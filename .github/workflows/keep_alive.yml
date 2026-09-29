@@ -1,0 +1,56 @@
+name: Keep Streamlit App Alive
+
+on:
+  schedule:
+    # Esegue ogni giorno alle ore 07:30 UTC (09:30 ora italiana)
+    - cron: '30 7 * * *'
+  workflow_dispatch:
+    inputs:
+      custom_url:
+        description: 'URL alternativo dell app Streamlit da testare (opzionale)'
+        required: false
+        default: ''
+
+jobs:
+  ping-app:
+    name: Ping Streamlit Cloud App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit Cloud
+        env:
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+          INPUT_URL: ${{ github.event.inputs.custom_url }}
+        run: |
+          TARGET_URL="${INPUT_URL}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="${STREAMLIT_APP_URL}"
+          fi
+          
+          # Se non impostato nei secret, usa un fallback esplicativo
+          if [ -z "$TARGET_URL" ]; then
+            echo "ATTENZIONE: Nessun URL configurato nei Secret di GitHub."
+            echo "Configura il secret STREAMLIT_APP_URL nelle impostazioni della repo:"
+            echo "Settings -> Secrets and variables -> Actions -> Repository secrets -> New repository secret"
+            echo "Nome: STREAMLIT_APP_URL"
+            echo "Valore: https://iltuonome-app.streamlit.app"
+            exit 1
+          fi
+
+          echo "Ping in corso verso l'app: $TARGET_URL"
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 45 "$TARGET_URL")
+          echo "Codice HTTP ricevuto: $RESPONSE_CODE"
+
+          if [ "$RESPONSE_CODE" -ge 200 ] && [ "$RESPONSE_CODE" -lt 400 ]; then
+            echo "SUCCESSO: L'applicazione Streamlit è attiva e raggiungibile!"
+          else
+            echo "AVVISO: Risposta inattesa ($RESPONSE_CODE), riprovo una seconda volta..."
+            sleep 5
+            RETRY_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 60 "$TARGET_URL")
+            echo "Secondo tentativo: $RETRY_CODE"
+            if [ "$RETRY_CODE" -ge 200 ] && [ "$RETRY_CODE" -lt 400 ]; then
+              echo "SUCCESSO al secondo tentativo: L'applicazione è stata risvegliata!"
+            else
+              echo "ERRORE: Impossibile risvegliare l'app o URL errato (codice $RETRY_CODE)."
+              exit 1
+            fi
+          fi

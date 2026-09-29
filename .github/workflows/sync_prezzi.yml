@@ -1,0 +1,54 @@
+name: Sync Giornaliero Prezzi Futures da Gmail
+
+on:
+  schedule:
+    # Esecuzione dal lunedì al venerdì ogni ora tra le 08:00 e le 15:00 UTC (10:00 - 17:00 ora italiana)
+    - cron: '0 8-15 * * 1-5'
+  workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions
+
+jobs:
+  sync:
+    name: Estrazione e Aggiornamento Database
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Configurazione Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Installazione dipendenze e OCR di sistema
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-ita
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytesseract
+
+      - name: Esecuzione Sync da Gmail
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          python -c "
+          from execution.fetch_gmail_quotes import fetch_quotes_from_gmail
+          q, l = fetch_quotes_from_gmail()
+          print(f'Quotazioni elaborate con successo: {len(q)}')
+          "
+
+      - name: Commit e Push automatico delle nuove quotazioni
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add data/storico_prezzi.json data/storico_prezzi.csv 2>/dev/null || git add -A
+          if git diff --staged --quiet; then
+            echo "Nessuna variazione al database, nessun commit necessario."
+          else
+            git commit -m "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]"
+            git push
+          fi

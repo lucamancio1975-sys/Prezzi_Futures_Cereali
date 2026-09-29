@@ -1,0 +1,30 @@
+# Variabili di ambiente e credenziali riservate (NON committare mai)
+.env
+.env.local
+.env.*
+
+# File e cartelle temporanee
+__pycache__/
+*.py[cod]
+*$py.class
+.tmp/
+*.tmp
+_temp_*
+
+# Cartelle IDE, agenti e Streamlit locale
+.vscode/
+.idea/
+.pytest_cache/
+.agents/
+
+# Progetti legacy e risorse grafiche di lavoro
+APP ON LINE PER VISUALIZZARE PREZZO GRANO DURO/
+APP ON LINE PER VISUALIZZARE PREZZO GRANO TENERO/
+logo per icona app/
+
+# SO
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
