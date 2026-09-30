@@ -1,0 +1,190 @@
+# 🔍 Analisi Critica Completa — App Quotazioni Futures Cereali
+
+> **Data Analisi:** 30 Settembre 2026  
+> **Tipo:** Recensione senza modifiche al codice  
+> **Scope:** Architettura, Workflow, UI/UX, Sicurezza, Performance, Manutenibilità
+
+---
+
+## 📐 Panoramica dell'Architettura
+
+L'app è una **dashboard Streamlit single-page** per la consultazione giornaliera dei prezzi futures di Grano Duro (PDT), Grano Tenero (PDT) e Grano Tenero (PMG), con scadenza Luglio 2027. Recupera automaticamente le quotazioni da Gmail (allegati PDF, immagini OCR, o corpo email), le archivia in JSON/CSV locale, e le presenta con un'interfaccia stile "Bloomberg Terminal" mobile-first.
+
+```mermaid
+graph TD
+    A["📧 Gmail IMAP"] --> B["fetch_gmail_quotes.py"]
+    B --> C{"Tipo allegato?"}
+    C -->|PDF| D["parse_pdf_quotazioni.py"]
+    C -->|Immagine| E["parse_image_quotazioni.py"]
+    C -->|Testo/HTML| D
+    D --> F["storage_manager.py"]
+    E --> F
+    F --> G["data/storico_prezzi.json"]
+    F --> H["data/storico_prezzi.csv"]
+    G --> I["app.py — Dashboard Streamlit"]
+    I --> J["📱 Browser / PWA"]
+```
+
+---
+
+## ✅ PREGI
+
+### 1. 🏗️ Architettura a Livelli Pulita
+- La separazione in moduli `execution/` (fetch, parse, storage) rispetto alla UI (`app.py`) è un'**ottima scelta progettuale**. Ogni modulo ha una singola responsabilità ben definita.
+- L'import condizionale con `try/except ImportError` ([app.py:23-40](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/app.py#L23-L40)) garantisce la compatibilità sia con esecuzione diretta che da package.
+
+### 2. 🔄 Pipeline di Estrazione Dati Multi-Strategia
+- Il sistema a **3 priorità** (PDF → OCR immagine → corpo email) è robusto e resiliente:
+  - **Priorità 1:** parsing PDF con `pypdf` — velocissimo, zero dipendenze OCR
+  - **Priorità 2:** OCR con Windows native (`Windows.Media.Ocr`) + fallback `pytesseract`
+  - **Priorità 3:** parsing testo/HTML con regex e BeautifulSoup
+- Questo approccio a cascata copre praticamente tutti i formati possibili di invio quotazioni.
+
+### 3. 🧠 OCR Nativo Windows — Scelta Brillante
+- Lo script [win_ocr.ps1](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/win_ocr.ps1) sfrutta l'engine `Windows.Media.Ocr` nativo, che:
+  - Non richiede installazione extra (già presente su Windows 10/11)
+  - È più accurato di Tesseract per testo italiano
+  - Restituisce coordinate bounding box per ogni parola (utile per la localizzazione spaziale nella tabella)
+- Il **ritaglio intelligente dell'immagine** per zone (Grano Duro Y:620-720, Grano Tenero Y:370-490) dimostra una conoscenza precisa del layout tabellare usato dal fornitore.
+
+### 4. 📊 Deduplicazione Rigorosa
+- La chiave composta `(data, prodotto, scadenza, tipo)` in [storage_manager.py:81-86](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/storage_manager.py#L81-L86) è corretta e impedisce duplicati anche riesaminando le stesse email multiple volte.
+- L'aggiornamento condizionale solo se il prezzo cambia è un tocco intelligente.
+
+### 5. 🎨 Design UI/UX Eccellente
+- Il tema **Bloomberg/Wall Street** è visivamente coerente: palette scura, accenti dorati/verdi/ciano, tipografia professionale (JetBrains Mono + Space Grotesk + Plus Jakarta Sans).
+- **Mobile-first genuino**: uso intensivo di `clamp()` per sizing responsivo, `touch-action: pan-y` per il grafico, contenitore max 680px.
+- Animazioni CSS curate: pulsazione `blink-attendi`, hover con `translateY`, glow effects.
+- Ogni prodotto ha la propria identità cromatica chiara (Oro=Duro, Verde=Tenero PDT, Ciano=Tenero PMG).
+
+### 6. 📱 PWA Completa e Multi-Piattaforma
+- Manifest JSON con icone a tutte le risoluzioni necessarie (180, 192, 512, maskable).
+- Service Worker per installabilità.
+- Meta tag per iOS (`apple-mobile-web-app-capable`), Android e Windows.
+- L'approccio **triplice** per l'iniezione PWA (setup_pwa.py che patcha index.html + iniezione JS diretta nel DOM parent + components.html) è ridondante ma efficace nel garantire la funzionalità su tutti i deployment.
+
+### 7. 📈 Grafico Plotly Ben Calibrato
+- Scalatura Y dinamica con padding basato su deviazione standard ([app.py:1124-1136](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/app.py#L1124-L1136)) — evita spazi vuoti e compressione eccessiva.
+- Disabilitazione corretta della toolbar e dello zoom per uso mobile consultivo.
+- Evidenziazione dell'ultimo punto con marker bianco cerchiato.
+
+### 8. 🧩 Dettagli Professionali
+- Guida PDF integrata con download/apertura al tocco di un'icona bilancia.
+- Date in italiano corretto (Lunedì, Martedì...).
+- Badge di stato "Aggiornato a Oggi" / "In attesa oggi" chiaro e immediato.
+- Switch rapido PDT ↔ PMG per il Grano Tenero senza tornare alla selezione.
+- File `.env.example` con istruzioni chiare, `.gitignore` ben fatto.
+
+### 9. 🔧 Batch Launcher Curato
+- [avvia_app.bat](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/avvia_app.bat) verifica Python nel PATH, chiude processi sulla porta, imposta encoding UTF-8, mostra istruzioni chiare. Pensato per un utente non tecnico.
+
+### 10. 💾 Dati Storici Impressionanti
+- Il database contiene ~4292 righe di dati dal **Novembre 2025** ad oggi (**Settembre 2026**) — quasi 11 mesi di storico giornaliero, a dimostrazione che il sistema funziona in modo affidabile in produzione.
+
+---
+
+## ⚠️ DIFETTI E CRITICITÀ
+
+### 1. 🔴 File `app.py` Monolitico — 1216 Righe
+- **Problema:** L'intero frontend (CSS, HTML, logica, grafico, navigazione) è concentrato in un unico file di 1216 righe e ~43 KB.
+- **Impatto:** Manutenibilità difficile, alto rischio di regressioni, difficoltà nel testing.
+- **Suggerimento:** Separare almeno: CSS in file esterno, template HTML in funzioni/file dedicati, logica di rendering per schermata.
+
+### 2. 🔴 CSS Inline Massivo (~600 righe)
+- Il blocco CSS embedded via `st.markdown(unsafe_allow_html=True)` da riga 111 a 715 è enorme. Ogni ricaricamento della pagina lo ri-inietta.
+- Contiene molte regole `!important` ripetute (ne ho contate **oltre 50**), sintomo di "CSS war" col tema Streamlit nativo.
+- Non c'è nessun meccanismo di minificazione o caching del CSS.
+
+### 3. 🔴 Nessun `__init__.py` nel Package `execution/`
+- La cartella `execution/` non contiene un file `__init__.py`, il che la rende tecnicamente non un package Python valido.
+- L'app compensa con `sys.path.append`, ma questo è un workaround fragile.
+
+### 4. 🟡 Duplicazione Codice: `parse_data_string` e `MESI_IT`
+- La funzione `parse_data_string()` e il dizionario `MESI_IT` sono **identici** in:
+  - [parse_pdf_quotazioni.py:14-46](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/parse_pdf_quotazioni.py#L14-L46)
+  - [parse_image_quotazioni.py:18-50](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/parse_image_quotazioni.py#L18-L50)
+- **Violazione DRY classica.** Qualsiasi fix futuro andrà fatto in due posti.
+
+### 5. 🟡 Coordinate OCR Hardcoded
+- In [parse_image_quotazioni.py:122-125](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/parse_image_quotazioni.py#L122-L125), le zone di ritaglio (Y:620-720 per Duro, Y:370-490 per Tenero) sono fisse rispetto a un layout immagine di 580×824.
+- Se il fornitore cambia anche leggermente il formato della tabella, l'OCR si rompe silenziosamente.
+- Non c'è logging o alert se l'OCR non trova nulla nelle zone previste.
+
+### 6. 🟡 Sicurezza CORS/XSRF Disabilitata
+- In [config.toml:16-17](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/.streamlit/config.toml#L16-L17):
+  ```toml
+  enableCORS = false
+  enableXsrfProtection = false
+  ```
+- Questo è accettabile per sviluppo locale, ma **rischio sicurezza** se esposto pubblicamente su Streamlit Cloud senza protezioni aggiuntive.
+
+### 7. 🟡 Nessun Test Automatizzato
+- Non c'è **nessun file di test** nell'intero progetto — né per i parser regex, né per la deduplicazione, né per il parsing date.
+- I regex per l'estrazione prezzi sono complessi e delicati — un singolo cambio di formato nell'email può causare parsing silenziosamente errato.
+
+### 8. 🟡 Gestione Errori "Silenziosa"
+- Molti blocchi `except Exception: pass` sparsi nel codice ([fetch_gmail_quotes.py:202-203](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/fetch_gmail_quotes.py#L202-L203), [app.py:893-894](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/app.py#L893-L894)).
+- I `print()` per il logging non sono visibili all'utente finale su Streamlit Cloud.
+- Non c'è un sistema di logging strutturato (es. `logging` module).
+
+### 9. 🟡 Database JSON come Storage Primario
+- Con ~4300 record e crescita giornaliera di 3-4 record, il file JSON diventa sempre più grande (~100 KB attualmente).
+- Ogni scrittura riscrive l'**intero file** (`json.dump`), rischio di corruzione in caso di crash durante la scrittura.
+- Nessun meccanismo di backup automatico o rotazione dati.
+- Non c'è concurrency control: se due istanze Streamlit scrivono contemporaneamente, dati persi.
+
+
+### 11. 🟡 PWA: Iniezione Ridondante e Fragile
+- L'approccio PWA è **triplicato** (un tema ricorrente):
+  1. `setup_pwa.py` — patcha l'`index.html` di Streamlit (modifica file di libreria!)
+  2. `components.html()` a riga 65 — iniezione JS nel DOM parent
+  3. `inject_pwa_head()` a riga 775 — seconda iniezione JS quasi identica
+- La modifica diretta dei file interni di Streamlit (`setup_pwa.py:39-72`) è **molto fragile**: qualsiasi aggiornamento di Streamlit può rompere la funzionalità.
+
+### 12. 🟡 `manifest.json` Duplicato
+- Esiste sia in [radice](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/manifest.json) che in [static/](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/static/manifest.json), identici. Fonte di confusione su quale sia il "vero".
+
+### 13. 🟡 Validazione Prezzi con Range Troppo Ampio
+- Grano Duro: range accettato `120-600 €/t` ([parse_pdf_quotazioni.py:105](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/parse_pdf_quotazioni.py#L105))
+- Grano Duro OCR: range `220-350 €/t` ([parse_image_quotazioni.py:155](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/parse_image_quotazioni.py#L155))
+- **Incoerenza:** il parser PDF accetta prezzi fino a 600, quello OCR fino a 350. Un prezzo legittimo di 360 verrebbe ignorato dall'OCR ma non dal PDF.
+
+### 14. 🟡 Nessun Filtro sul Mittente Email
+- Il filtro di pertinenza in [fetch_gmail_quotes.py:117-119](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/execution/fetch_gmail_quotes.py#L117-L119) è basato su parole chiave nell'oggetto, non sul mittente specifico.
+- Un'email spam contenente la parola "grano" potrebbe inquinare il database con dati errati.
+
+### 15. 🟢 Dipendenze Pesanti Non Necessarie
+- `opencv-python-headless` e `numpy` nel [requirements.txt](file:///c:/Users/User/OneDrive/Documenti/Antigravity/Nuova%20cartella/1_APP%20GENERALE%20DURO+TENERO/requirements.txt) sono usati **solo** per ridimensionare un'immagine prima dell'OCR (`cv2.resize`).
+- Lo stesso risultato si otterrebbe con `Pillow.Image.resize()` già importato, eliminando due dipendenze pesanti (~50 MB).
+
+### 16. 🟢 Cartelle Legacy nella Root
+- Le cartelle `APP ON LINE PER VISUALIZZARE PREZZO GRANO DURO/` e `APP ON LINE PER VISUALIZZARE PREZZO GRANO TENERO/` sono in `.gitignore` ma **ancora presenti** nel filesystem. Potrebbero confondere.
+
+---
+
+## 📊 Tabella Riepilogativa
+
+| Area | Voto | Note |
+|------|------|------|
+| **Architettura** | 🟢 7.5/10 | Separazione a livelli buona, ma `app.py` monolitico |
+| **Pipeline Dati** | 🟢 8/10 | Multi-strategia eccellente, ma coordinate OCR fragili |
+| **UI/UX Design** | 🟢 9/10 | Stile premium, mobile-first autentico, palette coerente |
+| **Affidabilità** | 🟡 6.5/10 | Funziona da 11 mesi, ma errori silenziosi e nessun test |
+| **Sicurezza** | 🟡 6/10 | CORS/XSRF disabilitati, nessun filtro mittente |
+| **Manutenibilità** | 🟡 5.5/10 | CSS monolitico, scadenza hardcoded, codice duplicato |
+| **Performance** | 🟢 8/10 | Cache Streamlit, query veloce, OCR nativo Windows |
+| **PWA** | 🟡 7/10 | Funziona ma implementazione triplicata e fragile |
+| **Documentazione** | 🟢 7.5/10 | README chiaro, docstring presenti, direttive incluse |
+
+> **Voto Complessivo: 7.2/10** — App funzionante, esteticamente curata e affidabile nella pratica quotidiana. Le criticità principali riguardano la manutenibilità a lungo termine e la fragilità della pipeline OCR/PWA.
+
+---
+
+## 🎯 Le 5 Priorità di Miglioramento Raccomandate
+
+1. **Aggiungere test unitari** per i parser (regex PDF, parsing date, deduplicazione) — il rischio più alto di regressione
+2. **Rendere configurabile la scadenza** (lug-27 → lug-28) senza intervento manuale
+3. **Eliminare la duplicazione** di `parse_data_string` e `MESI_IT` in un modulo condiviso
+4. **Rimuovere `opencv-python-headless`** a favore di `Pillow.Image.resize()`
+5. **Implementare logging strutturato** con il modulo `logging` di Python al posto di `print()`
+

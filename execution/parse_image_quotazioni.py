@@ -11,43 +11,11 @@ import subprocess
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 from PIL import Image
-import cv2
-import numpy as np
-
-# Mapping mesi in italiano per parsing date
-MESI_IT = {
-    'gen': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'mag': 5, 'giu': 6,
-    'lug': 7, 'ago': 8, 'set': 9, 'ott': 10, 'nov': 11, 'dic': 12,
-    'gennaio': 1, 'febbraio': 2, 'marzo': 3, 'aprile': 4, 'maggio': 5, 'giugno': 6,
-    'luglio': 7, 'agosto': 8, 'settembre': 9, 'ottobre': 10, 'novembre': 11, 'dicembre': 12
-}
-
-def parse_data_string(data_str: str) -> Optional[str]:
-    """Converte date come '18-set-26' o '18 settembre 2026' in 'YYYY-MM-DD'."""
-    if not data_str:
-        return None
-    data_str = data_str.strip().lower()
-    
-    # Formato '18-set-26' o '18-set-2026'
-    m_short = re.search(r'(\d{1,2})[-/\s]([a-z]{3})[-/\s](\d{2,4})', data_str)
-    if m_short:
-        giorno, mese_txt, anno_raw = m_short.groups()
-        mese = MESI_IT.get(mese_txt)
-        if mese:
-            anno = int(anno_raw)
-            if anno < 100:
-                anno += 2000
-            return f"{anno:04d}-{mese:02d}-{int(giorno):02d}"
-            
-    # Formato '18 settembre 2026'
-    m_long = re.search(r'(\d{1,2})\s+([a-z]+)\s+(\d{4})', data_str)
-    if m_long:
-        giorno, mese_txt, anno = m_long.groups()
-        mese = MESI_IT.get(mese_txt)
-        if mese:
-            return f"{int(anno):04d}-{mese:02d}-{int(giorno):02d}"
-            
-    return None
+# Importazione utility condivise per date (DRY)
+try:
+    from execution.utils import MESI_IT, parse_data_string
+except ImportError:
+    from utils import MESI_IT, parse_data_string
 
 def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
     """
@@ -132,12 +100,12 @@ def extract_quotes_from_image(
         else:
             crop_rgb = crop_gd.convert("RGB")
 
-        crop_np = np.array(crop_rgb)
-        crop_cv = cv2.cvtColor(crop_np, cv2.COLOR_RGB2BGR)
-        crop_hires = cv2.resize(crop_cv, (0, 0), fx=2.5, fy=2.5, interpolation=cv2.INTER_LANCZOS4)
+        # Ingrandimento 2.5x con interpolazione Lanczos di Pillow (zero dipendenze cv2/numpy)
+        new_size_gd = (int(crop_rgb.width * 2.5), int(crop_rgb.height * 2.5))
+        crop_hires = crop_rgb.resize(new_size_gd, Image.Resampling.LANCZOS)
 
         temp_gd = os.path.join(os.path.dirname(image_path), f"_temp_ocr_gd_{os.getpid()}_{os.path.basename(image_path)}")
-        cv2.imwrite(temp_gd, crop_hires)
+        crop_hires.save(temp_gd)
         lines_gd = _run_ocr_on_image(temp_gd)
         if os.path.exists(temp_gd):
             os.remove(temp_gd)
@@ -147,12 +115,13 @@ def extract_quotes_from_image(
         duro_nums = []
         for line in lines_gd:
             txt = line.get("Text", "")
-            nums = re.findall(r'\b(2\d{2}|3\d{2})\b', txt.replace(" ", ""))
+            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t
+            nums = re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", ""))
             words = line.get("Words", [])
             y_coord = words[0].get("Y", 0) if words else 0
             for n in nums:
                 val = float(n)
-                if 220 <= val <= 350:
+                if 120 <= val <= 600:
                     duro_nums.append((val, y_coord))
 
         if duro_nums:
@@ -199,17 +168,17 @@ def extract_quotes_from_image(
         else:
             crop_rgb = crop_gt.convert("RGB")
 
-        crop_np = np.array(crop_rgb)
-        crop_cv = cv2.cvtColor(crop_np, cv2.COLOR_RGB2BGR)
-        crop_hires = cv2.resize(crop_cv, (0, 0), fx=2.5, fy=2.5, interpolation=cv2.INTER_LANCZOS4)
+        # Ingrandimento 2.5x con interpolazione Lanczos di Pillow (zero dipendenze cv2/numpy)
+        new_size_gt = (int(crop_rgb.width * 2.5), int(crop_rgb.height * 2.5))
+        crop_hires = crop_rgb.resize(new_size_gt, Image.Resampling.LANCZOS)
 
         temp_gt = os.path.join(os.path.dirname(image_path), f"_temp_ocr_gt_{os.getpid()}_{os.path.basename(image_path)}")
-        cv2.imwrite(temp_gt, crop_hires)
+        crop_hires.save(temp_gt)
         lines_gt = _run_ocr_on_image(temp_gt)
         if os.path.exists(temp_gt):
             os.remove(temp_gt)
 
-        crop_w = crop_hires.shape[1]
+        crop_w = crop_hires.width
         col_div = int(crop_w * 0.68)
 
         pmg_candidates = []
@@ -221,10 +190,11 @@ def extract_quotes_from_image(
             y_val = words[0].get("Y", 0) if words else 0
             x_val = words[0].get("X", 0) if words else 0
 
-            nums = re.findall(r'\b(1\d{2}|2\d{2}|3\d{2})\b', txt.replace(" ", ""))
+            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t
+            nums = re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", ""))
             for n in nums:
                 val = float(n)
-                if 160 <= val <= 350:
+                if 120 <= val <= 600:
                     if x_val < col_div:
                         pmg_candidates.append((val, y_val, x_val))
                     else:

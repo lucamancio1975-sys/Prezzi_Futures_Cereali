@@ -6,6 +6,7 @@ e il calcolo dei KPI finanziari per Grano Duro e Grano Tenero (PDT e PMG).
 
 import os
 import json
+import shutil
 import pandas as pd
 from typing import List, Dict, Any, Optional
 
@@ -43,7 +44,10 @@ def load_quotes() -> List[Dict[str, Any]]:
         return []
 
 def save_quotes(quotes: List[Dict[str, Any]]) -> bool:
-    """Salva le quotazioni nel database JSON e aggiorna l'esportazione CSV."""
+    """
+    Salva le quotazioni nel database JSON in modo ATOMICO e aggiorna l'esportazione CSV.
+    Mantiene automaticamente un file di backup (.bak) per prevenire qualsiasi corruzione di dati.
+    """
     ensure_data_dir()
     try:
         # Ordina per data crescente, prodotto, tipo e scadenza
@@ -54,18 +58,32 @@ def save_quotes(quotes: List[Dict[str, Any]]) -> bool:
             x.get("scadenza", "")
         ))
         
-        # Scrittura JSON
-        with open(DB_JSON_PATH, "w", encoding="utf-8") as f:
+        # 1. Backup del DB esistente se valido
+        if os.path.exists(DB_JSON_PATH) and os.path.getsize(DB_JSON_PATH) > 0:
+            bak_path = DB_JSON_PATH + ".bak"
+            try:
+                shutil.copy2(DB_JSON_PATH, bak_path)
+            except Exception:
+                pass
+
+        # 2. Scrittura atomica JSON (scrive su .tmp e rinomina istantaneamente)
+        tmp_json = DB_JSON_PATH + ".tmp"
+        with open(tmp_json, "w", encoding="utf-8") as f:
             json.dump(quotes, f, indent=2, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_json, DB_JSON_PATH)
             
-        # Scrittura CSV
+        # 3. Scrittura atomica CSV
         if quotes:
+            tmp_csv = DB_CSV_PATH + ".tmp"
             df = pd.DataFrame(quotes)
-            df.to_csv(DB_CSV_PATH, index=False, sep=";", encoding="utf-8-sig")
+            df.to_csv(tmp_csv, index=False, sep=";", encoding="utf-8-sig")
+            os.replace(tmp_csv, DB_CSV_PATH)
             
         return True
     except Exception as e:
-        print(f"Errore salvataggio database: {e}")
+        print(f"Errore salvataggio database atomico: {e}")
         return False
 
 def add_quotes(new_quotes: List[Dict[str, Any]]) -> int:

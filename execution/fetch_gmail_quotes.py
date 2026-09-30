@@ -111,7 +111,14 @@ def fetch_quotes_from_gmail(
             sender = decode_mime_words(msg.get("From", ""))
             date_hdr = msg.get("Date", "")
 
-            # Filtro di pertinenza
+            # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS in .env o secrets)
+            allowed_senders_cfg = os.getenv("GMAIL_ALLOWED_SENDERS", "").strip()
+            if allowed_senders_cfg:
+                allowed_list = [s.strip().lower() for s in allowed_senders_cfg.split(",") if s.strip()]
+                if not any(a in sender_lower for a in allowed_list):
+                    continue
+
+            # Filtro di pertinenza su oggetto o mittente predefinito
             subj_lower = subject.lower()
             sender_lower = sender.lower()
             is_relevant = any(k in subj_lower for k in [
