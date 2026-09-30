@@ -46,7 +46,7 @@ def fetch_quotes_from_gmail(
     server: str = "imap.gmail.com",
     folder: str = "INBOX",
     search_criteria: str = 'ALL',
-    max_emails: int = 15
+    max_emails: int = 35
 ) -> Tuple[List[Dict[str, Any]], List[str]]:
     """
     Si connette a Gmail via IMAP SSL, scansiona le ultime email ricevute,

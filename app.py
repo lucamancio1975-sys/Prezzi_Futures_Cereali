@@ -128,10 +128,10 @@ st.markdown("""
         max-width: 100vw;
     }
 
-    /* Ottimizzazione contenitore principale per smartphone */
+    /* Ottimizzazione contenitore principale per smartphone con ampio respiro in fondo */
     .block-container {
         padding-top: clamp(0.4rem, 2vh, 1.2rem) !important;
-        padding-bottom: 1.0rem !important;
+        padding-bottom: clamp(140px, 20vh, 200px) !important;
         padding-left: clamp(0.4rem, 2.5vw, 0.85rem) !important;
         padding-right: clamp(0.4rem, 2.5vw, 0.85rem) !important;
         max-width: 680px !important;
@@ -179,9 +179,12 @@ st.markdown("""
     [title*="Manage app" i],
     div:has(> button[data-testid="manage-app-button"]),
     footer,
+    [data-testid="stFooter"],
     .viewerBadge_container__1QSob,
     [class*="viewerBadge"],
     [class*="ViewerBadge"],
+    [class*="ProfileButton"],
+    [class*="profileButton"],
     [data-testid="stToolbar"] a[href*="github.com"],
     [data-testid="stToolbar"] button[title*="GitHub"],
     [data-testid="stToolbar"] [title*="GitHub"],
@@ -884,7 +887,7 @@ def run_inspection_process():
     """, unsafe_allow_html=True)
 
     try:
-        fetch_quotes_from_gmail(max_emails=8)
+        fetch_quotes_from_gmail(max_emails=35)
     except Exception as e:
         print(f"Errore ispezione quotazioni: {e}")
 
@@ -1000,15 +1003,6 @@ is_today = (last_date_str == oggi_str)
 
 data_dt = last_row["data"]
 data_estesa = f"{giorni_it[data_dt.weekday()]} {data_dt.day} {mesi_it[data_dt.month]} {data_dt.year}"
-prev_date_fmt = prev_row["data"].strftime("%d/%m")
-
-# Ultimo movimento di mercato se delta == 0
-last_move_info = ""
-if delta_p == 0 and stats.get("last_move_delta", 0) != 0:
-    m_delta = stats["last_move_delta"]
-    m_sign = "+" if m_delta > 0 else ""
-    m_color = "#34d399" if m_delta > 0 else "#f43f5e"
-    last_move_info = f'<span style="color:#64748b; font-size:0.75rem; margin-left:6px;">(Ultimo cambio vs {stats["last_move_date"]}: <b style="color:{m_color}">{m_sign}{m_delta:.2f} €/t</b>)</span>'
 
 # Status badge
 status_badge = (
@@ -1100,9 +1094,8 @@ hero_html = f"""<div class="hero-box {hero_class}">
 </div>
 {specs_html}
 <div class="hero-delta-row">
-<span class="hero-delta-label">Rispetto a ieri ({prev_date_fmt} @ {prev_p:.2f} €/t):</span>
-<span class="hero-badge-delta {delta_class}">{delta_sign}{delta_p:.2f} €/t ({delta_sign}{pct_p:.2f}%)</span>
-{last_move_info}
+<span class="hero-delta-label">Differenziale:</span>
+<span class="hero-badge-delta {delta_class}">{delta_sign}{pct_p:.2f}%</span>
 </div>
 </div>"""
 st.markdown(hero_html, unsafe_allow_html=True)
@@ -1158,8 +1151,8 @@ fig.add_trace(go.Scatter(
 
 # Layout mobile compatto ed elegante (solo andamento e valori assi X e Y)
 fig.update_layout(
-    height=275,
-    margin=dict(l=10, r=10, t=14, b=18),
+    height=280,
+    margin=dict(l=10, r=10, t=14, b=30),
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(11, 17, 32, 0.75)",
     showlegend=False,
@@ -1194,3 +1187,9 @@ st.plotly_chart(
         "doubleClick": False
     }
 )
+
+# Spazio aggiuntivo sul fondo (sfondo scuro) per consentire lo scroll completo oltre i badge/creator
+st.markdown("""
+<div class="app-bottom-spacer" style="height: 140px; width: 100%; pointer-events: none;"></div>
+""", unsafe_allow_html=True)
+

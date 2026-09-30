@@ -2,8 +2,8 @@ name: Sync Giornaliero Prezzi Futures da Gmail
 
 on:
   schedule:
-    # Esecuzione dal lunedì al venerdì ogni ora tra le 08:00 e le 15:00 UTC (10:00 - 17:00 ora italiana)
-    - cron: '0 8-15 * * 1-5'
+    # Esecuzione dal lunedì al venerdì ogni 30 minuti tra le 07:00 e le 16:30 UTC (09:00 - 18:30 ora italiana)
+    - cron: '*/30 7-16 * * 1-5'
   workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions
 
 jobs:
@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout del repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configurazione Python
         uses: actions/setup-python@v5
@@ -36,8 +38,13 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           python -c "
+          import os
+          if not os.getenv('GMAIL_USER') or not os.getenv('GMAIL_APP_PASSWORD'):
+              print('ATTENZIONE: Secrets GMAIL_USER o GMAIL_APP_PASSWORD non configurati nei Secrets del repository!')
           from execution.fetch_gmail_quotes import fetch_quotes_from_gmail
-          q, l = fetch_quotes_from_gmail()
+          q, l = fetch_quotes_from_gmail(max_emails=35)
+          for log_line in l:
+              print(log_line)
           print(f'Quotazioni elaborate con successo: {len(q)}')
           "
 
@@ -50,5 +57,6 @@ jobs:
             echo "Nessuna variazione al database, nessun commit necessario."
           else
             git commit -m "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]"
+            git pull --rebase origin main || true
             git push
           fi
