@@ -721,8 +721,11 @@ st.markdown("""
 if "selected_product" not in st.session_state:
     st.session_state.selected_product = None  # Valori: 'DURO_PDT', 'TENERO_PDT', 'TENERO_PMG'
 
-if "trigger_sync" not in st.session_state:
-    st.session_state.trigger_sync = False
+if "last_mail_check" not in st.session_state:
+    st.session_state.last_mail_check = 0
+
+if "force_sync" not in st.session_state:
+    st.session_state.force_sync = False
 
 
 # =========================================================================
@@ -874,15 +877,14 @@ def get_cached_delta(prodotto: str, tipo: str, scadenza: str = "lug-27"):
 # =========================================================================
 # PROCESSO DI ISPEZIONE E SINCRONIZZAZIONE (CON ANIMAZIONE ATTENDI)
 # =========================================================================
-def run_inspection_process():
+def run_inspection_process(messaggio: str = "⏳ Ricerca nuove email con quotazioni di oggi..."):
     """
-    Mostra l'animazione '⏳ Attendi...' e avvia il fetch da Gmail.
-    Per velocizzare prova prima l'allegato PDF, poi OCR immagini, poi corpo email.
+    Mostra l'animazione di attesa ed esamina le ultime email su Gmail alla ricerca del PDF o immagine di oggi.
     """
     placeholder = st.empty()
-    placeholder.markdown("""
+    placeholder.markdown(f"""
     <div class="attendi-container">
-        <div class="attendi-text">⏳ Attendi...</div>
+        <div class="attendi-text">{messaggio}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -915,19 +917,16 @@ if st.session_state.selected_product is None:
     # 1. Grano Duro PDT
     if st.button("🌾 Grano Duro prezzo determinato - Raccolto Luglio 2027", use_container_width=True, key="btn_duro_pdt"):
         st.session_state.selected_product = "DURO_PDT"
-        st.session_state.trigger_sync = True
         st.rerun()
 
     # 2. Grano Tenero PDT
     if st.button("🌱 Grano Tenero prezzo determinato - Raccolto Luglio 2027", use_container_width=True, key="btn_tenero_pdt"):
         st.session_state.selected_product = "TENERO_PDT"
-        st.session_state.trigger_sync = True
         st.rerun()
 
     # 3. Grano Tenero PMG
     if st.button("🌱 Grano Tenero prezzo minimo garantito - Raccolto Luglio 2027", use_container_width=True, key="btn_tenero_pmg"):
         st.session_state.selected_product = "TENERO_PMG"
-        st.session_state.trigger_sync = True
         st.rerun()
 
     st.stop()
@@ -937,11 +936,6 @@ if st.session_state.selected_product is None:
 # 2. SCHERMATA DEDICATA AL PRODOTTO SELEZIONATO
 # =========================================================================
 product_key = st.session_state.selected_product
-
-# Se attivato il trigger di sincronizzazione dal clic
-if st.session_state.get("trigger_sync", False):
-    run_inspection_process()
-    st.session_state.trigger_sync = False
 
 # Mappatura parametri in base al prodotto
 if product_key == "DURO_PDT":
@@ -969,8 +963,22 @@ else:  # TENERO_PMG
     chart_line_color = "#38bdf8"
     chart_fill_color = "rgba(56, 189, 248, 0.08)"
 
-# Lettura dati e calcolo del delta rapido
+# 1. Interrogazione preliminare database
 quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
+oggi_str = datetime.now().strftime("%Y-%m-%d")
+ha_quotazione_oggi = any(q.get("data") == oggi_str for q in (quotes or []))
+is_weekday = (datetime.now().weekday() < 5)
+
+# 2. Controllo mail ad ogni run se manca il dato di oggi o se forzato dall'utente
+now_ts = time.time()
+force_sync = st.session_state.get("force_sync", False)
+time_since_last_check = now_ts - st.session_state.get("last_mail_check", 0)
+
+if force_sync or (not ha_quotazione_oggi and is_weekday and time_since_last_check > 90):
+    st.session_state.force_sync = False
+    st.session_state.last_mail_check = now_ts
+    run_inspection_process(messaggio="⏳ Verifica nuova email di oggi con quotazioni...")
+    quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
 
 if not quotes:
     st.warning(f"Nessuna quotazione registrata per {prod_name} {tipo_contratto} (lug-27).")
@@ -1037,6 +1045,12 @@ with nav_col2:
         if st.button(f"🔄 {twin_label}", key="btn_switch_twin", use_container_width=True):
             st.session_state.selected_product = twin_key
             st.rerun()
+    else:
+        # Se Grano Duro, permetti di ricontrollare manualmente la mail se necessario
+        if not is_today:
+            if st.button("📨 Controlla email oggi", key="btn_check_mail_duro", use_container_width=True):
+                st.session_state.force_sync = True
+                st.rerun()
 
 # ----------------- 1. TOP BAR COMPATTA -----------------
 topbar_html = f"""<div class="app-topbar">
@@ -1055,6 +1069,12 @@ topbar_html = f"""<div class="app-topbar">
 </div>
 </div>"""
 st.markdown(topbar_html, unsafe_allow_html=True)
+
+# Se non è ancora aggiornato ad oggi, offre il pulsante immediato per verificare la posta
+if not is_today:
+    if st.button("📨 Controlla nuova email di oggi", key="btn_check_mail_today", use_container_width=True):
+        st.session_state.force_sync = True
+        st.rerun()
 
 # ----------------- 2. HERO CARD PREZZO ATTUALE -----------------
 # Specifiche in base al prodotto
