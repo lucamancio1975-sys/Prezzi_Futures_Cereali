@@ -297,14 +297,20 @@ st.markdown("""
     }
 
     /* Stile comune per i tre bottoni della schermata di scelta */
-    .st-key-btn_duro_pdt > button,
-    .st-key-btn_tenero_pdt > button,
-    .st-key-btn_tenero_pmg > button {
+    .st-key-btn_duro_pdt button,
+    .st-key-btn_tenero_pdt button,
+    .st-key-btn_tenero_pmg button,
+    div[class*="st-key-btn_duro_pdt"] button,
+    div[class*="st-key-btn_tenero_pdt"] button,
+    div[class*="st-key-btn_tenero_pmg"] button,
+    button[aria-label*="Grano Duro"],
+    button[aria-label*="Tenero prezzo determinato"],
+    button[aria-label*="prezzo minimo"] {
         width: 100% !important;
-        min-height: 70px !important;
+        min-height: 72px !important;
         border-radius: 14px !important;
         font-family: 'Space Grotesk', sans-serif !important;
-        font-size: clamp(0.96rem, 3.5vw, 1.12rem) !important;
+        font-size: clamp(1.04rem, 3.8vw, 1.20rem) !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -318,49 +324,157 @@ st.markdown("""
         text-align: center !important;
     }
 
-    /* 1. Grano Duro PDT (Oro / Ambra / Emerald) */
-    .st-key-btn_duro_pdt > button {
-        background: linear-gradient(135deg, #1c1404 0%, #2e2008 100%) !important;
-        color: #fbbf24 !important;
-        border: 1.5px solid #f59e0b !important;
-        box-shadow: 0 4px 18px rgba(245, 158, 11, 0.20) !important;
+    .st-key-btn_duro_pdt button p,
+    .st-key-btn_tenero_pdt button p,
+    .st-key-btn_tenero_pmg button p,
+    div[class*="st-key-btn_duro_pdt"] button p,
+    div[class*="st-key-btn_tenero_pdt"] button p,
+    div[class*="st-key-btn_tenero_pmg"] button p,
+    button[aria-label*="Grano Duro"] p,
+    button[aria-label*="Tenero prezzo determinato"] p,
+    button[aria-label*="prezzo minimo"] p {
+        font-size: clamp(1.04rem, 3.8vw, 1.20rem) !important;
     }
-    .st-key-btn_duro_pdt > button:hover {
+
+    /* ------------------------------------------------------------- */
+    /* ANIMAZIONI LAMPEGGIAMENTO TENUE (SOLO SCRITTA, RITMO LENTO)  */
+    /* ------------------------------------------------------------- */
+    @keyframes gentle-text-blink-ocra {
+        0%, 100% {
+            opacity: 1;
+            filter: brightness(1);
+            color: #df9e38 !important;
+            text-shadow: 0 0 10px rgba(223, 158, 56, 0.45);
+        }
+        50% {
+            opacity: 0.78;
+            filter: brightness(0.92);
+            color: #df9e38 !important;
+            text-shadow: 0 0 3px rgba(223, 158, 56, 0.15);
+        }
+    }
+
+    @keyframes gentle-text-blink-lampone {
+        0%, 100% {
+            opacity: 1;
+            filter: brightness(1);
+            color: #e02b55 !important;
+            text-shadow: 0 0 10px rgba(224, 43, 85, 0.50);
+        }
+        50% {
+            opacity: 0.78;
+            filter: brightness(0.92);
+            color: #e02b55 !important;
+            text-shadow: 0 0 3px rgba(224, 43, 85, 0.15);
+        }
+    }
+
+    @keyframes gentle-text-blink-cobalto {
+        0%, 100% {
+            opacity: 1;
+            filter: brightness(1);
+            color: #388bfd !important;
+            text-shadow: 0 0 10px rgba(56, 139, 253, 0.50);
+        }
+        50% {
+            opacity: 0.78;
+            filter: brightness(0.92);
+            color: #388bfd !important;
+            text-shadow: 0 0 3px rgba(56, 139, 253, 0.15);
+        }
+    }
+
+    /* 1. Grano Duro PDT (Giallo Ocra) */
+    .st-key-btn_duro_pdt button,
+    div[class*="st-key-btn_duro_pdt"] button,
+    button[aria-label*="Grano Duro"] {
+        background: linear-gradient(135deg, #1c1404 0%, #2e2008 100%) !important;
+        border: 1.5px solid rgba(223, 158, 56, 0.65) !important;
+        box-shadow: 0 4px 18px rgba(223, 158, 56, 0.18) !important;
+    }
+    .st-key-btn_duro_pdt button *,
+    .st-key-btn_duro_pdt button p,
+    div[class*="st-key-btn_duro_pdt"] button *,
+    div[class*="st-key-btn_duro_pdt"] button p,
+    button[aria-label*="Grano Duro"] *,
+    button[aria-label*="Grano Duro"] p {
+        color: #df9e38 !important;
+        animation: gentle-text-blink-ocra 4.0s infinite ease-in-out !important;
+    }
+    .st-key-btn_duro_pdt button:hover,
+    div[class*="st-key-btn_duro_pdt"] button:hover,
+    button[aria-label*="Grano Duro"]:hover {
         background: linear-gradient(135deg, #2e2008 0%, #45300b 100%) !important;
         border-color: #fef08a !important;
-        box-shadow: 0 6px 24px rgba(245, 158, 11, 0.40) !important;
+        box-shadow: 0 6px 24px rgba(223, 158, 56, 0.35) !important;
         transform: translateY(-2px) !important;
-        color: #ffffff !important;
+    }
+    .st-key-btn_duro_pdt button:hover *,
+    div[class*="st-key-btn_duro_pdt"] button:hover *,
+    button[aria-label*="Grano Duro"]:hover * {
+        color: #fef08a !important;
     }
 
-    /* 2. Grano Tenero PDT (Smeraldo Brillante) */
-    .st-key-btn_tenero_pdt > button {
-        background: linear-gradient(135deg, #062319 0%, #0d3829 100%) !important;
-        color: #00ff88 !important;
-        border: 1.5px solid #00ff88 !important;
-        box-shadow: 0 4px 18px rgba(0, 255, 136, 0.18) !important;
+    /* 2. Grano Tenero PDT (Rosso Lampone) */
+    .st-key-btn_tenero_pdt button,
+    div[class*="st-key-btn_tenero_pdt"] button,
+    button[aria-label*="Tenero prezzo determinato"] {
+        background: linear-gradient(135deg, #240b13 0%, #35101c 100%) !important;
+        border: 1.5px solid rgba(224, 43, 85, 0.65) !important;
+        box-shadow: 0 4px 18px rgba(224, 43, 85, 0.20) !important;
     }
-    .st-key-btn_tenero_pdt > button:hover {
-        background: linear-gradient(135deg, #0d3829 0%, #14533c 100%) !important;
-        border-color: #34d399 !important;
-        box-shadow: 0 6px 24px rgba(0, 255, 136, 0.38) !important;
+    .st-key-btn_tenero_pdt button *,
+    .st-key-btn_tenero_pdt button p,
+    div[class*="st-key-btn_tenero_pdt"] button *,
+    div[class*="st-key-btn_tenero_pdt"] button p,
+    button[aria-label*="Tenero prezzo determinato"] *,
+    button[aria-label*="Tenero prezzo determinato"] p {
+        color: #e02b55 !important;
+        animation: gentle-text-blink-lampone 4.0s infinite ease-in-out !important;
+    }
+    .st-key-btn_tenero_pdt button:hover,
+    div[class*="st-key-btn_tenero_pdt"] button:hover,
+    button[aria-label*="Tenero prezzo determinato"]:hover {
+        background: linear-gradient(135deg, #35101c 0%, #4c1729 100%) !important;
+        border-color: #fb7185 !important;
+        box-shadow: 0 6px 24px rgba(224, 43, 85, 0.40) !important;
         transform: translateY(-2px) !important;
-        color: #ffffff !important;
+    }
+    .st-key-btn_tenero_pdt button:hover *,
+    div[class*="st-key-btn_tenero_pdt"] button:hover *,
+    button[aria-label*="Tenero prezzo determinato"]:hover * {
+        color: #fecdd3 !important;
     }
 
-    /* 3. Grano Tenero PMG (Ciano / Blu Elettrico) */
-    .st-key-btn_tenero_pmg > button {
-        background: linear-gradient(135deg, #071f33 0%, #0e3152 100%) !important;
-        color: #38bdf8 !important;
-        border: 1.5px solid #38bdf8 !important;
-        box-shadow: 0 4px 18px rgba(56, 189, 248, 0.18) !important;
+    /* 3. Grano Tenero PMG (Blu Cobalto) */
+    .st-key-btn_tenero_pmg button,
+    div[class*="st-key-btn_tenero_pmg"] button,
+    button[aria-label*="prezzo minimo"] {
+        background: linear-gradient(135deg, #091a36 0%, #0f274f 100%) !important;
+        border: 1.5px solid rgba(56, 139, 253, 0.65) !important;
+        box-shadow: 0 4px 18px rgba(56, 139, 253, 0.20) !important;
     }
-    .st-key-btn_tenero_pmg > button:hover {
-        background: linear-gradient(135deg, #0e3152 0%, #164673 100%) !important;
+    .st-key-btn_tenero_pmg button *,
+    .st-key-btn_tenero_pmg button p,
+    div[class*="st-key-btn_tenero_pmg"] button *,
+    div[class*="st-key-btn_tenero_pmg"] button p,
+    button[aria-label*="prezzo minimo"] *,
+    button[aria-label*="prezzo minimo"] p {
+        color: #388bfd !important;
+        animation: gentle-text-blink-cobalto 4.0s infinite ease-in-out !important;
+    }
+    .st-key-btn_tenero_pmg button:hover,
+    div[class*="st-key-btn_tenero_pmg"] button:hover,
+    button[aria-label*="prezzo minimo"]:hover {
+        background: linear-gradient(135deg, #0f274f 0%, #17386d 100%) !important;
         border-color: #60a5fa !important;
-        box-shadow: 0 6px 24px rgba(56, 189, 248, 0.38) !important;
+        box-shadow: 0 6px 24px rgba(56, 139, 253, 0.40) !important;
         transform: translateY(-2px) !important;
-        color: #ffffff !important;
+    }
+    .st-key-btn_tenero_pmg button:hover *,
+    div[class*="st-key-btn_tenero_pmg"] button:hover *,
+    button[aria-label*="prezzo minimo"]:hover * {
+        color: #bfdbfe !important;
     }
 
     /* ------------------------------------------------------------- */
@@ -561,19 +675,19 @@ st.markdown("""
         text-overflow: ellipsis;
     }
 
-    /* Pulsante Guida (Icona Bilancia della Legge) */
+    /* Pulsante Guida (Icona Bilancia della Legge) - Animazione continua e uniforme */
     @keyframes law-pulse {
         0%, 100% {
             border-color: rgba(245, 158, 11, 0.35);
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.15), 0 2px 6px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 rgba(245, 158, 11, 0), 0 2px 6px rgba(0, 0, 0, 0.4);
             color: #f59e0b;
             background: rgba(245, 158, 11, 0.08);
         }
         50% {
-            border-color: rgba(245, 158, 11, 0.85);
-            box-shadow: 0 0 12px 2px rgba(245, 158, 11, 0.45), inset 0 0 8px rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.75);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.30), 0 2px 6px rgba(0, 0, 0, 0.4);
             color: #fef08a;
-            background: rgba(245, 158, 11, 0.20);
+            background: rgba(245, 158, 11, 0.18);
         }
     }
 
@@ -587,8 +701,7 @@ st.markdown("""
         border-radius: 10px;
         border: 1.5px solid rgba(245, 158, 11, 0.35);
         text-decoration: none !important;
-        transition: all 0.25s ease;
-        animation: law-pulse 2.2s infinite ease-in-out;
+        animation: law-pulse 4.5s infinite ease-in-out;
         cursor: pointer;
         padding: 3px;
         user-select: none;
@@ -648,27 +761,28 @@ st.markdown("""
         border-radius: 4px;
     }
 
-    /* Delta rispetto a ieri */
+    /* Differenziale rispetto a quotazione precedente */
     .hero-delta-row {
-        margin-top: 7px;
-        padding-top: 6px;
+        margin-top: 8px;
+        padding-top: 7px;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         align-items: center;
+        justify-content: space-between;
         flex-wrap: wrap;
         gap: 6px;
     }
     .hero-delta-label {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: clamp(0.68rem, 2.3vw, 0.76rem);
+        font-size: clamp(0.68rem, 2.3vw, 0.77rem);
         font-weight: 600;
         color: #94a3b8;
     }
     .hero-badge-delta {
         font-family: 'JetBrains Mono', monospace;
-        font-size: clamp(0.72rem, 2.4vw, 0.80rem);
+        font-size: clamp(0.72rem, 2.4vw, 0.81rem);
         font-weight: 700;
-        padding: 2px 7px;
+        padding: 3px 8px;
         border-radius: 6px;
         white-space: nowrap;
     }
@@ -983,6 +1097,51 @@ if st.session_state.selected_product is None:
         st.session_state.selected_product = "TENERO_PMG"
         st.rerun()
 
+    # Iniezione sicura per garantire colori del carattere e lampeggiamento tenue su qualsiasi browser e versione Streamlit
+    components.html("""
+    <script>
+    (function() {
+        function styleButtons() {
+            try {
+                const targetDoc = window.parent ? window.parent.document : document;
+                const buttons = targetDoc.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    const txt = (btn.textContent || btn.innerText || '').trim();
+                    if (txt.includes('Grano Duro')) {
+                        btn.style.setProperty('background', 'linear-gradient(135deg, #1c1404 0%, #2e2008 100%)', 'important');
+                        btn.style.setProperty('border', '1.5px solid rgba(223, 158, 56, 0.70)', 'important');
+                        btn.querySelectorAll('p, span, div').forEach(el => {
+                            el.style.setProperty('color', '#df9e38', 'important');
+                            el.style.setProperty('animation', 'gentle-text-blink-ocra 4.0s infinite ease-in-out', 'important');
+                        });
+                    } else if (txt.includes('Grano Tenero') && txt.includes('determinato')) {
+                        btn.style.setProperty('background', 'linear-gradient(135deg, #240b13 0%, #35101c 100%)', 'important');
+                        btn.style.setProperty('border', '1.5px solid rgba(224, 43, 85, 0.70)', 'important');
+                        btn.querySelectorAll('p, span, div').forEach(el => {
+                            el.style.setProperty('color', '#e02b55', 'important');
+                            el.style.setProperty('animation', 'gentle-text-blink-lampone 4.0s infinite ease-in-out', 'important');
+                        });
+                    } else if (txt.includes('Grano Tenero') && (txt.includes('minimo') || txt.includes('garantito'))) {
+                        btn.style.setProperty('background', 'linear-gradient(135deg, #091a36 0%, #0f274f 100%)', 'important');
+                        btn.style.setProperty('border', '1.5px solid rgba(56, 139, 253, 0.70)', 'important');
+                        btn.querySelectorAll('p, span, div').forEach(el => {
+                            el.style.setProperty('color', '#388bfd', 'important');
+                            el.style.setProperty('animation', 'gentle-text-blink-cobalto 4.0s infinite ease-in-out', 'important');
+                        });
+                    }
+                });
+            } catch(e) {
+                console.warn('Errore applicazione stili bottoni:', e);
+            }
+        }
+        styleButtons();
+        setTimeout(styleButtons, 50);
+        setTimeout(styleButtons, 200);
+        setTimeout(styleButtons, 600);
+    })();
+    </script>
+    """, height=0, width=0)
+
     st.stop()
 
 
@@ -1043,9 +1202,12 @@ df = pd.DataFrame(quotes)
 df["data"] = pd.to_datetime(df["data"])
 df = df.sort_values("data")
 
-# Mostra rigorosamente le ultime 80 quotazioni (circa 4 mesi di contrattazioni feriali)
-# scorrendo via via le più vecchie quando ne entrano di nuove
-if len(df) > 80:
+# Mostra le quotazioni coerentemente a partire dal 1° Giugno 2026
+# per garantire lo stesso formato e orizzonte temporale uniforme a tutti e tre i prodotti
+df_june = df[df["data"] >= "2026-06-01"]
+if len(df_june) >= 15:
+    df = df_june
+elif len(df) > 80:
     df = df.tail(80)
 
 last_row = df.iloc[-1]
@@ -1162,8 +1324,8 @@ hero_html = f"""<div class="hero-box {hero_class}">
 </div>
 {specs_html}
 <div class="hero-delta-row">
-<span class="hero-delta-label">Differenziale:</span>
-<span class="hero-badge-delta {delta_class}">{delta_sign}{pct_p:.2f}%</span>
+<span class="hero-delta-label">Differenziale dalla quotazione precedente:</span>
+<span class="hero-badge-delta {delta_class}">{delta_sign}{delta_p:.2f} €/ton</span>
 </div>
 </div>"""
 st.markdown(hero_html, unsafe_allow_html=True)
@@ -1229,6 +1391,9 @@ fig.update_layout(
         gridcolor="rgba(255, 255, 255, 0.05)",
         tickfont=dict(color="#94a3b8", size=10, family="JetBrains Mono"),
         linecolor="#1e293b",
+        tickmode="linear",
+        tick0="2026-06-01",
+        dtick="M1",
         tickformat="%b %y",
         showspikes=False
     ),

@@ -10,14 +10,20 @@ echo.
 
 cd /d "%~dp0"
 
-:: Verifica ambiente python
+:: Verifica ambiente python (cerca python o py)
+set "PY_CMD=python"
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [ERRORE] Python non e' stato trovato nel PATH di sistema!
-    echo Installa Python o verifica che sia presente nelle variabili d'ambiente.
-    echo.
-    pause
-    exit /b 1
+    py --version >nul 2>&1
+    if %errorlevel% equ 0 (
+        set "PY_CMD=py"
+    ) else (
+        echo [ERRORE] Python non e' stato trovato nel PATH di sistema!
+        echo Installa Python o verifica che sia presente nelle variabili d'ambiente.
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
 :: Chiusura di eventuali istanze rimaste aperte sulla porta 8503
@@ -33,8 +39,8 @@ echo Per arrestarla, chiudi questa finestra.
 echo ===============================================================
 echo.
 
-:: Avvio di Streamlit (gestisce autonomamente l'apertura di un'unica scheda nel browser)
-python -m streamlit run app.py --server.port=8503
+:: Avvio di Streamlit (apertura automatica del browser garantita)
+%PY_CMD% -m streamlit run app.py --server.port=8503 --server.headless=false --browser.gatherUsageStats=false
 
 if %errorlevel% neq 0 (
     echo.
