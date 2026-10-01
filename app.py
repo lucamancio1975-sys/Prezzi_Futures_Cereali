@@ -886,9 +886,9 @@ def get_cached_delta(prodotto: str, tipo: str, scadenza: str = "lug-27"):
 # =========================================================================
 # PROCESSO DI ISPEZIONE E SINCRONIZZAZIONE (CON ANIMAZIONE ATTENDI)
 # =========================================================================
-def run_inspection_process(messaggio: str = "⏳ Verifica se pervenuta mail quotazioni di oggi..."):
+def run_inspection_process(messaggio: str = "⏳ Verifica disponibilità quotazione di oggi..."):
     """
-    Mostra l'animazione di attesa ed esamina le ultime email su Gmail alla ricerca della quotazione di oggi.
+    Mostra l'animazione di attesa e verifica la presenza della quotazione odierna.
     """
     placeholder = st.empty()
     placeholder.markdown(f"""
@@ -911,8 +911,8 @@ def check_today_quotes_flow():
     """
     Workflow di sincronizzazione automatica:
     1. Consulta lo storico nel database.
-    2. Se manca la quotazione odierna, interroga la casella mail per individuare
-       se esiste una quotazione del giorno di questa run.
+    2. Se manca la quotazione odierna, effettua la verifica di aggiornamento
+       per individuare se esiste una quotazione del giorno di questa run.
     """
     oggi_str = datetime.now().strftime("%Y-%m-%d")
     all_quotes = load_quotes()
@@ -925,14 +925,14 @@ def check_today_quotes_flow():
     if needs_check:
         st.session_state.force_sync = False
         st.session_state.mail_checked_today = oggi_str
-        run_inspection_process(messaggio="⏳ Ricerca nuova email con quotazioni di oggi...")
+        run_inspection_process(messaggio="⏳ Verifica disponibilità quotazione di oggi...")
 
 
 # =========================================================================
 # 1. SCHERMATA PRINCIPALE (SELEZIONE PRODOTTO)
 # =========================================================================
 if st.session_state.selected_product is None:
-    # Esegui il controllo rapido della mail odierna all'avvio se necessario
+    # Esegui il controllo rapido della quotazione odierna all'avvio se necessario
     check_today_quotes_flow()
     
     all_raw_quotes = load_quotes()
@@ -983,12 +983,6 @@ if st.session_state.selected_product is None:
         st.session_state.selected_product = "TENERO_PMG"
         st.rerun()
 
-    if not ha_quotazione_oggi:
-        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
-        if st.button("📨 Ricontrolla casella email ora", key="btn_check_home", use_container_width=True):
-            st.session_state.force_sync = True
-            st.rerun()
-
     st.stop()
 
 
@@ -1028,11 +1022,11 @@ quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto
 oggi_str = datetime.now().strftime("%Y-%m-%d")
 ha_quotazione_oggi = any(q.get("data") == oggi_str for q in (quotes or []))
 
-# 2. Controllo mail ad ogni run se manca il dato di oggi o se forzato dall'utente
+# 2. Controllo aggiornamento ad ogni run se manca il dato di oggi o se forzato dall'utente
 if st.session_state.get("force_sync", False) or (not ha_quotazione_oggi and st.session_state.get("mail_checked_today") != oggi_str):
     st.session_state.force_sync = False
     st.session_state.mail_checked_today = oggi_str
-    run_inspection_process(messaggio="⏳ Verifica nuova email di oggi con quotazioni...")
+    run_inspection_process(messaggio="⏳ Verifica disponibilità quotazione di oggi...")
     quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
 
 if not quotes:
@@ -1111,12 +1105,6 @@ with nav_col2:
         if st.button(f"🔄 {twin_label}", key="btn_switch_twin", use_container_width=True):
             st.session_state.selected_product = twin_key
             st.rerun()
-    else:
-        # Se Grano Duro e non aggiornato a oggi, permetti di ricontrollare manualmente
-        if not is_today:
-            if st.button("📨 Ricontrolla email oggi", key="btn_check_mail_duro", use_container_width=True):
-                st.session_state.force_sync = True
-                st.rerun()
 
 # ----------------- 1. TOP BAR COMPATTA -----------------
 topbar_html = f"""<div class="app-topbar">
@@ -1135,12 +1123,6 @@ topbar_html = f"""<div class="app-topbar">
 </div>
 </div>"""
 st.markdown(topbar_html, unsafe_allow_html=True)
-
-# Se non è ancora aggiornato ad oggi, offre il pulsante immediato per verificare la posta
-if not is_today:
-    if st.button("📨 Ricontrolla casella email ora", key="btn_check_mail_today", use_container_width=True):
-        st.session_state.force_sync = True
-        st.rerun()
 
 # ----------------- 2. HERO CARD PREZZO ATTUALE -----------------
 # Specifiche in base al prodotto
