@@ -231,18 +231,18 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: clamp(4px, 1.2vh, 12px);
-        margin-bottom: clamp(12px, 2.2vh, 18px);
+        margin-top: clamp(0px, 0.4vh, 4px);
+        margin-bottom: clamp(6px, 1.2vh, 9px);
         padding: 0 4px;
     }
     .futures-protection-badge {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(26, 38, 64, 0.8) 100%);
         border: 1px solid rgba(245, 158, 11, 0.4);
         border-radius: 9999px;
-        padding: 8px 18px;
+        padding: 5px 14px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         transition: all 0.3s ease;
     }
@@ -253,7 +253,7 @@ st.markdown("""
     }
     .futures-protection-text {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(0.78rem, 3.0vw, 0.98rem);
+        font-size: clamp(0.74rem, 2.7vw, 0.88rem);
         font-weight: 700;
         letter-spacing: 0.015em;
         background: linear-gradient(90deg, #f59e0b 0%, #fef08a 50%, #f59e0b 100%);
@@ -265,11 +265,11 @@ st.markdown("""
     .main-question-card {
         background: linear-gradient(145deg, #090e1a 0%, #111c33 100%);
         border: 1.5px solid #1e293b;
-        border-radius: 16px;
-        padding: clamp(18px, 4.5vw, 28px) clamp(14px, 3.5vw, 22px);
-        margin: 0 0 clamp(16px, 3vh, 22px) 0;
+        border-radius: 14px;
+        padding: clamp(10px, 2.5vw, 15px) clamp(10px, 2.5vw, 16px);
+        margin: 0 0 clamp(8px, 1.4vh, 12px) 0;
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         position: relative;
         overflow: hidden;
     }
@@ -307,7 +307,7 @@ st.markdown("""
     button[aria-label*="Tenero prezzo determinato"],
     button[aria-label*="prezzo minimo"] {
         width: 100% !important;
-        min-height: 72px !important;
+        min-height: 64px !important;
         border-radius: 14px !important;
         font-family: 'Space Grotesk', sans-serif !important;
         font-size: clamp(1.04rem, 3.8vw, 1.20rem) !important;
@@ -317,9 +317,9 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 12px 16px !important;
-        margin-bottom: 12px !important;
-        line-height: 1.3 !important;
+        padding: 10px 14px !important;
+        margin-bottom: 8px !important;
+        line-height: 1.25 !important;
         white-space: normal !important;
         text-align: center !important;
     }
@@ -1064,9 +1064,16 @@ if st.session_state.selected_product is None:
         ld_str = "N.D."
 
     if ha_quotazione_oggi:
-        status_banner = '<div style="text-align:center; margin-bottom:14px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+        status_banner = '<div style="text-align:center; margin-bottom:7px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
     else:
-        status_banner = f'<div style="text-align:center; margin-bottom:14px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+        status_banner = f'<div style="text-align:center; margin-bottom:7px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+
+    # Riduzione mirata del 40% dello spazio superiore solo per la schermata principale
+    st.markdown("""<style>
+        .block-container {
+            padding-top: clamp(0.1rem, 0.6vh, 0.45rem) !important;
+        }
+    </style>""", unsafe_allow_html=True)
 
     # Banner di protezione in testa
     main_banner_html = f"""<div class="futures-protection-container">
