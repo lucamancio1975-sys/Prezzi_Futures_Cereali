@@ -13,7 +13,7 @@ import email
 from email.header import decode_header
 import tempfile
 import socket
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from dotenv import load_dotenv
 
 try:
@@ -46,7 +46,9 @@ def fetch_quotes_from_gmail(
     server: str = "imap.gmail.com",
     folder: str = "INBOX",
     search_criteria: str = 'ALL',
-    max_emails: int = 35
+    max_emails: int = 35,
+    target_date: Optional[str] = None,
+    stop_after_first_match: bool = False
 ) -> Tuple[List[Dict[str, Any]], List[str]]:
     """
     Si connette a Gmail via IMAP SSL, scansiona le ultime email ricevute,
@@ -55,6 +57,10 @@ def fetch_quotes_from_gmail(
       2. In caso di assenza PDF o assenza dati: prova OCR sulle immagini allegate/inline
       3. In caso di assenza immagini: interpreta il testo o tabella HTML del corpo email
     e le inserisce con deduplicazione nel database unico delle quotazioni.
+    
+    Se target_date è specificato (es. '2026-10-01'), ottimizza la ricerca:
+    ispeziona prima l'header della data e si ferma immediatamente se l'email più
+    recente risale a una data precedente (zero spreco di banda e tempo).
     
     Ritorna una tupla: (quotazioni_estratte, log_messaggi)
     """
@@ -78,11 +84,11 @@ def fetch_quotes_from_gmail(
         return [], logs
 
     all_extracted_quotes = []
-    socket.setdefaulttimeout(14.0)
+    socket.setdefaulttimeout(15.0)
 
     try:
         logs.append(f"Connessione sicura al server quotazioni ({server})...")
-        mail = imaplib.IMAP4_SSL(server, timeout=14.0)
+        mail = imaplib.IMAP4_SSL(server, timeout=15.0)
         mail.login(user, password)
         mail.select(folder)
         logs.append("Connessione stabilita con successo.")
@@ -94,24 +100,46 @@ def fetch_quotes_from_gmail(
             return [], logs
 
         mail_ids = data[0].split()
-        logs.append(f"Trovate {len(mail_ids)} email totali. Esame delle ultime {min(len(mail_ids), max_emails)}...")
+        n_scan = min(len(mail_ids), max_emails)
+        logs.append(f"Trovate {len(mail_ids)} email totali. Esame delle ultime {n_scan}...")
 
         # Esamina le email dalla più recente a ritroso
-        recent_ids = mail_ids[-max_emails:]
+        recent_ids = mail_ids[-n_scan:]
         recent_ids.reverse()
 
         for mid in recent_ids:
-            res, msg_data = mail.fetch(mid, '(RFC822)')
-            if res != 'OK':
-                continue
+            # 1. Ispezione rapida preliminare dell'header (millisecondi)
+            hdr_res, hdr_data = mail.fetch(mid, '(BODY[HEADER.FIELDS (SUBJECT FROM DATE)])')
+            subject = ""
+            sender = ""
+            date_hdr = ""
+            email_date = None
 
-            raw_email = msg_data[0][1]
-            msg = email.message_from_bytes(raw_email)
-            subject = decode_mime_words(msg.get("Subject", ""))
-            sender = decode_mime_words(msg.get("From", ""))
-            date_hdr = msg.get("Date", "")
+            if hdr_res == 'OK' and hdr_data and hdr_data[0]:
+                hdr_msg = email.message_from_bytes(hdr_data[0][1])
+                subject = decode_mime_words(hdr_msg.get("Subject", ""))
+                sender = decode_mime_words(hdr_msg.get("From", ""))
+                date_hdr = hdr_msg.get("Date", "")
+                try:
+                    parsed_dt = email.utils.parsedate_to_datetime(date_hdr)
+                    if parsed_dt:
+                        email_date = parsed_dt.astimezone().strftime("%Y-%m-%d")
+                except Exception:
+                    pass
 
-            # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS in .env o secrets)
+            # Se cerchiamo specificamente la data odierna:
+            if target_date:
+                # Se abbiamo raggiunto un'email antecedente a target_date,
+                # e poiché le email sono in ordine cronologico, nessuna email successiva potrà essere di oggi.
+                if email_date and email_date < target_date:
+                    logs.append(f"Email ID {mid.decode()} del {email_date} antecedente a {target_date}: nessuna quotazione odierna presente.")
+                    break
+                # Se l'email non coincide con target_date, passa oltre senza scaricare allegati
+                if email_date and email_date != target_date:
+                    continue
+
+            # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS)
+            sender_lower = sender.lower()
             allowed_senders_cfg = os.getenv("GMAIL_ALLOWED_SENDERS", "").strip()
             if allowed_senders_cfg:
                 allowed_list = [s.strip().lower() for s in allowed_senders_cfg.split(",") if s.strip()]
@@ -120,18 +148,27 @@ def fetch_quotes_from_gmail(
 
             # Filtro di pertinenza su oggetto o mittente predefinito
             subj_lower = subject.lower()
-            sender_lower = sender.lower()
             is_relevant = any(k in subj_lower for k in [
                 "quotazion", "futures", "pdt", "pmg", "grano", "prezzi", "tenero", "duro"
             ]) or "consorziagrari" in sender_lower
 
-            email_date = None
-            try:
-                parsed_tuple = email.utils.parsedate_to_datetime(date_hdr)
-                if parsed_tuple:
-                    email_date = parsed_tuple.strftime("%Y-%m-%d")
-            except Exception:
-                pass
+            if not is_relevant:
+                continue
+
+            # 2. Scarica il messaggio completo solo per l'email pertinente
+            res, msg_data = mail.fetch(mid, '(RFC822)')
+            if res != 'OK':
+                continue
+
+            raw_email = msg_data[0][1]
+            msg = email.message_from_bytes(raw_email)
+            if not email_date:
+                try:
+                    parsed_dt = email.utils.parsedate_to_datetime(msg.get("Date", ""))
+                    if parsed_dt:
+                        email_date = parsed_dt.astimezone().strftime("%Y-%m-%d")
+                except Exception:
+                    pass
 
             extracted_from_this_email = []
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -211,6 +248,9 @@ def fetch_quotes_from_gmail(
 
             if extracted_from_this_email:
                 all_extracted_quotes.extend(extracted_from_this_email)
+                if target_date or stop_after_first_match:
+                    logs.append(f"Trovata quotazione per la data richiesta ({email_date}): arresto rapido scansione.")
+                    break
 
         mail.logout()
 
@@ -225,6 +265,26 @@ def fetch_quotes_from_gmail(
         logs.append(f"[ERRORE] Errore durante il collegamento o sincronizzazione Gmail: {str(e)}")
 
     return all_extracted_quotes, logs
+
+def check_and_sync_today_quotes(target_date: Optional[str] = None) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
+    """
+    Funzione ad alte prestazioni richiamata all'avvio dell'app Streamlit:
+    1. Verifica l'ultima data nello storico locale.
+    2. Se la data odierna non è ancora presente, interroga la casella Gmail.
+    3. Controlla in frazioni di secondo se è arrivata una mail in data odierna.
+    4. Se presente, la scarica, ne estrae le quotazioni e le salva all'istante nel database.
+    5. Restituisce (quotes_estratte, is_updated_to_today, logs).
+    """
+    from datetime import datetime
+    oggi_str = target_date or datetime.now().strftime("%Y-%m-%d")
+    
+    quotes, logs = fetch_quotes_from_gmail(
+        max_emails=8,
+        target_date=oggi_str,
+        stop_after_first_match=True
+    )
+    is_today_present = any(q.get("data") == oggi_str for q in quotes)
+    return quotes, is_today_present, logs
 
 if __name__ == "__main__":
     import sys

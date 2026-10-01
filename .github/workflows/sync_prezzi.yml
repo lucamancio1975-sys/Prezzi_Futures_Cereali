@@ -2,8 +2,8 @@ name: Sync Giornaliero Prezzi Futures da Gmail
 
 on:
   schedule:
-    # Esecuzione consolidamento database dal lunedì al venerdì alle ore 08:00 italiane (06:00 UTC)
-    - cron: '0 6 * * 1-5'
+    # Esecuzione consolidamento database ogni mattina alle ore 08:00 italiane (06:00 UTC)
+    - cron: '0 6 * * *'
   workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions
 
 jobs:

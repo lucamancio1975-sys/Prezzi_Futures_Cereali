@@ -125,8 +125,88 @@ def add_quotes(new_quotes: List[Dict[str, Any]]) -> int:
                 
     if added_count > 0:
         save_quotes(list(existing_map.values()))
+        try:
+            sync_to_github()
+        except Exception:
+            pass
         
     return added_count
+
+def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]") -> bool:
+    """
+    Sincronizzazione atomica di data/storico_prezzi.json e data/storico_prezzi.csv
+    sul repository GitHub tramite GitHub Contents API.
+    Funziona sia in ambiente locale sia su Streamlit Community Cloud (utilizzando GITHUB_TOKEN).
+    """
+    token = os.getenv("GITHUB_TOKEN")
+    repo = os.getenv("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
+    
+    if not token:
+        try:
+            import streamlit as st
+            token = st.secrets.get("GITHUB_TOKEN")
+            repo = st.secrets.get("GITHUB_REPO", repo)
+        except Exception:
+            pass
+            
+    if not token or not repo:
+        return False
+        
+    import base64
+    import urllib.request
+    
+    headers = {
+        "Authorization": f"token {token}",
+        "User-Agent": "FuturesGrano-SyncBot",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+    }
+    
+    success = True
+    files_to_sync = [
+        ("data/storico_prezzi.json", DB_JSON_PATH),
+        ("data/storico_prezzi.csv", DB_CSV_PATH)
+    ]
+    
+    for github_rel_path, local_abs_path in files_to_sync:
+        if not os.path.exists(local_abs_path):
+            continue
+        try:
+            with open(local_abs_path, "rb") as f:
+                content_b64 = base64.b64encode(f.read()).decode("utf-8")
+                
+            api_url = f"https://api.github.com/repos/{repo}/contents/{github_rel_path}"
+            
+            # Recupera lo SHA corrente se il file esiste già su GitHub
+            current_sha = None
+            try:
+                get_req = urllib.request.Request(api_url, headers=headers)
+                with urllib.request.urlopen(get_req, timeout=10.0) as resp:
+                    resp_data = json.loads(resp.read().decode())
+                    current_sha = resp_data.get("sha")
+            except Exception:
+                pass
+                
+            payload = {
+                "message": commit_message,
+                "content": content_b64
+            }
+            if current_sha:
+                payload["sha"] = current_sha
+                
+            put_req = urllib.request.Request(
+                api_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="PUT"
+            )
+            with urllib.request.urlopen(put_req, timeout=12.0) as resp:
+                pass
+        except Exception as e:
+            print(f"[GITHUB SYNC ERROR] Impossibile sincronizzare {github_rel_path}: {e}")
+            success = False
+            
+    return success
 
 def get_quotes_for_selection(
     prodotto: str,

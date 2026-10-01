@@ -27,7 +27,10 @@ try:
         get_quotes_for_selection,
         get_delta_for_selection
     )
-    from execution.fetch_gmail_quotes import fetch_quotes_from_gmail
+    from execution.fetch_gmail_quotes import (
+        fetch_quotes_from_gmail,
+        check_and_sync_today_quotes
+    )
 except ImportError:
     import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), "execution"))
@@ -37,7 +40,10 @@ except ImportError:
         get_quotes_for_selection,
         get_delta_for_selection
     )
-    from fetch_gmail_quotes import fetch_quotes_from_gmail
+    from fetch_gmail_quotes import (
+        fetch_quotes_from_gmail,
+        check_and_sync_today_quotes
+    )
 
 import streamlit.components.v1 as components
 
@@ -55,7 +61,7 @@ ICON_PATH = os.path.join(os.path.dirname(__file__), "static", "icon-192.png")
 PAGE_ICON = ICON_PATH if os.path.exists(ICON_PATH) else "🌾"
 
 st.set_page_config(
-    page_title="Quotazioni Futures Grano Duro e Tenero | Raccolto Luglio 2027",
+    page_title="Futures Grano - Quotazioni Giornaliere",
     page_icon=PAGE_ICON,
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -69,6 +75,7 @@ components.html("""
         const targetDoc = window.parent ? window.parent.document : document;
         const targetNav = window.parent ? window.parent.navigator : navigator;
         const head = targetDoc.head || document.head;
+        targetDoc.title = 'Futures Grano - Quotazioni Giornaliere';
         
         function createOrUpdate(tag, attrs) {
             let sel = tag;
@@ -87,7 +94,9 @@ components.html("""
         createOrUpdate('link', { rel: 'manifest', href: '/app/static/manifest.json' });
         createOrUpdate('link', { rel: 'apple-touch-icon', href: '/app/static/icon-180.png' });
         createOrUpdate('link', { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/app/static/icon-192.png' });
+        createOrUpdate('link', { rel: 'shortcut icon', href: '/app/static/favicon.png' });
         createOrUpdate('meta', { name: 'theme-color', content: '#030712' });
+        createOrUpdate('meta', { name: 'application-name', content: 'Futures Grano' });
         createOrUpdate('meta', { name: 'mobile-web-app-capable', content: 'yes' });
         createOrUpdate('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
         createOrUpdate('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
@@ -877,9 +886,9 @@ def get_cached_delta(prodotto: str, tipo: str, scadenza: str = "lug-27"):
 # =========================================================================
 # PROCESSO DI ISPEZIONE E SINCRONIZZAZIONE (CON ANIMAZIONE ATTENDI)
 # =========================================================================
-def run_inspection_process(messaggio: str = "⏳ Ricerca nuove email con quotazioni di oggi..."):
+def run_inspection_process(messaggio: str = "⏳ Verifica se pervenuta mail quotazioni di oggi..."):
     """
-    Mostra l'animazione di attesa ed esamina le ultime email su Gmail alla ricerca del PDF o immagine di oggi.
+    Mostra l'animazione di attesa ed esamina le ultime email su Gmail alla ricerca della quotazione di oggi.
     """
     placeholder = st.empty()
     placeholder.markdown(f"""
@@ -889,28 +898,73 @@ def run_inspection_process(messaggio: str = "⏳ Ricerca nuove email con quotazi
     """, unsafe_allow_html=True)
 
     try:
-        fetch_quotes_from_gmail(max_emails=35)
+        oggi_str = datetime.now().strftime("%Y-%m-%d")
+        new_q, is_t, logs = check_and_sync_today_quotes(target_date=oggi_str)
+        if is_t or new_q:
+            st.cache_data.clear()
     except Exception as e:
         print(f"Errore ispezione quotazioni: {e}")
 
-    st.cache_data.clear()
     placeholder.empty()
+
+def check_today_quotes_flow():
+    """
+    Workflow di sincronizzazione automatica:
+    1. Consulta lo storico nel database.
+    2. Se manca la quotazione odierna, interroga la casella mail per individuare
+       se esiste una quotazione del giorno di questa run.
+    """
+    oggi_str = datetime.now().strftime("%Y-%m-%d")
+    all_quotes = load_quotes()
+    ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
+    
+    needs_check = st.session_state.get("force_sync", False) or (
+        not ha_oggi and st.session_state.get("mail_checked_today") != oggi_str
+    )
+    
+    if needs_check:
+        st.session_state.force_sync = False
+        st.session_state.mail_checked_today = oggi_str
+        run_inspection_process(messaggio="⏳ Ricerca nuova email con quotazioni di oggi...")
 
 
 # =========================================================================
 # 1. SCHERMATA PRINCIPALE (SELEZIONE PRODOTTO)
 # =========================================================================
 if st.session_state.selected_product is None:
+    # Esegui il controllo rapido della mail odierna all'avvio se necessario
+    check_today_quotes_flow()
+    
+    all_raw_quotes = load_quotes()
+    oggi_str = datetime.now().strftime("%Y-%m-%d")
+    ha_quotazione_oggi = any(q.get("data") == oggi_str for q in all_raw_quotes)
+    last_db_date = all_raw_quotes[-1].get("data") if all_raw_quotes else ""
+    
+    if last_db_date:
+        try:
+            ld_dt = datetime.strptime(last_db_date, "%Y-%m-%d")
+            ld_str = f"{giorni_it[ld_dt.weekday()]} {ld_dt.day} {mesi_it[ld_dt.month]} {ld_dt.year}"
+        except Exception:
+            ld_str = last_db_date
+    else:
+        ld_str = "N.D."
+
+    if ha_quotazione_oggi:
+        status_banner = '<div style="text-align:center; margin-bottom:14px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+    else:
+        status_banner = f'<div style="text-align:center; margin-bottom:14px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+
     # Banner di protezione in testa
-    main_banner_html = """<div class="futures-protection-container">
+    main_banner_html = f"""<div class="futures-protection-container">
 <div class="futures-protection-badge">
 <span style="font-size: 1.15rem; line-height: 1;">🛡️</span>
 <span class="futures-protection-text">Contratti di Protezione Futures per i Cereali</span>
 </div>
 </div>
+{status_banner}
 <div class="main-question-card">
 <h1 class="main-question-title">Che quotazione ti interessa?</h1>
-<div class="main-question-sub">Seleziona una delle opzioni per avviare l'analisi</div>
+<div class="main-question-sub">Seleziona una delle opzioni per visualizzare la quotazione e il grafico</div>
 </div>"""
     st.markdown(main_banner_html, unsafe_allow_html=True)
 
@@ -928,6 +982,12 @@ if st.session_state.selected_product is None:
     if st.button("🌱 Grano Tenero prezzo minimo garantito - Raccolto Luglio 2027", use_container_width=True, key="btn_tenero_pmg"):
         st.session_state.selected_product = "TENERO_PMG"
         st.rerun()
+
+    if not ha_quotazione_oggi:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        if st.button("📨 Ricontrolla casella email ora", key="btn_check_home", use_container_width=True):
+            st.session_state.force_sync = True
+            st.rerun()
 
     st.stop()
 
@@ -967,16 +1027,11 @@ else:  # TENERO_PMG
 quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
 oggi_str = datetime.now().strftime("%Y-%m-%d")
 ha_quotazione_oggi = any(q.get("data") == oggi_str for q in (quotes or []))
-is_weekday = (datetime.now().weekday() < 5)
 
 # 2. Controllo mail ad ogni run se manca il dato di oggi o se forzato dall'utente
-now_ts = time.time()
-force_sync = st.session_state.get("force_sync", False)
-time_since_last_check = now_ts - st.session_state.get("last_mail_check", 0)
-
-if force_sync or (not ha_quotazione_oggi and is_weekday and time_since_last_check > 90):
+if st.session_state.get("force_sync", False) or (not ha_quotazione_oggi and st.session_state.get("mail_checked_today") != oggi_str):
     st.session_state.force_sync = False
-    st.session_state.last_mail_check = now_ts
+    st.session_state.mail_checked_today = oggi_str
     run_inspection_process(messaggio="⏳ Verifica nuova email di oggi con quotazioni...")
     quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
 
@@ -993,6 +1048,11 @@ stats = get_cached_delta(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-
 df = pd.DataFrame(quotes)
 df["data"] = pd.to_datetime(df["data"])
 df = df.sort_values("data")
+
+# Mostra rigorosamente le ultime 80 quotazioni (circa 4 mesi di contrattazioni feriali)
+# scorrendo via via le più vecchie quando ne entrano di nuove
+if len(df) > 80:
+    df = df.tail(80)
 
 last_row = df.iloc[-1]
 prev_row = df.iloc[-2] if len(df) > 1 else last_row
@@ -1012,12 +1072,18 @@ is_today = (last_date_str == oggi_str)
 data_dt = last_row["data"]
 data_estesa = f"{giorni_it[data_dt.weekday()]} {data_dt.day} {mesi_it[data_dt.month]} {data_dt.year}"
 
-# Status badge
-status_badge = (
-    '<span class="app-sync-status status-today">🟢 Aggiornato a Oggi</span>'
-    if is_today else
-    f'<span class="app-sync-status status-wait">⏳ {data_dt.strftime("%d/%m")} (In attesa oggi)</span>'
-)
+# Status badge e dicitura data
+if is_today:
+    status_badge = '<span class="app-sync-status status-today">🟢 Aggiornato a Oggi</span>'
+    date_display_html = f'<div class="hero-date-val">📅 <b>{data_estesa}</b></div>'
+else:
+    status_badge = f'<span class="app-sync-status status-wait">⏳ Aggiornato al {data_dt.strftime("%d/%m/%Y")} (In attesa oggi)</span>'
+    date_display_html = f'''<div class="hero-date-val">
+        📅 <b>{data_estesa}</b>
+        <div style="font-size: clamp(0.68rem, 2.3vw, 0.76rem); color: #fbbf24; margin-top: 3px; font-weight: 600;">
+            ⏳ Aggiornata al {data_dt.strftime("%d/%m/%Y")} — in attesa di quotazione odierna
+        </div>
+    </div>'''
 
 # Pill del contratto
 contract_pill = (
@@ -1046,9 +1112,9 @@ with nav_col2:
             st.session_state.selected_product = twin_key
             st.rerun()
     else:
-        # Se Grano Duro, permetti di ricontrollare manualmente la mail se necessario
+        # Se Grano Duro e non aggiornato a oggi, permetti di ricontrollare manualmente
         if not is_today:
-            if st.button("📨 Controlla email oggi", key="btn_check_mail_duro", use_container_width=True):
+            if st.button("📨 Ricontrolla email oggi", key="btn_check_mail_duro", use_container_width=True):
                 st.session_state.force_sync = True
                 st.rerun()
 
@@ -1072,7 +1138,7 @@ st.markdown(topbar_html, unsafe_allow_html=True)
 
 # Se non è ancora aggiornato ad oggi, offre il pulsante immediato per verificare la posta
 if not is_today:
-    if st.button("📨 Controlla nuova email di oggi", key="btn_check_mail_today", use_container_width=True):
+    if st.button("📨 Ricontrolla casella email ora", key="btn_check_mail_today", use_container_width=True):
         st.session_state.force_sync = True
         st.rerun()
 
@@ -1097,7 +1163,7 @@ hero_html = f"""<div class="hero-box {hero_class}">
 <div class="hero-top-row">
 <div class="hero-price-section">
 <div class="hero-price-val {price_val_class}">{last_p:.2f} <span class="hero-price-unit">€/t</span></div>
-<div class="hero-date-val">📅 <b>{data_estesa}</b></div>
+{date_display_html}
 </div>
 <a {pdf_link_attr} class="hero-law-btn" title="Visualizza Guida agli Impegni e Conferimento (PDF)">
 <div style="width:20px; height:20px; display:flex; align-items:center; justify-content:center;">

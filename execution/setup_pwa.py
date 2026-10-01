@@ -20,6 +20,7 @@ def configure_pwa():
 
         # File da sincronizzare nella directory statica di Streamlit
         files_to_copy = [
+            ("manifest.json", "manifest.json"),
             ("icon-180.png", "icon-180.png"),
             ("icon-192.png", "icon-192.png"),
             ("icon-512.png", "icon-512.png"),
@@ -41,14 +42,23 @@ def configure_pwa():
             with open(index_path, "r", encoding="utf-8") as f:
                 content = f.read()
 
+            # 1. Sostituzione tassativa del titolo nativo 'Streamlit'
+            import re
+            content = re.sub(r'<title>.*?</title>', '<title>Futures Grano - Quotazioni Giornaliere</title>', content, flags=re.IGNORECASE)
+
+            # 2. Sostituzione favicon nativa
+            content = re.sub(r'<link\s+rel=["\']shortcut icon["\'].*?>', '<link rel="shortcut icon" href="/app/static/favicon.png" />\n    <link rel="icon" type="image/png" sizes="192x192" href="/app/static/icon-192.png" />', content, flags=re.IGNORECASE)
+
             pwa_marker = "<!-- PWA FUTURES GRANO -->"
             if pwa_marker not in content:
                 pwa_tags = (
                     f"\n    {pwa_marker}\n"
                     f'    <link rel="manifest" href="/app/static/manifest.json" />\n'
-                    f'    <link rel="apple-touch-icon" href="/app/static/icon-180.png" />\n'
+                    f'    <link rel="apple-touch-icon" sizes="180x180" href="/app/static/icon-180.png" />\n'
                     f'    <link rel="icon" type="image/png" sizes="192x192" href="/app/static/icon-192.png" />\n'
+                    f'    <link rel="icon" type="image/png" sizes="512x512" href="/app/static/icon-512.png" />\n'
                     f'    <meta name="theme-color" content="#030712" />\n'
+                    f'    <meta name="application-name" content="Futures Grano" />\n'
                     f'    <meta name="mobile-web-app-capable" content="yes" />\n'
                     f'    <meta name="apple-mobile-web-app-capable" content="yes" />\n'
                     f'    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />\n'
@@ -63,13 +73,14 @@ def configure_pwa():
                     f"      }}\n"
                     f"    </script>\n"
                 )
-                new_content = content.replace("</head>", pwa_tags + "  </head>")
-                # Backup di sicurezza
-                backup_path = index_path + ".bak"
-                if not os.path.exists(backup_path):
-                    shutil.copy2(index_path, backup_path)
-                with open(index_path, "w", encoding="utf-8") as f:
-                    f.write(new_content)
+                content = content.replace("</head>", pwa_tags + "  </head>")
+
+            # Backup e salvataggio
+            backup_path = index_path + ".bak"
+            if not os.path.exists(backup_path):
+                shutil.copy2(index_path, backup_path)
+            with open(index_path, "w", encoding="utf-8") as f:
+                f.write(content)
         return True
     except Exception as e:
         print(f"[PWA CONFIG WARNING] {e}")
