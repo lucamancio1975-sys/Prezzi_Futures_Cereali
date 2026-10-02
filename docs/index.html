@@ -173,7 +173,21 @@
       }
     }
 
-    iframe.addEventListener('load', hideSplash);
+    iframe.addEventListener('load', () => {
+      hideSplash();
+      window.scrollTo(0, 0);
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+    });
+
+    // 3. Ascolto comandi di reset scroll verso l'alto inviati dall'app interna
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.action === 'SCROLL_TOP') {
+        window.scrollTo(0, 0);
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+      }
+    });
 
     // Timeout di sicurezza nel caso di connessione lenta (max 4.5s)
     setTimeout(hideSplash, 4500);

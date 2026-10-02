@@ -215,10 +215,14 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Iframe invisibili per iniezioni PWA/JS */
-    iframe[height="0"], iframe[width="0"] {
+    /* Iframe invisibili per iniezioni PWA/JS e contenitori vuoti */
+    iframe[height="0"], iframe[width="0"],
+    div[data-testid="element-container"]:has(iframe[height="0"]),
+    div[data-testid="element-container"]:has(> div > iframe[height="0"]),
+    div[data-testid="stVerticalBlock"] > div:has(iframe[height="0"]) {
         display: none !important;
         height: 0 !important;
+        min-height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
         border: none !important;
@@ -231,29 +235,29 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: clamp(0px, 0.4vh, 4px);
-        margin-bottom: clamp(6px, 1.2vh, 9px);
-        padding: 0 4px;
+        margin-top: 0px !important;
+        margin-bottom: 2px !important;
+        padding: 0 2px;
     }
     .futures-protection-badge {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(26, 38, 64, 0.8) 100%);
         border: 1px solid rgba(245, 158, 11, 0.4);
         border-radius: 9999px;
-        padding: 5px 14px;
+        padding: 3px 12px;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        gap: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         transition: all 0.3s ease;
     }
     .futures-protection-badge:hover {
         border-color: rgba(245, 158, 11, 0.8);
-        box-shadow: 0 6px 25px rgba(245, 158, 11, 0.35);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
         transform: translateY(-1px);
     }
     .futures-protection-text {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(0.74rem, 2.7vw, 0.88rem);
+        font-size: clamp(0.70rem, 2.5vw, 0.82rem);
         font-weight: 700;
         letter-spacing: 0.015em;
         background: linear-gradient(90deg, #f59e0b 0%, #fef08a 50%, #f59e0b 100%);
@@ -265,11 +269,11 @@ st.markdown("""
     .main-question-card {
         background: linear-gradient(145deg, #090e1a 0%, #111c33 100%);
         border: 1.5px solid #1e293b;
-        border-radius: 14px;
-        padding: clamp(10px, 2.5vw, 15px) clamp(10px, 2.5vw, 16px);
-        margin: 0 0 clamp(8px, 1.4vh, 12px) 0;
+        border-radius: 12px;
+        padding: 6px 12px !important;
+        margin: 0 0 5px 0 !important;
         text-align: center;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         position: relative;
         overflow: hidden;
     }
@@ -282,18 +286,19 @@ st.markdown("""
     }
     .main-question-title {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(1.25rem, 4.8vw, 1.75rem);
+        font-size: clamp(1.02rem, 3.8vw, 1.28rem) !important;
         font-weight: 800;
         color: #ffffff;
         letter-spacing: -0.02em;
-        line-height: 1.25;
+        line-height: 1.2 !important;
         margin: 0;
     }
     .main-question-sub {
-        font-size: clamp(0.76rem, 2.5vw, 0.86rem);
+        font-size: clamp(0.68rem, 2.2vw, 0.78rem) !important;
         color: #94a3b8;
-        margin-top: 6px;
+        margin-top: 2px !important;
         font-weight: 500;
+        line-height: 1.2 !important;
     }
 
     /* Stile comune per i tre bottoni della schermata di scelta */
@@ -307,19 +312,19 @@ st.markdown("""
     button[aria-label*="Tenero prezzo determinato"],
     button[aria-label*="prezzo minimo"] {
         width: 100% !important;
-        min-height: 64px !important;
-        border-radius: 14px !important;
+        min-height: 50px !important;
+        border-radius: 12px !important;
         font-family: 'Space Grotesk', sans-serif !important;
-        font-size: clamp(1.04rem, 3.8vw, 1.20rem) !important;
+        font-size: clamp(0.90rem, 3.2vw, 1.05rem) !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 10px 14px !important;
-        margin-bottom: 8px !important;
-        line-height: 1.25 !important;
+        padding: 7px 12px !important;
+        margin-bottom: 5px !important;
+        line-height: 1.2 !important;
         white-space: normal !important;
         text-align: center !important;
     }
@@ -1064,14 +1069,18 @@ if st.session_state.selected_product is None:
         ld_str = "N.D."
 
     if ha_quotazione_oggi:
-        status_banner = '<div style="text-align:center; margin-bottom:7px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+        status_banner = '<div style="text-align:center; margin-bottom:3px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
     else:
-        status_banner = f'<div style="text-align:center; margin-bottom:7px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+        status_banner = f'<div style="text-align:center; margin-bottom:3px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
 
-    # Riduzione mirata del 40% dello spazio superiore solo per la schermata principale
+    # Eliminazione dell'80% dello spazio nero in testa e compattazione layout
     st.markdown("""<style>
         .block-container {
-            padding-top: clamp(0.1rem, 0.6vh, 0.45rem) !important;
+            padding-top: 0px !important;
+            margin-top: -14px !important;
+        }
+        div[data-testid="stVerticalBlock"] {
+            gap: 0.25rem !important;
         }
     </style>""", unsafe_allow_html=True)
 
@@ -1104,16 +1113,32 @@ if st.session_state.selected_product is None:
         st.session_state.selected_product = "TENERO_PMG"
         st.rerun()
 
-    # Iniezione sicura per garantire colori del carattere e lampeggiamento tenue su qualsiasi browser e versione Streamlit
+    # Iniezione sicura per garantire colori del carattere, lampeggiamento tenue e reset scroll al tocco
     components.html("""
     <script>
     (function() {
+        function triggerScrollTop() {
+            try {
+                window.scrollTo(0, 0);
+                if (document.documentElement) document.documentElement.scrollTop = 0;
+                if (document.body) document.body.scrollTop = 0;
+                if (window.parent && window.parent !== window) {
+                    try { window.parent.scrollTo(0, 0); } catch(e) {}
+                    try { window.parent.postMessage({ action: 'SCROLL_TOP' }, '*'); } catch(e) {}
+                }
+            } catch(e) {}
+        }
+
         function styleButtons() {
             try {
                 const targetDoc = window.parent ? window.parent.document : document;
                 const buttons = targetDoc.querySelectorAll('button');
                 buttons.forEach(btn => {
                     const txt = (btn.textContent || btn.innerText || '').trim();
+                    if (!btn.dataset.scrollBound) {
+                        btn.addEventListener('click', triggerScrollTop, { passive: true });
+                        btn.dataset.scrollBound = 'true';
+                    }
                     if (txt.includes('Grano Duro')) {
                         btn.style.setProperty('background', 'linear-gradient(135deg, #1c1404 0%, #2e2008 100%)', 'important');
                         btn.style.setProperty('border', '1.5px solid rgba(223, 158, 56, 0.70)', 'important');
@@ -1155,6 +1180,53 @@ if st.session_state.selected_product is None:
 # =========================================================================
 # 2. SCHERMATA DEDICATA AL PRODOTTO SELEZIONATO
 # =========================================================================
+# Reset immediato e forzato dello scroll verso l'alto (in cima) all'apertura del dettaglio
+components.html("""
+<script>
+(function() {
+    function resetToTop() {
+        try {
+            window.scrollTo(0, 0);
+            if (document.documentElement) document.documentElement.scrollTop = 0;
+            if (document.body) document.body.scrollTop = 0;
+
+            const pDoc = window.parent ? window.parent.document : document;
+            if (pDoc) {
+                pDoc.querySelectorAll('.main, section.main, [data-testid="stMain"], [data-testid="stAppViewContainer"], .block-container').forEach(el => {
+                    el.scrollTop = 0;
+                });
+            }
+
+            if (window.parent && window.parent !== window) {
+                try {
+                    window.parent.scrollTo(0, 0);
+                    if (window.parent.document.documentElement) window.parent.document.documentElement.scrollTop = 0;
+                    if (window.parent.document.body) window.parent.document.body.scrollTop = 0;
+                } catch(e) {}
+                try {
+                    window.parent.postMessage({ action: 'SCROLL_TOP' }, '*');
+                } catch(e) {}
+            }
+        } catch(e) {}
+    }
+    resetToTop();
+    requestAnimationFrame(resetToTop);
+    setTimeout(resetToTop, 20);
+    setTimeout(resetToTop, 80);
+    setTimeout(resetToTop, 250);
+    setTimeout(resetToTop, 600);
+})();
+</script>
+""", height=0, width=0)
+
+# Stile mirato per la schermata di dettaglio per partire subito in cima
+st.markdown("""<style>
+    .block-container {
+        padding-top: clamp(0.1rem, 0.8vh, 0.4rem) !important;
+        margin-top: 0px !important;
+    }
+</style>""", unsafe_allow_html=True)
+
 product_key = st.session_state.selected_product
 
 # Mappatura parametri in base al prodotto
