@@ -186,7 +186,7 @@ def sync_from_github() -> int:
     raw_url = f"https://raw.githubusercontent.com/{repo}/main/data/storico_prezzi.json?_t={int(time.time())}"
     try:
         req = urllib.request.Request(raw_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=6.0) as resp:
+        with urllib.request.urlopen(req, timeout=2.0) as resp:
             if resp.status == 200:
                 remote_quotes = json.loads(resp.read().decode("utf-8"))
     except Exception:
@@ -198,7 +198,7 @@ def sync_from_github() -> int:
         try:
             import base64
             req = urllib.request.Request(api_url, headers={**headers, "Accept": "application/vnd.github.v3+json"})
-            with urllib.request.urlopen(req, timeout=8.0) as resp:
+            with urllib.request.urlopen(req, timeout=2.0) as resp:
                 if resp.status == 200:
                     api_data = json.loads(resp.read().decode("utf-8"))
                     raw_content = base64.b64decode(api_data.get("content", "")).decode("utf-8")

@@ -1038,8 +1038,10 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
     placeholder = st.empty()
     if show_msg:
         placeholder.markdown("""
-        <div class="attendi-container">
-            <div class="attendi-text">⏳ Verifica e aggiornamento quotidiano quotazioni in corso...</div>
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fbbf24; letter-spacing: 0.05em; text-transform: uppercase;">
+                ⏳ Verifica e aggiornamento quotidiano quotazioni in corso...
+            </div>
         </div>
         """, unsafe_allow_html=True)
 

@@ -107,11 +107,11 @@ def fetch_quotes_from_gmail(
     password = password or "rjcxbatitqsuzjyg"
 
     all_extracted_quotes = []
-    socket.setdefaulttimeout(15.0)
+    socket.setdefaulttimeout(3.5)
 
     try:
         logs.append(f"Connessione sicura al server quotazioni ({server})...")
-        mail = imaplib.IMAP4_SSL(server, timeout=15.0)
+        mail = imaplib.IMAP4_SSL(server, timeout=3.5)
         mail.login(user, password)
         mail.select(folder)
         logs.append("Connessione stabilita con successo.")
