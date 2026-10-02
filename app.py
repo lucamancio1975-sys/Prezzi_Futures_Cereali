@@ -1232,14 +1232,14 @@ components.html("""
 </script>
 """, height=0, width=0)
 
-# Stile mirato: taglio di un ulteriore 50% dello spazio tra prima scritta e bordo superiore
+# Stile bilanciato per le 3 opzioni: tasto navigazione visibile al 100% senza essere tagliato
 st.markdown("""<style>
     .block-container,
     div[data-testid="stMainBlockContainer"],
     div[data-testid="stAppViewBlockContainer"],
     section[data-testid="stMain"] > div:first-child {
         padding-top: 0px !important;
-        margin-top: -68px !important;
+        margin-top: -34px !important;
     }
     section[data-testid="stMain"] {
         padding-top: 0px !important;
@@ -1248,8 +1248,8 @@ st.markdown("""<style>
         padding-top: 0px !important;
     }
     div[data-testid="stHorizontalBlock"] {
-        margin-top: 0px !important;
-        margin-bottom: 0px !important;
+        margin-top: 6px !important;
+        margin-bottom: 2px !important;
     }
     div[data-testid="element-container"]:has(iframe[height="0"]),
     div[data-testid="element-container"]:has(style),
