@@ -610,29 +610,6 @@ st.markdown("""
         border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
-    /* Pulsanti di aggiornamento manuale con look Bloomberg Terminal */
-    div.st-key-btn_sync_home button,
-    div.st-key-btn_sync_detail button,
-    div[class*="st-key-btn_sync_home"] button,
-    div[class*="st-key-btn_sync_detail"] button {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%) !important;
-        border: 1px solid rgba(56, 189, 248, 0.4) !important;
-        color: #38bdf8 !important;
-        font-family: 'Space Grotesk', sans-serif !important;
-        font-weight: 700 !important;
-        border-radius: 9px !important;
-        transition: all 0.2s ease !important;
-    }
-    div.st-key-btn_sync_home button:hover,
-    div.st-key-btn_sync_detail button:hover,
-    div[class*="st-key-btn_sync_home"] button:hover,
-    div[class*="st-key-btn_sync_detail"] button:hover {
-        border-color: #38bdf8 !important;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
-        color: #ffffff !important;
-        transform: translateY(-1px) !important;
-    }
-
     /* ------------------------------------------------------------- */
     /* HERO CARD PREZZO                                              */
     /* ------------------------------------------------------------- */
@@ -1112,13 +1089,13 @@ def check_today_quotes_flow():
         perform_app_sync(force=True, show_msg=True)
 
 
+# Esecuzione centralizzata della sincronizzazione e aggiornamento automatico all'avvio della app
+check_today_quotes_flow()
+
 # =========================================================================
 # 1. SCHERMATA PRINCIPALE (SELEZIONE PRODOTTO)
 # =========================================================================
 if st.session_state.selected_product is None:
-    # Esegui la sincronizzazione giornaliera automatica ad ogni apertura dell'app
-    check_today_quotes_flow()
-
     all_raw_quotes = load_quotes()
     oggi_str = datetime.now().strftime("%Y-%m-%d")
     ha_quotazione_oggi = any(q.get("data") == oggi_str for q in all_raw_quotes)
@@ -1168,13 +1145,6 @@ if st.session_state.selected_product is None:
 <div class="main-question-sub">Seleziona una delle opzioni per visualizzare la quotazione e il grafico</div>
 </div>"""
     st.markdown(main_banner_html, unsafe_allow_html=True)
-
-    # Pulsante per forzare l'aggiornamento manuale immediato
-    col_sync_l, col_sync_btn, col_sync_r = st.columns([0.1, 0.8, 0.1])
-    with col_sync_btn:
-        if st.button("🔄 Aggiorna quotazioni ora", key="btn_sync_home", use_container_width=True):
-            st.session_state.force_sync = True
-            st.rerun()
 
     # 1. Grano Duro PDT
     if st.button("🌾 Grano Duro prezzo determinato - Raccolto Luglio 2027", use_container_width=True, key="btn_duro_pdt"):
@@ -1377,12 +1347,6 @@ quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto
 oggi_str = datetime.now().strftime("%Y-%m-%d")
 ha_quotazione_oggi = any(q.get("data") == oggi_str for q in (quotes or []))
 
-# 2. Controllo aggiornamento ad ogni run se forzato dall'utente
-if st.session_state.get("force_sync", False):
-    st.session_state.force_sync = False
-    perform_app_sync(force=True, show_msg=True)
-    quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
-
 if not quotes:
     st.warning(f"Nessuna quotazione registrata per {prod_name} {tipo_contratto} (lug-27).")
     if st.button("⬅️ Torna alla selezione"):
@@ -1443,31 +1407,19 @@ pdf_bytes, pdf_b64, pdf_filename = get_pdf_guida(product_key)
 pdf_link_attr = f'href="data:application/pdf;base64,{pdf_b64}" download="{pdf_filename}" target="_blank" rel="noopener noreferrer"' if pdf_b64 else 'href="#"'
 
 # ----------------- BARRA DI NAVIGAZIONE E AZIONI IN TESTA -----------------
-if "TENERO" in product_key:
-    nav_col1, nav_col2, nav_col3 = st.columns([1.1, 1.0, 1.1])
-    with nav_col1:
-        if st.button("⬅️ Torna", key="btn_back_home", use_container_width=True):
-            st.session_state.selected_product = None
-            st.rerun()
-    with nav_col2:
-        if st.button("🔄 Aggiorna", key="btn_sync_detail", use_container_width=True):
-            st.session_state.force_sync = True
-            st.rerun()
-    with nav_col3:
+nav_col1, nav_col2 = st.columns([1, 1])
+with nav_col1:
+    if st.button("⬅️ Torna alla selezione", key="btn_back_home", use_container_width=True):
+        st.session_state.selected_product = None
+        st.rerun()
+
+with nav_col2:
+    # Se Grano Tenero, consenti il rapido switch PDT <-> PMG
+    if "TENERO" in product_key:
         twin_key = "TENERO_PMG" if product_key == "TENERO_PDT" else "TENERO_PDT"
-        twin_label = "Switch PMG" if product_key == "TENERO_PDT" else "Switch PDT"
-        if st.button(f"⇄ {twin_label}", key="btn_switch_twin", use_container_width=True):
+        twin_label = "Switch a PMG" if product_key == "TENERO_PDT" else "Switch a PDT"
+        if st.button(f"🔄 {twin_label}", key="btn_switch_twin", use_container_width=True):
             st.session_state.selected_product = twin_key
-            st.rerun()
-else:
-    nav_col1, nav_col2 = st.columns([1.2, 1.2])
-    with nav_col1:
-        if st.button("⬅️ Torna alla selezione", key="btn_back_home", use_container_width=True):
-            st.session_state.selected_product = None
-            st.rerun()
-    with nav_col2:
-        if st.button("🔄 Aggiorna quotazione", key="btn_sync_detail", use_container_width=True):
-            st.session_state.force_sync = True
             st.rerun()
 
 # ----------------- 1. TOP BAR COMPATTA -----------------
