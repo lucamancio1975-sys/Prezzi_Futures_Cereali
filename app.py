@@ -257,7 +257,7 @@ st.markdown("""
     }
     .futures-protection-text {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(0.70rem, 2.5vw, 0.82rem);
+        font-size: clamp(0.76rem, 2.7vw, 0.88rem);
         font-weight: 700;
         letter-spacing: 0.015em;
         background: linear-gradient(90deg, #f59e0b 0%, #fef08a 50%, #f59e0b 100%);
@@ -270,7 +270,7 @@ st.markdown("""
         background: linear-gradient(145deg, #090e1a 0%, #111c33 100%);
         border: 1.5px solid #1e293b;
         border-radius: 12px;
-        padding: 6px 12px !important;
+        padding: 7px 12px !important;
         margin: 0 0 5px 0 !important;
         text-align: center;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -286,7 +286,7 @@ st.markdown("""
     }
     .main-question-title {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(1.02rem, 3.8vw, 1.28rem) !important;
+        font-size: clamp(1.10rem, 4.1vw, 1.36rem) !important;
         font-weight: 800;
         color: #ffffff;
         letter-spacing: -0.02em;
@@ -294,7 +294,7 @@ st.markdown("""
         margin: 0;
     }
     .main-question-sub {
-        font-size: clamp(0.68rem, 2.2vw, 0.78rem) !important;
+        font-size: clamp(0.75rem, 2.4vw, 0.85rem) !important;
         color: #94a3b8;
         margin-top: 2px !important;
         font-weight: 500;
@@ -312,17 +312,17 @@ st.markdown("""
     button[aria-label*="Tenero prezzo determinato"],
     button[aria-label*="prezzo minimo"] {
         width: 100% !important;
-        min-height: 50px !important;
+        min-height: 52px !important;
         border-radius: 12px !important;
         font-family: 'Space Grotesk', sans-serif !important;
-        font-size: clamp(0.90rem, 3.2vw, 1.05rem) !important;
+        font-size: clamp(0.98rem, 3.5vw, 1.14rem) !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
         transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 7px 12px !important;
+        padding: 8px 12px !important;
         margin-bottom: 5px !important;
         line-height: 1.2 !important;
         white-space: normal !important;
@@ -338,7 +338,8 @@ st.markdown("""
     button[aria-label*="Grano Duro"] p,
     button[aria-label*="Tenero prezzo determinato"] p,
     button[aria-label*="prezzo minimo"] p {
-        font-size: clamp(1.04rem, 3.8vw, 1.20rem) !important;
+        font-size: clamp(0.98rem, 3.5vw, 1.14rem) !important;
+        line-height: 1.2 !important;
     }
 
     /* ------------------------------------------------------------- */
@@ -577,9 +578,9 @@ st.markdown("""
     }
     .app-sync-status {
         font-family: 'JetBrains Mono', monospace;
-        font-size: clamp(0.62rem, 2.3vw, 0.70rem);
+        font-size: clamp(0.68rem, 2.5vw, 0.78rem);
         font-weight: 700;
-        padding: 2px 7px;
+        padding: 3px 8px;
         border-radius: 5px;
         display: inline-block;
         width: fit-content;
@@ -1211,19 +1212,43 @@ components.html("""
     }
     resetToTop();
     requestAnimationFrame(resetToTop);
-    setTimeout(resetToTop, 20);
-    setTimeout(resetToTop, 80);
-    setTimeout(resetToTop, 250);
-    setTimeout(resetToTop, 600);
+    setTimeout(resetToTop, 15);
+    setTimeout(resetToTop, 60);
+    setTimeout(resetToTop, 150);
+    setTimeout(resetToTop, 350);
+    setTimeout(resetToTop, 700);
+    setTimeout(resetToTop, 1200);
 })();
 </script>
 """, height=0, width=0)
 
-# Stile mirato per la schermata di dettaglio per partire subito in cima
+# Stile mirato per eliminare il 50% dello spazio nero in testa alle 3 pagine di scelta
 st.markdown("""<style>
     .block-container {
-        padding-top: clamp(0.1rem, 0.8vh, 0.4rem) !important;
+        padding-top: 0px !important;
+        margin-top: -16px !important;
+    }
+    div[data-testid="stHorizontalBlock"] {
         margin-top: 0px !important;
+        margin-bottom: 2px !important;
+    }
+    div[data-testid="element-container"]:has(iframe[height="0"]),
+    div[data-testid="element-container"]:has(style) {
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .st-key-btn_back_home > button,
+    .st-key-btn_switch_twin > button {
+        margin-top: 0px !important;
+        padding: 5px 10px !important;
+        min-height: 38px !important;
+    }
+    .app-topbar {
+        margin-top: 2px !important;
+        margin-bottom: 6px !important;
+        padding: 5px 10px !important;
     }
 </style>""", unsafe_allow_html=True)
 
