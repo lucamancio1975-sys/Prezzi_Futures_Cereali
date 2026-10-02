@@ -1055,6 +1055,8 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
 
         if new_q:
             st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate nel database!"
+            placeholder.empty()
+            st.rerun()
         elif ha_oggi or is_t:
             st.session_state.sync_feedback = "🟢 Database aggiornato alla seduta odierna."
         else:

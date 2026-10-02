@@ -41,48 +41,68 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
             except Exception as e:
                 print(f"[OCR] Errore esecuzione win_ocr: {e}")
 
-    # 2. Fallback con pytesseract (Linux / Streamlit Community Cloud)
+    # 2. Fallback universale con pytesseract (Linux / Streamlit Community Cloud)
     try:
         import pytesseract
         from pytesseract import Output
-        img = Image.open(image_path)
-        data = pytesseract.image_to_data(img, lang='ita+eng', output_type=Output.DICT)
-        lines_dict = {}
-        n_boxes = len(data.get('text', []))
-        for i in range(n_boxes):
-            w_text = str(data['text'][i]).strip()
-            if not w_text:
-                continue
-            line_key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
-            if line_key not in lines_dict:
-                lines_dict[line_key] = []
-            lines_dict[line_key].append({
-                "Text": w_text,
-                "X": data['left'][i],
-                "Y": data['top'][i],
-                "Width": data['width'][i],
-                "Height": data['height'][i]
-            })
-        lines = []
-        for line_key, words in lines_dict.items():
-            full_text = " ".join([w["Text"] for w in words])
-            lines.append({"Text": full_text, "Words": words})
-        if lines:
-            return lines
-    except Exception:
-        pass
+        
+        # Assicura modalità RGB (rimuovendo canale alpha che confonde Tesseract)
+        img_raw = Image.open(image_path)
+        if img_raw.mode == "RGBA":
+            bg = Image.new("RGB", img_raw.size, (255, 255, 255))
+            bg.paste(img_raw, mask=img_raw.split()[3])
+            img_ocr = bg
+        else:
+            img_ocr = img_raw.convert("RGB")
 
-    try:
-        import pytesseract
-        text = pytesseract.image_to_string(Image.open(image_path), lang='ita+eng')
-        lines = []
-        for line in text.split('\n'):
-            line_s = line.strip()
-            if line_s:
-                lines.append({"Text": line_s, "Words": []})
-        return lines
-    except Exception:
-        pass
+        langs_to_try = ['ita', 'eng', 'ita+eng', None]
+        for lang in langs_to_try:
+            try:
+                kwargs = {'output_type': Output.DICT}
+                if lang:
+                    kwargs['lang'] = lang
+                data = pytesseract.image_to_data(img_ocr, **kwargs)
+                lines_dict = {}
+                n_boxes = len(data.get('text', []))
+                for i in range(n_boxes):
+                    w_text = str(data['text'][i]).strip()
+                    if not w_text:
+                        continue
+                    line_key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
+                    if line_key not in lines_dict:
+                        lines_dict[line_key] = []
+                    lines_dict[line_key].append({
+                        "Text": w_text,
+                        "X": data['left'][i],
+                        "Y": data['top'][i],
+                        "Width": data['width'][i],
+                        "Height": data['height'][i]
+                    })
+                lines = []
+                for line_key, words in lines_dict.items():
+                    full_text = " ".join([w["Text"] for w in words])
+                    lines.append({"Text": full_text, "Words": words})
+                if lines:
+                    return lines
+            except Exception:
+                pass
+
+            try:
+                kwargs = {}
+                if lang:
+                    kwargs['lang'] = lang
+                text = pytesseract.image_to_string(img_ocr, **kwargs)
+                lines = []
+                for line in text.split('\n'):
+                    line_s = line.strip()
+                    if line_s:
+                        lines.append({"Text": line_s, "Words": []})
+                if lines:
+                    return lines
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"[OCR] Errore generale pytesseract: {e}")
 
     return []
 
