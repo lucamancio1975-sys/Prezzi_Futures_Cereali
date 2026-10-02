@@ -1,0 +1,4326 @@
+[
+  {
+    "data": "2025-11-11",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-11",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-12",
+    "scadenza": "lug-27",
+    "prezzo": 257.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-12",
+    "scadenza": "lug-27",
+    "prezzo": 204.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-13",
+    "scadenza": "lug-27",
+    "prezzo": 257.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-13",
+    "scadenza": "lug-27",
+    "prezzo": 204.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-14",
+    "scadenza": "lug-27",
+    "prezzo": 257.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-14",
+    "scadenza": "lug-27",
+    "prezzo": 204.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-17",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-17",
+    "scadenza": "lug-27",
+    "prezzo": 203.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-18",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-18",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-19",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-19",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-20",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-20",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-21",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-21",
+    "scadenza": "lug-27",
+    "prezzo": 203.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-24",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-24",
+    "scadenza": "lug-27",
+    "prezzo": 202.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.PDF)"
+  },
+  {
+    "data": "2025-11-25",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-25",
+    "scadenza": "lug-27",
+    "prezzo": 201.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-26",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-26",
+    "scadenza": "lug-27",
+    "prezzo": 201.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-27",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-27",
+    "scadenza": "lug-27",
+    "prezzo": 201.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-28",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-11-28",
+    "scadenza": "lug-27",
+    "prezzo": 201.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-01",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-01",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-02",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-02",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-03",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-03",
+    "scadenza": "lug-27",
+    "prezzo": 200.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-04",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-04",
+    "scadenza": "lug-27",
+    "prezzo": 199.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-05",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-05",
+    "scadenza": "lug-27",
+    "prezzo": 199.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-09",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-09",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-10",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-10",
+    "scadenza": "lug-27",
+    "prezzo": 197.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-11",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-11",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-12",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-12",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-15",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-15",
+    "scadenza": "lug-27",
+    "prezzo": 197.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-16",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-16",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-17",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-17",
+    "scadenza": "lug-27",
+    "prezzo": 194.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-18",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-18",
+    "scadenza": "lug-27",
+    "prezzo": 194.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2025-12-19",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-19",
+    "scadenza": "lug-27",
+    "prezzo": 194.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-22",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-22",
+    "scadenza": "lug-27",
+    "prezzo": 195.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-23",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-23",
+    "scadenza": "lug-27",
+    "prezzo": 195.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-29",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-29",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-30",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2025-12-30",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-05",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-05",
+    "scadenza": "lug-27",
+    "prezzo": 195.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-07",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-07",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-08",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-08",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-09",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-09",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-12",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-12",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-13",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-13",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-14",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-14",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-15",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-15",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-16",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-16",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-19",
+    "scadenza": "lug-27",
+    "prezzo": 257.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-19",
+    "scadenza": "lug-27",
+    "prezzo": 209.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-20",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-20",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-21",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-21",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-22",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-22",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-23",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-23",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-26",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-26",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-01-27",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-27",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-29",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-01-29",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-02",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-02",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-03",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-03",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-04",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-04",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-05",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-05",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-06",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-06",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-09",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-09",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-10",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-10",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-11",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-11",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-12",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-12",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-13",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-13",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-16",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-16",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-17",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-17",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-18",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-18",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-19",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-19",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-20",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-20",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-23",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-23",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-24",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-24",
+    "scadenza": "lug-27",
+    "prezzo": 212.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-25",
+    "scadenza": "lug-27",
+    "prezzo": 226.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-25",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-02-26",
+    "scadenza": "lug-27",
+    "prezzo": 257.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-26",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-27",
+    "scadenza": "lug-27",
+    "prezzo": 228.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-02-27",
+    "scadenza": "lug-27",
+    "prezzo": 215.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-02",
+    "scadenza": "lug-27",
+    "prezzo": 233.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-02",
+    "scadenza": "lug-27",
+    "prezzo": 216.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-03",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-03",
+    "scadenza": "lug-27",
+    "prezzo": 215.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-09",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-09",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-10",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-10",
+    "scadenza": "lug-27",
+    "prezzo": 218.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-11",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-11",
+    "scadenza": "lug-27",
+    "prezzo": 219.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-12",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-12",
+    "scadenza": "lug-27",
+    "prezzo": 219.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-13",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-13",
+    "scadenza": "lug-27",
+    "prezzo": 220.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-16",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-16",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-18",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-18",
+    "scadenza": "lug-27",
+    "prezzo": 218.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-19",
+    "scadenza": "lug-27",
+    "prezzo": 242.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-19",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-23",
+    "scadenza": "lug-27",
+    "prezzo": 242.0,
+    "tipo": "PDT",
+    "fonte": "Storico Simulato CAI",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-03-24",
+    "scadenza": "lug-27",
+    "prezzo": 234.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-24",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-27",
+    "scadenza": "lug-27",
+    "prezzo": 238.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-27",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-30",
+    "scadenza": "lug-27",
+    "prezzo": 237.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-30",
+    "scadenza": "lug-27",
+    "prezzo": 220.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-03-31",
+    "scadenza": "lug-27",
+    "prezzo": 238.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-03-31",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT & PMG.pdf)"
+  },
+  {
+    "data": "2026-04-01",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-01",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-02",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-02",
+    "scadenza": "lug-27",
+    "prezzo": 226.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-07",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-07",
+    "scadenza": "lug-27",
+    "prezzo": 224.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-08",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-08",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-09",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-09",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-10",
+    "scadenza": "lug-27",
+    "prezzo": 244.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-10",
+    "scadenza": "lug-27",
+    "prezzo": 212.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-14",
+    "scadenza": "lug-27",
+    "prezzo": 244.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-14",
+    "scadenza": "lug-27",
+    "prezzo": 218.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-15",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-15",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-16",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-16",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-17",
+    "scadenza": "lug-27",
+    "prezzo": 244.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-17",
+    "scadenza": "lug-27",
+    "prezzo": 224.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-20",
+    "scadenza": "lug-27",
+    "prezzo": 245.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-20",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-21",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-21",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-22",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-22",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-23",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-23",
+    "scadenza": "lug-27",
+    "prezzo": 224.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-24",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-24",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-27",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-27",
+    "scadenza": "lug-27",
+    "prezzo": 224.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-28",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-28",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-29",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-29",
+    "scadenza": "lug-27",
+    "prezzo": 230.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-30",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-04-30",
+    "scadenza": "lug-27",
+    "prezzo": 231.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-02",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "fonte": "Storico Simulato CAI",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-05-04",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-04",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-05",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-05",
+    "scadenza": "lug-27",
+    "prezzo": 230.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-06",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-06",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-07",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-07",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-08",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-08",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-11",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-11",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-12",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-12",
+    "scadenza": "lug-27",
+    "prezzo": 228.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-13",
+    "scadenza": "lug-27",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-13",
+    "scadenza": "lug-27",
+    "prezzo": 233.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-14",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-14",
+    "scadenza": "lug-27",
+    "prezzo": 226.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-15",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-15",
+    "scadenza": "lug-27",
+    "prezzo": 224.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-18",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-18",
+    "scadenza": "lug-27",
+    "prezzo": 223.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-19",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-19",
+    "scadenza": "lug-27",
+    "prezzo": 223.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-20",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-20",
+    "scadenza": "lug-27",
+    "prezzo": 223.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-21",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-21",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-22",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-22",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-25",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-25",
+    "scadenza": "lug-27",
+    "prezzo": 222.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-26",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-26",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-27",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-27",
+    "scadenza": "lug-27",
+    "prezzo": 223.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-28",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-28",
+    "scadenza": "lug-27",
+    "prezzo": 220.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-29",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-05-29",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-01",
+    "scadenza": "lug-27",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-01",
+    "scadenza": "lug-28",
+    "prezzo": 255.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-01",
+    "scadenza": "lug-27",
+    "prezzo": 218.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-01",
+    "scadenza": "lug-27",
+    "prezzo": 196.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-04",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-04",
+    "scadenza": "lug-28",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-04",
+    "scadenza": "lug-27",
+    "prezzo": 217.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-04",
+    "scadenza": "lug-27",
+    "prezzo": 195.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-08",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-08",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-08",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-08",
+    "scadenza": "lug-27",
+    "prezzo": 192.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-09",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-09",
+    "scadenza": "lug-28",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-09",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-09",
+    "scadenza": "lug-27",
+    "prezzo": 190.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-10",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-10",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-10",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-10",
+    "scadenza": "lug-27",
+    "prezzo": 191.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-11",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-11",
+    "scadenza": "lug-28",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-11",
+    "scadenza": "lug-27",
+    "prezzo": 215.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-11",
+    "scadenza": "lug-27",
+    "prezzo": 192.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-12",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-12",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-12",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-12",
+    "scadenza": "lug-27",
+    "prezzo": 191.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-15",
+    "scadenza": "lug-27",
+    "prezzo": 245.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-15",
+    "scadenza": "lug-28",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-15",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-15",
+    "scadenza": "lug-27",
+    "prezzo": 187.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-16",
+    "scadenza": "lug-27",
+    "prezzo": 245.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-16",
+    "scadenza": "lug-28",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-16",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-16",
+    "scadenza": "lug-27",
+    "prezzo": 187.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-17",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-17",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-17",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-17",
+    "scadenza": "lug-27",
+    "prezzo": 188.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-18",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-18",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-18",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-18",
+    "scadenza": "lug-27",
+    "prezzo": 191.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-19",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-19",
+    "scadenza": "lug-28",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-19",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-19",
+    "scadenza": "lug-27",
+    "prezzo": 190.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-22",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-22",
+    "scadenza": "lug-28",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-22",
+    "scadenza": "lug-27",
+    "prezzo": 212.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-22",
+    "scadenza": "lug-27",
+    "prezzo": 189.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-23",
+    "scadenza": "lug-27",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-23",
+    "scadenza": "lug-28",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-23",
+    "scadenza": "lug-27",
+    "prezzo": 212.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-23",
+    "scadenza": "lug-27",
+    "prezzo": 189.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-24",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-24",
+    "scadenza": "lug-28",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-24",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-24",
+    "scadenza": "lug-27",
+    "prezzo": 190.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-25",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-25",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-25",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-25",
+    "scadenza": "lug-27",
+    "prezzo": 191.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-26",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-26",
+    "scadenza": "lug-28",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-26",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-26",
+    "scadenza": "lug-27",
+    "prezzo": 190.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-28",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "fonte": "Storico Simulato CAI",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-06-29",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-29",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-29",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-29",
+    "scadenza": "lug-27",
+    "prezzo": 188.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-30",
+    "scadenza": "lug-27",
+    "prezzo": 245.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-30",
+    "scadenza": "lug-28",
+    "prezzo": 247.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-30",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-06-30",
+    "scadenza": "lug-27",
+    "prezzo": 187.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-01",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-01",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-01",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-01",
+    "scadenza": "lug-27",
+    "prezzo": 188.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-02",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-02",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-02",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-02",
+    "scadenza": "lug-27",
+    "prezzo": 188.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-03",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-03",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-03",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-03",
+    "scadenza": "lug-27",
+    "prezzo": 188.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-06",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-06",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-06",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-06",
+    "scadenza": "lug-27",
+    "prezzo": 191.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-07",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-07",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-07",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-07",
+    "scadenza": "lug-27",
+    "prezzo": 184.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-08",
+    "scadenza": "lug-27",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-08",
+    "scadenza": "lug-28",
+    "prezzo": 253.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-08",
+    "scadenza": "lug-27",
+    "prezzo": 216.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-08",
+    "scadenza": "lug-27",
+    "prezzo": 193.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-09",
+    "scadenza": "lug-27",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-09",
+    "scadenza": "lug-28",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-09",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-09",
+    "scadenza": "lug-27",
+    "prezzo": 190.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-10",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-10",
+    "scadenza": "lug-28",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-10",
+    "scadenza": "lug-27",
+    "prezzo": 215.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-10",
+    "scadenza": "lug-27",
+    "prezzo": 192.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-13",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-13",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-13",
+    "scadenza": "lug-27",
+    "prezzo": 216.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-13",
+    "scadenza": "lug-27",
+    "prezzo": 193.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-14",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-14",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-14",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-14",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-15",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-15",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-15",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-15",
+    "scadenza": "lug-27",
+    "prezzo": 202.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-16",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-16",
+    "scadenza": "lug-28",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-16",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-16",
+    "scadenza": "lug-27",
+    "prezzo": 202.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-17",
+    "scadenza": "lug-27",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-17",
+    "scadenza": "lug-28",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-17",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-17",
+    "scadenza": "lug-27",
+    "prezzo": 202.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-20",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-20",
+    "scadenza": "lug-28",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-20",
+    "scadenza": "lug-27",
+    "prezzo": 228.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-20",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-21",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-21",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-21",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-21",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-22",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-22",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-22",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-22",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-23",
+    "scadenza": "lug-27",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-23",
+    "scadenza": "lug-28",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-23",
+    "scadenza": "lug-27",
+    "prezzo": 233.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-23",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-24",
+    "scadenza": "lug-27",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-24",
+    "scadenza": "lug-28",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-24",
+    "scadenza": "lug-27",
+    "prezzo": 223.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-07-24",
+    "scadenza": "lug-27",
+    "prezzo": 200.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-04",
+    "scadenza": "lug-27",
+    "prezzo": 250.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-04",
+    "scadenza": "lug-28",
+    "prezzo": 252.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-04",
+    "scadenza": "lug-27",
+    "prezzo": 221.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-04",
+    "scadenza": "lug-27",
+    "prezzo": 198.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-05",
+    "scadenza": "lug-27",
+    "prezzo": 246.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-05",
+    "scadenza": "lug-28",
+    "prezzo": 248.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-05",
+    "scadenza": "lug-27",
+    "prezzo": 217.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-05",
+    "scadenza": "lug-27",
+    "prezzo": 194.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-06",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-06",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-06",
+    "scadenza": "lug-27",
+    "prezzo": 220.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-06",
+    "scadenza": "lug-27",
+    "prezzo": 197.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-07",
+    "scadenza": "lug-27",
+    "prezzo": 249.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-07",
+    "scadenza": "lug-28",
+    "prezzo": 251.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-07",
+    "scadenza": "lug-27",
+    "prezzo": 220.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-07",
+    "scadenza": "lug-27",
+    "prezzo": 197.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-18",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-18",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-18",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-18",
+    "scadenza": "lug-27",
+    "prezzo": 204.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-20",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-20",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-20",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-20",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-21",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-21",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-21",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-21",
+    "scadenza": "lug-27",
+    "prezzo": 206.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-24",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-24",
+    "scadenza": "lug-28",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-24",
+    "scadenza": "lug-27",
+    "prezzo": 230.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-24",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-25",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-25",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-25",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-25",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-26",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-26",
+    "scadenza": "lug-28",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-26",
+    "scadenza": "lug-27",
+    "prezzo": 230.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-26",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-27",
+    "scadenza": "lug-27",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-27",
+    "scadenza": "lug-28",
+    "prezzo": 264.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-27",
+    "scadenza": "lug-27",
+    "prezzo": 233.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-27",
+    "scadenza": "lug-27",
+    "prezzo": 211.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-28",
+    "scadenza": "lug-27",
+    "prezzo": 264.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-28",
+    "scadenza": "lug-28",
+    "prezzo": 266.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-28",
+    "scadenza": "lug-27",
+    "prezzo": 235.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-28",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-31",
+    "scadenza": "lug-27",
+    "prezzo": 266.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-31",
+    "scadenza": "lug-28",
+    "prezzo": 268.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-31",
+    "scadenza": "lug-27",
+    "prezzo": 237.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-08-31",
+    "scadenza": "lug-27",
+    "prezzo": 215.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-01",
+    "scadenza": "lug-27",
+    "prezzo": 265.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-01",
+    "scadenza": "lug-28",
+    "prezzo": 267.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-01",
+    "scadenza": "lug-27",
+    "prezzo": 236.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-01",
+    "scadenza": "lug-27",
+    "prezzo": 214.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-02",
+    "scadenza": "lug-27",
+    "prezzo": 264.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-02",
+    "scadenza": "lug-28",
+    "prezzo": 266.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-02",
+    "scadenza": "lug-27",
+    "prezzo": 235.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-02",
+    "scadenza": "lug-27",
+    "prezzo": 213.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-03",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-03",
+    "scadenza": "lug-28",
+    "prezzo": 263.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-03",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-03",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-08",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "fonte": "Storico Simulato CAI",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-09-15",
+    "scadenza": "lug-27",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "fonte": "Storico Simulato CAI",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-09-16",
+    "scadenza": "lug-27",
+    "prezzo": 259.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-16",
+    "scadenza": "lug-28",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-16",
+    "scadenza": "lug-27",
+    "prezzo": 230.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-16",
+    "scadenza": "lug-27",
+    "prezzo": 208.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-17",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-17",
+    "scadenza": "lug-28",
+    "prezzo": 263.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-17",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-17",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-18",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "fonte": "PDF PDT PMG (18-set-26)",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-09-18",
+    "scadenza": "lug-28",
+    "prezzo": 263.0,
+    "tipo": "PDT",
+    "fonte": "PDF PDT PMG (18-set-26)",
+    "prodotto": "GRANO DURO"
+  },
+  {
+    "data": "2026-09-18",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-18",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-21",
+    "scadenza": "lug-27",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-21",
+    "scadenza": "lug-28",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-21",
+    "scadenza": "lug-27",
+    "prezzo": 231.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-21",
+    "scadenza": "lug-27",
+    "prezzo": 209.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-22",
+    "scadenza": "lug-27",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email Immagine (22-set-26)"
+  },
+  {
+    "data": "2026-09-22",
+    "scadenza": "lug-28",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email Immagine (22-set-26)"
+  },
+  {
+    "data": "2026-09-22",
+    "scadenza": "lug-27",
+    "prezzo": 231.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-22",
+    "scadenza": "lug-27",
+    "prezzo": 209.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-23",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-23",
+    "scadenza": "lug-28",
+    "prezzo": 263.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-23",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-23",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-24",
+    "scadenza": "lug-27",
+    "prezzo": 261.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-24",
+    "scadenza": "lug-28",
+    "prezzo": 263.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-24",
+    "scadenza": "lug-27",
+    "prezzo": 232.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-24",
+    "scadenza": "lug-27",
+    "prezzo": 210.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-25",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-25",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-25",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-25",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-28",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-28",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-28",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-28",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-29",
+    "scadenza": "lug-27",
+    "prezzo": 254.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-29",
+    "scadenza": "lug-28",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-29",
+    "scadenza": "lug-27",
+    "prezzo": 225.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-29",
+    "scadenza": "lug-27",
+    "prezzo": 203.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "Email (image001.png)"
+  },
+  {
+    "data": "2026-09-30",
+    "scadenza": "lug-27",
+    "prezzo": 256.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-30",
+    "scadenza": "lug-28",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-30",
+    "scadenza": "lug-27",
+    "prezzo": 227.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-09-30",
+    "scadenza": "lug-27",
+    "prezzo": 205.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-10-01",
+    "scadenza": "lug-27",
+    "prezzo": 258.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-10-01",
+    "scadenza": "lug-28",
+    "prezzo": 260.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-10-01",
+    "scadenza": "lug-27",
+    "prezzo": 229.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  },
+  {
+    "data": "2026-10-01",
+    "scadenza": "lug-27",
+    "prezzo": 207.0,
+    "tipo": "PMG",
+    "prodotto": "GRANO TENERO FINO ROSSO",
+    "premio_bologna_giorgione": 30.0,
+    "fonte": "PDF (PDT  PMG.pdf)"
+  }
+]
