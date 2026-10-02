@@ -25,7 +25,9 @@ try:
         load_quotes,
         add_quotes,
         get_quotes_for_selection,
-        get_delta_for_selection
+        get_delta_for_selection,
+        sync_from_github,
+        get_latest_db_date
     )
     from execution.fetch_gmail_quotes import (
         fetch_quotes_from_gmail,
@@ -38,7 +40,9 @@ except ImportError:
         load_quotes,
         add_quotes,
         get_quotes_for_selection,
-        get_delta_for_selection
+        get_delta_for_selection,
+        sync_from_github,
+        get_latest_db_date
     )
     from fetch_gmail_quotes import (
         fetch_quotes_from_gmail,
@@ -605,6 +609,29 @@ st.markdown("""
         border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
+    /* Pulsanti di aggiornamento manuale con look Bloomberg Terminal */
+    div.st-key-btn_sync_home button,
+    div.st-key-btn_sync_detail button,
+    div[class*="st-key-btn_sync_home"] button,
+    div[class*="st-key-btn_sync_detail"] button {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%) !important;
+        border: 1px solid rgba(56, 189, 248, 0.4) !important;
+        color: #38bdf8 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 700 !important;
+        border-radius: 9px !important;
+        transition: all 0.2s ease !important;
+    }
+    div.st-key-btn_sync_home button:hover,
+    div.st-key-btn_sync_detail button:hover,
+    div[class*="st-key-btn_sync_home"] button:hover,
+    div[class*="st-key-btn_sync_detail"] button:hover {
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+    }
+
     /* ------------------------------------------------------------- */
     /* HERO CARD PREZZO                                              */
     /* ------------------------------------------------------------- */
@@ -859,11 +886,18 @@ st.markdown("""
 if "selected_product" not in st.session_state:
     st.session_state.selected_product = None  # Valori: 'DURO_PDT', 'TENERO_PDT', 'TENERO_PMG'
 
-if "last_mail_check" not in st.session_state:
-    st.session_state.last_mail_check = 0
+if "app_boot_sync_done" not in st.session_state:
+    st.session_state.app_boot_sync_done = False
+
+if "last_sync_time" not in st.session_state:
+    st.session_state.last_sync_time = 0
 
 if "force_sync" not in st.session_state:
     st.session_state.force_sync = False
+
+if "sync_feedback" not in st.session_state:
+    st.session_state.sync_feedback = ""
+
 
 
 # =========================================================================
@@ -1013,62 +1047,82 @@ def get_cached_delta(prodotto: str, tipo: str, scadenza: str = "lug-27"):
     return get_delta_for_selection(prodotto=prodotto, tipo=tipo, scadenza=scadenza)
 
 # =========================================================================
-# PROCESSO DI ISPEZIONE E SINCRONIZZAZIONE (CON ANIMAZIONE ATTENDI)
+# PROCESSO DI AGGIORNAMENTO GIORNALIERO E SINCRONIZZAZIONE
 # =========================================================================
-def run_inspection_process(messaggio: str = "⏳ Verifica disponibilità quotazione di oggi..."):
+def perform_app_sync(force: bool = False, show_msg: bool = True):
     """
-    Mostra l'animazione di attesa e verifica la presenza della quotazione odierna.
+    Esegue il processo di aggiornamento giornaliero delle quotazioni cereali:
+    1. Sincronizzazione cloud da repository GitHub (riceve le ultime quotazioni salvate da qualsiasi sorgente).
+    2. Scansione email IMAP SSL da casella Gmail con estrazione PDF/immagini/corpo email.
+    3. Deduplicazione, archiviazione locale e push verso GitHub.
+    4. Pulizia automatica della cache Streamlit per aggiornare grafici e metriche.
     """
     placeholder = st.empty()
-    placeholder.markdown(f"""
-    <div class="attendi-container">
-        <div class="attendi-text">{messaggio}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    if show_msg:
+        placeholder.markdown("""
+        <div class="attendi-container">
+            <div class="attendi-text">⏳ Verifica e aggiornamento quotidiano quotazioni in corso...</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     try:
-        oggi_str = datetime.now().strftime("%Y-%m-%d")
-        new_q, is_t, logs = check_and_sync_today_quotes(target_date=oggi_str)
-        if is_t or new_q:
-            st.cache_data.clear()
-    except Exception as e:
-        print(f"Errore ispezione quotazioni: {e}")
+        new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=30)
+        st.cache_data.clear()
+        st.session_state.last_sync_time = time.time()
+        st.session_state.app_boot_sync_done = True
 
-    placeholder.empty()
+        all_q = load_quotes()
+        oggi_str = datetime.now().strftime("%Y-%m-%d")
+        ha_oggi = any(q.get("data") == oggi_str for q in all_q)
+
+        if new_q:
+            st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate nel database!"
+        elif ha_oggi or is_t:
+            st.session_state.sync_feedback = "🟢 Database aggiornato alla seduta odierna."
+        else:
+            last_d = all_q[-1].get("data") if all_q else "N.D."
+            st.session_state.sync_feedback = f"Verifica completata: ultima quotazione ufficiale {last_d}."
+    except Exception as e:
+        print(f"Errore processo aggiornamento: {e}")
+        st.session_state.sync_feedback = "Verifica completata."
+    finally:
+        placeholder.empty()
 
 def check_today_quotes_flow():
     """
-    Workflow di sincronizzazione automatica:
-    1. Consulta lo storico nel database.
-    2. Se manca la quotazione odierna, effettua la verifica di aggiornamento
-       per individuare se esiste una quotazione del giorno di questa run.
+    Workflow di sincronizzazione automatica all'apertura dell'app:
+    - Ad ogni apertura dell'app (nuova sessione), avvia la sincronizzazione automatica.
+    - Se forzato dall'utente (force_sync=True), esegue l'aggiornamento immediato.
+    - Se manca la quotazione odierna e sono trascorsi almeno 180 secondi dall'ultimo controllo, ri-sincronizza.
     """
-    oggi_str = datetime.now().strftime("%Y-%m-%d")
+    now_ts = time.time()
     all_quotes = load_quotes()
+    oggi_str = datetime.now().strftime("%Y-%m-%d")
     ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
-    
-    needs_check = st.session_state.get("force_sync", False) or (
-        not ha_oggi and st.session_state.get("mail_checked_today") != oggi_str
+
+    needs_check = (
+        st.session_state.get("force_sync", False) or
+        (not st.session_state.get("app_boot_sync_done", False)) or
+        (not ha_oggi and (now_ts - st.session_state.get("last_sync_time", 0) > 180))
     )
-    
+
     if needs_check:
         st.session_state.force_sync = False
-        st.session_state.mail_checked_today = oggi_str
-        run_inspection_process(messaggio="⏳ Verifica disponibilità quotazione di oggi...")
+        perform_app_sync(force=True, show_msg=True)
 
 
 # =========================================================================
 # 1. SCHERMATA PRINCIPALE (SELEZIONE PRODOTTO)
 # =========================================================================
 if st.session_state.selected_product is None:
-    # Esegui il controllo rapido della quotazione odierna all'avvio se necessario
+    # Esegui la sincronizzazione giornaliera automatica ad ogni apertura dell'app
     check_today_quotes_flow()
-    
+
     all_raw_quotes = load_quotes()
     oggi_str = datetime.now().strftime("%Y-%m-%d")
     ha_quotazione_oggi = any(q.get("data") == oggi_str for q in all_raw_quotes)
     last_db_date = all_raw_quotes[-1].get("data") if all_raw_quotes else ""
-    
+
     if last_db_date:
         try:
             ld_dt = datetime.strptime(last_db_date, "%Y-%m-%d")
@@ -1078,10 +1132,16 @@ if st.session_state.selected_product is None:
     else:
         ld_str = "N.D."
 
+    last_check_str = ""
+    if st.session_state.get("last_sync_time", 0) > 0:
+        last_check_str = datetime.fromtimestamp(st.session_state.last_sync_time).strftime("%H:%M")
+
+    check_badge = f'<div style="font-size: 0.74rem; color: #94a3b8; margin-top: 4px; font-weight: 500;">Ultima verifica automatica: ore {last_check_str}</div>' if last_check_str else ''
+
     if ha_quotazione_oggi:
-        status_banner = '<div style="text-align:center; margin-top: 6px; margin-bottom: 16px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+        status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span>{check_badge}</div>'
     else:
-        status_banner = f'<div style="text-align:center; margin-top: 6px; margin-bottom: 16px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+        status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span>{check_badge}</div>'
 
     # Spaziatura ampia ed elegante tra i riquadri della schermata principale
     st.markdown("""<style>
@@ -1107,6 +1167,13 @@ if st.session_state.selected_product is None:
 <div class="main-question-sub">Seleziona una delle opzioni per visualizzare la quotazione e il grafico</div>
 </div>"""
     st.markdown(main_banner_html, unsafe_allow_html=True)
+
+    # Pulsante per forzare l'aggiornamento manuale immediato
+    col_sync_l, col_sync_btn, col_sync_r = st.columns([0.1, 0.8, 0.1])
+    with col_sync_btn:
+        if st.button("🔄 Aggiorna quotazioni ora", key="btn_sync_home", use_container_width=True):
+            st.session_state.force_sync = True
+            st.rerun()
 
     # 1. Grano Duro PDT
     if st.button("🌾 Grano Duro prezzo determinato - Raccolto Luglio 2027", use_container_width=True, key="btn_duro_pdt"):
@@ -1309,11 +1376,10 @@ quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto
 oggi_str = datetime.now().strftime("%Y-%m-%d")
 ha_quotazione_oggi = any(q.get("data") == oggi_str for q in (quotes or []))
 
-# 2. Controllo aggiornamento ad ogni run se manca il dato di oggi o se forzato dall'utente
-if st.session_state.get("force_sync", False) or (not ha_quotazione_oggi and st.session_state.get("mail_checked_today") != oggi_str):
+# 2. Controllo aggiornamento ad ogni run se forzato dall'utente
+if st.session_state.get("force_sync", False):
     st.session_state.force_sync = False
-    st.session_state.mail_checked_today = oggi_str
-    run_inspection_process(messaggio="⏳ Verifica disponibilità quotazione di oggi...")
+    perform_app_sync(force=True, show_msg=True)
     quotes = get_cached_quotes_for_selection(prodotto=prod_name, tipo=tipo_contratto, scadenza="lug-27")
 
 if not quotes:
@@ -1376,19 +1442,31 @@ pdf_bytes, pdf_b64, pdf_filename = get_pdf_guida(product_key)
 pdf_link_attr = f'href="data:application/pdf;base64,{pdf_b64}" download="{pdf_filename}" target="_blank" rel="noopener noreferrer"' if pdf_b64 else 'href="#"'
 
 # ----------------- BARRA DI NAVIGAZIONE E AZIONI IN TESTA -----------------
-nav_col1, nav_col2 = st.columns([1, 1])
-with nav_col1:
-    if st.button("⬅️ Torna alla selezione", key="btn_back_home", use_container_width=True):
-        st.session_state.selected_product = None
-        st.rerun()
-
-with nav_col2:
-    # Se Grano Tenero, consenti il rapido switch PDT <-> PMG
-    if "TENERO" in product_key:
+if "TENERO" in product_key:
+    nav_col1, nav_col2, nav_col3 = st.columns([1.1, 1.0, 1.1])
+    with nav_col1:
+        if st.button("⬅️ Torna", key="btn_back_home", use_container_width=True):
+            st.session_state.selected_product = None
+            st.rerun()
+    with nav_col2:
+        if st.button("🔄 Aggiorna", key="btn_sync_detail", use_container_width=True):
+            st.session_state.force_sync = True
+            st.rerun()
+    with nav_col3:
         twin_key = "TENERO_PMG" if product_key == "TENERO_PDT" else "TENERO_PDT"
-        twin_label = "Switch a PMG" if product_key == "TENERO_PDT" else "Switch a PDT"
-        if st.button(f"🔄 {twin_label}", key="btn_switch_twin", use_container_width=True):
+        twin_label = "Switch PMG" if product_key == "TENERO_PDT" else "Switch PDT"
+        if st.button(f"⇄ {twin_label}", key="btn_switch_twin", use_container_width=True):
             st.session_state.selected_product = twin_key
+            st.rerun()
+else:
+    nav_col1, nav_col2 = st.columns([1.2, 1.2])
+    with nav_col1:
+        if st.button("⬅️ Torna alla selezione", key="btn_back_home", use_container_width=True):
+            st.session_state.selected_product = None
+            st.rerun()
+    with nav_col2:
+        if st.button("🔄 Aggiorna quotazione", key="btn_sync_detail", use_container_width=True):
+            st.session_state.force_sync = True
             st.rerun()
 
 # ----------------- 1. TOP BAR COMPATTA -----------------

@@ -127,16 +127,10 @@ def fetch_quotes_from_gmail(
                 except Exception:
                     pass
 
-            # Se cerchiamo specificamente la data odierna:
-            if target_date:
-                # Se abbiamo raggiunto un'email antecedente a target_date,
-                # e poiché le email sono in ordine cronologico, nessuna email successiva potrà essere di oggi.
-                if email_date and email_date < target_date:
-                    logs.append(f"Email ID {mid.decode()} del {email_date} antecedente a {target_date}: nessuna quotazione odierna presente.")
-                    break
-                # Se l'email non coincide con target_date, passa oltre senza scaricare allegati
-                if email_date and email_date != target_date:
-                    continue
+            # Se cerchiamo specificamente una target_date, verifica corrispondenza
+            if target_date and email_date and email_date != target_date:
+                # Se l'email ha una data diversa da quella cercata, passa oltre senza interrompere la scansione
+                continue
 
             # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS)
             sender_lower = sender.lower()
@@ -266,25 +260,50 @@ def fetch_quotes_from_gmail(
 
     return all_extracted_quotes, logs
 
-def check_and_sync_today_quotes(target_date: Optional[str] = None) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
+def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 25) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
     """
-    Funzione ad alte prestazioni richiamata all'avvio dell'app Streamlit:
-    1. Verifica l'ultima data nello storico locale.
-    2. Se la data odierna non è ancora presente, interroga la casella Gmail.
-    3. Controlla in frazioni di secondo se è arrivata una mail in data odierna.
-    4. Se presente, la scarica, ne estrae le quotazioni e le salva all'istante nel database.
-    5. Restituisce (quotes_estratte, is_updated_to_today, logs).
+    Funzione completa richiamata all'apertura dell'app Streamlit:
+    1. Effettua la sincronizzazione rapida dal cloud GitHub per acquisire le ultime quotazioni salvate.
+    2. Se la data odierna o recente non è ancora completa, scansiona le email pertinenti via IMAP SSL.
+    3. Rileva, estrae e salva atomicamente le nuove quotazioni nel database con deduplicazione.
+    4. Restituisce (quotes_estratte, is_updated_to_today, logs).
     """
     from datetime import datetime
+    logs = []
     oggi_str = target_date or datetime.now().strftime("%Y-%m-%d")
     
-    quotes, logs = fetch_quotes_from_gmail(
-        max_emails=8,
-        target_date=oggi_str,
-        stop_after_first_match=True
+    # 1. Sync rapido dal repository GitHub
+    try:
+        from execution.storage_manager import sync_from_github, load_quotes
+    except ImportError:
+        from storage_manager import sync_from_github, load_quotes
+
+    try:
+        n_github = sync_from_github()
+        if n_github > 0:
+            logs.append(f"☁️ Sincronizzate {n_github} quotazioni dal repository cloud GitHub.")
+    except Exception as e:
+        logs.append(f"Nota sync cloud: {e}")
+
+    # Verifica se dopo il sync cloud abbiamo già la quotazione odierna
+    current_quotes = load_quotes()
+    ha_gia_oggi = any(q.get("data") == oggi_str for q in current_quotes)
+    if ha_gia_oggi:
+        logs.append(f"🟢 Database già aggiornato alla data odierna ({oggi_str}).")
+        return [], True, logs
+
+    # 2. Controllo casella Gmail per estrarre le quotazioni più recenti
+    extracted_quotes, gmail_logs = fetch_quotes_from_gmail(
+        max_emails=scan_depth,
+        target_date=None, # Scansiona per acquisire qualsiasi quotazione recente non ancora a catalogo
+        stop_after_first_match=False
     )
-    is_today_present = any(q.get("data") == oggi_str for q in quotes)
-    return quotes, is_today_present, logs
+    logs.extend(gmail_logs)
+
+    # Ricarica lo storico aggiornato
+    updated_quotes = load_quotes()
+    is_today_present = any(q.get("data") == oggi_str for q in updated_quotes)
+    return extracted_quotes, is_today_present, logs
 
 if __name__ == "__main__":
     import sys

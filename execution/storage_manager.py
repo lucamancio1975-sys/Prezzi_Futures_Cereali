@@ -86,7 +86,14 @@ def save_quotes(quotes: List[Dict[str, Any]]) -> bool:
         print(f"Errore salvataggio database atomico: {e}")
         return False
 
-def add_quotes(new_quotes: List[Dict[str, Any]]) -> int:
+def get_latest_db_date() -> str:
+    """Restituisce la data più recente registrata nel database in formato YYYY-MM-DD."""
+    quotes = load_quotes()
+    if not quotes:
+        return ""
+    return max((q.get("data", "") for q in quotes if q.get("data")), default="")
+
+def add_quotes(new_quotes: List[Dict[str, Any]], push_github: bool = True) -> int:
     """
     Aggiunge nuove quotazioni deduplicando su chiave: (data, prodotto, scadenza, tipo).
     Ritorna il numero di nuovi record aggiunti o aggiornati.
@@ -125,12 +132,74 @@ def add_quotes(new_quotes: List[Dict[str, Any]]) -> int:
                 
     if added_count > 0:
         save_quotes(list(existing_map.values()))
-        try:
-            sync_to_github()
-        except Exception:
-            pass
+        if push_github:
+            try:
+                sync_to_github()
+            except Exception:
+                pass
         
     return added_count
+
+def sync_from_github() -> int:
+    """
+    Sincronizzazione in ingresso dal repository GitHub:
+    Scarica la versione più recente di data/storico_prezzi.json da GitHub
+    e fonde eventuali nuove quotazioni nel database locale.
+    Restituisce il numero di quotazioni importate/aggiornate.
+    """
+    import urllib.request
+    token = os.getenv("GITHUB_TOKEN")
+    repo = os.getenv("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
+    
+    if not repo:
+        try:
+            import streamlit as st
+            repo = st.secrets.get("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
+        except Exception:
+            repo = "lucamancio1975-sys/Prezzi_Futures_Cereali"
+            
+    if not token:
+        try:
+            import streamlit as st
+            token = st.secrets.get("GITHUB_TOKEN")
+        except Exception:
+            pass
+
+    headers = {"User-Agent": "FuturesGrano-App"}
+    if token:
+        headers["Authorization"] = f"token {token}"
+
+    remote_quotes = None
+    
+    # 1. Prova prima con l'URL raw (immediato e leggero)
+    raw_url = f"https://raw.githubusercontent.com/{repo}/main/data/storico_prezzi.json"
+    try:
+        req = urllib.request.Request(raw_url, headers=headers)
+        with urllib.request.urlopen(req, timeout=6.0) as resp:
+            if resp.status == 200:
+                remote_quotes = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        pass
+
+    # 2. Fallback su GitHub Contents API se raw fallisce
+    if remote_quotes is None and token:
+        api_url = f"https://api.github.com/repos/{repo}/contents/data/storico_prezzi.json"
+        try:
+            import base64
+            req = urllib.request.Request(api_url, headers={**headers, "Accept": "application/vnd.github.v3+json"})
+            with urllib.request.urlopen(req, timeout=8.0) as resp:
+                if resp.status == 200:
+                    api_data = json.loads(resp.read().decode("utf-8"))
+                    raw_content = base64.b64decode(api_data.get("content", "")).decode("utf-8")
+                    remote_quotes = json.loads(raw_content)
+        except Exception:
+            pass
+
+    if not remote_quotes or not isinstance(remote_quotes, list):
+        return 0
+
+    # Fonde le quotazioni remote nel DB locale senza rimandare indietro a GitHub
+    return add_quotes(remote_quotes, push_github=False)
 
 def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]") -> bool:
     """
