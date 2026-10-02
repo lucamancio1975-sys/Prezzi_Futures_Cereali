@@ -41,7 +41,37 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
             except Exception as e:
                 print(f"[OCR] Errore esecuzione win_ocr: {e}")
 
-    # 2. Fallback con pytesseract se installato
+    # 2. Fallback con pytesseract (Linux / Streamlit Community Cloud)
+    try:
+        import pytesseract
+        from pytesseract import Output
+        img = Image.open(image_path)
+        data = pytesseract.image_to_data(img, lang='ita+eng', output_type=Output.DICT)
+        lines_dict = {}
+        n_boxes = len(data.get('text', []))
+        for i in range(n_boxes):
+            w_text = str(data['text'][i]).strip()
+            if not w_text:
+                continue
+            line_key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
+            if line_key not in lines_dict:
+                lines_dict[line_key] = []
+            lines_dict[line_key].append({
+                "Text": w_text,
+                "X": data['left'][i],
+                "Y": data['top'][i],
+                "Width": data['width'][i],
+                "Height": data['height'][i]
+            })
+        lines = []
+        for line_key, words in lines_dict.items():
+            full_text = " ".join([w["Text"] for w in words])
+            lines.append({"Text": full_text, "Words": words})
+        if lines:
+            return lines
+    except Exception:
+        pass
+
     try:
         import pytesseract
         text = pytesseract.image_to_string(Image.open(image_path), lang='ita+eng')
