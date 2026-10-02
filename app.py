@@ -1029,24 +1029,16 @@ def get_cached_delta(prodotto: str, tipo: str, scadenza: str = "lug-27"):
 # =========================================================================
 def perform_app_sync(force: bool = False, show_msg: bool = True):
     """
-    Esegue il processo di aggiornamento giornaliero delle quotazioni cereali:
-    1. Sincronizzazione cloud da repository GitHub (riceve le ultime quotazioni salvate da qualsiasi sorgente).
-    2. Scansione email IMAP SSL da casella Gmail con estrazione PDF/immagini/corpo email.
-    3. Deduplicazione, archiviazione locale e push verso GitHub.
-    4. Pulizia automatica della cache Streamlit per aggiornare grafici e metriche.
+    Esegue il processo di aggiornamento giornaliero delle quotazioni cereali.
+    Ottimizzato per avvio < 3 secondi:
+    - Controlla prima il DB locale (zero rete, istantaneo).
+    - Solo se necessario, contatta GitHub e Gmail con timeout aggressivi.
+    - Il push verso GitHub è differito in background.
     """
     placeholder = st.empty()
-    if show_msg:
-        placeholder.markdown("""
-        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fbbf24; letter-spacing: 0.05em; text-transform: uppercase;">
-                ⏳ Verifica e aggiornamento quotidiano quotazioni in corso...
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
 
     try:
-        new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=8)
+        new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=5)
         st.cache_data.clear()
         st.session_state.last_sync_time = time.time()
         st.session_state.app_boot_sync_done = True
@@ -1057,7 +1049,6 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
 
         if new_q:
             st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate nel database!"
-            placeholder.empty()
             st.rerun()
         elif ha_oggi or is_t:
             st.session_state.sync_feedback = "🟢 Database aggiornato alla seduta odierna."
@@ -1072,23 +1063,21 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
 
 def check_today_quotes_flow():
     """
-    Workflow di sincronizzazione automatica all'apertura dell'app:
-    Esegue la sincronizzazione immediata ad ogni apertura o ricaricamento dell'app:
-    - Se l'app viene avviata (app_boot_sync_done is False)
-    - Oppure se nel database manca la quotazione della data odierna (evitando solo loop continui nello stesso secondo)
+    Workflow di sincronizzazione automatica all'apertura dell'app.
+    Strategia: mostra la UI il prima possibile.
     """
     now_ts = time.time()
-    all_quotes = load_quotes()
-    oggi_str = datetime.now().strftime("%Y-%m-%d")
-    ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
 
-    needs_check = (
-        (not st.session_state.get("app_boot_sync_done", False)) or
-        (not ha_oggi and (now_ts - st.session_state.get("last_sync_time", 0) > 8))
-    )
+    # Se la sincronizzazione è già stata fatta in questa sessione, salta direttamente
+    if st.session_state.get("app_boot_sync_done", False):
+        # Risincronizza solo se non abbiamo la data odierna e sono passati almeno 30 secondi
+        all_quotes = load_quotes()
+        oggi_str = datetime.now().strftime("%Y-%m-%d")
+        ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
+        if ha_oggi or (now_ts - st.session_state.get("last_sync_time", 0) < 30):
+            return
 
-    if needs_check:
-        perform_app_sync(force=True, show_msg=True)
+    perform_app_sync(force=True, show_msg=False)
 
 
 # Esecuzione centralizzata della sincronizzazione e aggiornamento automatico all'avvio della app

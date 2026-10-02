@@ -267,7 +267,7 @@ def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures ce
             current_sha = None
             try:
                 get_req = urllib.request.Request(api_url, headers=headers)
-                with urllib.request.urlopen(get_req, timeout=10.0) as resp:
+                with urllib.request.urlopen(get_req, timeout=5.0) as resp:
                     resp_data = json.loads(resp.read().decode())
                     current_sha = resp_data.get("sha")
             except Exception:
@@ -286,7 +286,7 @@ def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures ce
                 headers=headers,
                 method="PUT"
             )
-            with urllib.request.urlopen(put_req, timeout=12.0) as resp:
+            with urllib.request.urlopen(put_req, timeout=5.0) as resp:
                 pass
         except Exception as e:
             print(f"[GITHUB SYNC ERROR] Impossibile sincronizzare {github_rel_path}: {e}")

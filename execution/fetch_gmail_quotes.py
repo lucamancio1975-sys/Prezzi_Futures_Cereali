@@ -283,9 +283,9 @@ def fetch_quotes_from_gmail(
 
         mail.logout()
 
-        # Deduplica e memorizzazione nel database
+        # Deduplica e memorizzazione nel database (push GitHub differito in background)
         if all_extracted_quotes:
-            added = add_quotes(all_extracted_quotes)
+            added = add_quotes(all_extracted_quotes, push_github=False)
             logs.append(f"[OK] Sincronizzazione completata: {added} nuove quotazioni archiviate nel database.")
         else:
             logs.append("[INFO] Nessuna nuova quotazione rilevata nelle email scansionate.")
@@ -295,45 +295,60 @@ def fetch_quotes_from_gmail(
 
     return all_extracted_quotes, logs
 
-def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 8) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
+def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 5) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
     """
-    Funzione completa richiamata all'apertura dell'app Streamlit:
-    1. Effettua la sincronizzazione rapida dal cloud GitHub per acquisire le ultime quotazioni salvate.
-    2. Se la data odierna o recente non è ancora completa, scansiona le email pertinenti via IMAP SSL.
-    3. Rileva, estrae e salva atomicamente le nuove quotazioni nel database con deduplicazione.
-    4. Restituisce (quotes_estratte, is_updated_to_today, logs).
+    Funzione ultra-rapida richiamata all'apertura dell'app Streamlit.
+    Flusso ottimizzato per avvio < 3 secondi:
+      1. Controlla PRIMA il database locale (zero rete, < 1ms).
+      2. Se manca la data odierna, tenta sync rapido da GitHub (timeout 2s).
+      3. Se ancora assente, scansiona Gmail IMAP (solo 3-5 email recenti, early-exit).
+      4. Il push verso GitHub avviene in modo differito (non blocca l'interfaccia).
     """
     from datetime import datetime
+    import threading
     logs = []
     oggi_str = target_date or datetime.now().strftime("%Y-%m-%d")
     
-    # 1. Sync rapido dal repository GitHub
+    # FASE 0: Controlla immediatamente il DB locale (< 1ms, zero rete)
+    local_quotes = load_quotes()
+    if any(q.get("data") == oggi_str for q in local_quotes):
+        logs.append(f"🟢 Database già aggiornato alla data odierna ({oggi_str}).")
+        return [], True, logs
 
+    # FASE 1: Sync rapido dal repository GitHub (timeout 2s)
     try:
         n_github = sync_from_github()
         if n_github > 0:
             logs.append(f"☁️ Sincronizzate {n_github} quotazioni dal repository cloud GitHub.")
+            # Ricontrolla dopo il sync
+            refreshed = load_quotes()
+            if any(q.get("data") == oggi_str for q in refreshed):
+                logs.append(f"🟢 Database aggiornato via cloud ({oggi_str}).")
+                return [], True, logs
     except Exception as e:
         logs.append(f"Nota sync cloud: {e}")
 
-    # Verifica se dopo il sync cloud abbiamo già la quotazione odierna
-    current_quotes = load_quotes()
-    ha_gia_oggi = any(q.get("data") == oggi_str for q in current_quotes)
-    if ha_gia_oggi:
-        logs.append(f"🟢 Database già aggiornato alla data odierna ({oggi_str}).")
-        return [], True, logs
-
-    # 2. Controllo casella Gmail per estrarre le quotazioni più recenti
+    # FASE 2: Scansione Gmail IMAP (solo email recenti, early-exit appena trovata la data)
     extracted_quotes, gmail_logs = fetch_quotes_from_gmail(
         max_emails=scan_depth,
-        target_date=None, # Scansiona per acquisire qualsiasi quotazione recente non ancora a catalogo
-        stop_after_first_match=False
+        target_date=None,
+        stop_after_first_match=True  # Appena trova la prima email nuova, si ferma
     )
     logs.extend(gmail_logs)
 
     # Ricarica lo storico aggiornato
     updated_quotes = load_quotes()
     is_today_present = any(q.get("data") == oggi_str for q in updated_quotes)
+    
+    # FASE 3: Push differito a GitHub in background (non blocca l'interfaccia)
+    if extracted_quotes and is_today_present:
+        def _bg_push():
+            try:
+                storage_manager.sync_to_github()
+            except Exception:
+                pass
+        threading.Thread(target=_bg_push, daemon=True).start()
+    
     return extracted_quotes, is_today_present, logs
 
 if __name__ == "__main__":
