@@ -171,14 +171,19 @@ def sync_from_github() -> int:
         token = base64.b64decode("Z2hwXzIzWkQxcUtBeWg3SnNMcW5vT2ltQmlGTUQ4SWxORjB6YWx1bw==").decode()
     repo = repo or "lucamancio1975-sys/Prezzi_Futures_Cereali"
 
-    headers = {"User-Agent": "FuturesGrano-App"}
+    import time
+    headers = {
+        "User-Agent": "FuturesGrano-App",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache"
+    }
     if token:
         headers["Authorization"] = f"token {token}"
 
     remote_quotes = None
     
-    # 1. Prova prima con l'URL raw (immediato e leggero)
-    raw_url = f"https://raw.githubusercontent.com/{repo}/main/data/storico_prezzi.json"
+    # 1. Prova prima con l'URL raw (con cache buster per evitare ritardi CDN di GitHub)
+    raw_url = f"https://raw.githubusercontent.com/{repo}/main/data/storico_prezzi.json?_t={int(time.time())}"
     try:
         req = urllib.request.Request(raw_url, headers=headers)
         with urllib.request.urlopen(req, timeout=6.0) as resp:
