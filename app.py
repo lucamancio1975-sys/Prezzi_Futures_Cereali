@@ -19,35 +19,36 @@ import streamlit as st
 import plotly.graph_objects as go
 from dotenv import load_dotenv
 
+# Configurazione robusta dei percorsi di sistema (funziona sia su Streamlit Cloud sia in locale)
+import sys
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXEC_DIR = os.path.join(BASE_DIR, "execution")
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+if EXEC_DIR not in sys.path:
+    sys.path.insert(0, EXEC_DIR)
+
 # Import moduli di esecuzione locali
 try:
-    from execution.storage_manager import (
-        load_quotes,
-        add_quotes,
-        get_quotes_for_selection,
-        get_delta_for_selection,
-        sync_from_github,
-        get_latest_db_date
-    )
-    from execution.fetch_gmail_quotes import (
-        fetch_quotes_from_gmail,
-        check_and_sync_today_quotes
-    )
-except ImportError:
-    import sys
-    sys.path.append(os.path.join(os.path.dirname(__file__), "execution"))
-    from storage_manager import (
-        load_quotes,
-        add_quotes,
-        get_quotes_for_selection,
-        get_delta_for_selection,
-        sync_from_github,
-        get_latest_db_date
-    )
-    from fetch_gmail_quotes import (
-        fetch_quotes_from_gmail,
-        check_and_sync_today_quotes
-    )
+    import execution.storage_manager as storage_manager
+except Exception:
+    import storage_manager
+
+try:
+    import execution.fetch_gmail_quotes as fetch_gmail_quotes
+except Exception:
+    import fetch_gmail_quotes
+
+# Riferimenti sicuri alle funzioni necessarie
+load_quotes = storage_manager.load_quotes
+add_quotes = storage_manager.add_quotes
+get_quotes_for_selection = storage_manager.get_quotes_for_selection
+get_delta_for_selection = storage_manager.get_delta_for_selection
+sync_from_github = getattr(storage_manager, "sync_from_github", lambda: 0)
+get_latest_db_date = getattr(storage_manager, "get_latest_db_date", lambda: "")
+
+fetch_quotes_from_gmail = fetch_gmail_quotes.fetch_quotes_from_gmail
+check_and_sync_today_quotes = getattr(fetch_gmail_quotes, "check_and_sync_today_quotes", None)
 
 import streamlit.components.v1 as components
 

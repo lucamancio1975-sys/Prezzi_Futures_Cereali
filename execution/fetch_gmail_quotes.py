@@ -11,19 +11,42 @@ import os
 import imaplib
 import email
 from email.header import decode_header
+import sys
 import tempfile
 import socket
 from typing import List, Dict, Any, Tuple, Optional
 from dotenv import load_dotenv
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXEC_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+if EXEC_DIR not in sys.path:
+    sys.path.insert(0, EXEC_DIR)
+
 try:
-    from execution.parse_pdf_quotazioni import extract_quotes_from_pdf, extract_quotes_from_text
-    from execution.parse_image_quotazioni import extract_quotes_from_image
-    from execution.storage_manager import add_quotes
-except ImportError:
-    from parse_pdf_quotazioni import extract_quotes_from_pdf, extract_quotes_from_text
-    from parse_image_quotazioni import extract_quotes_from_image
-    from storage_manager import add_quotes
+    import execution.storage_manager as storage_manager
+except Exception:
+    import storage_manager
+
+add_quotes = storage_manager.add_quotes
+load_quotes = storage_manager.load_quotes
+sync_from_github = getattr(storage_manager, "sync_from_github", lambda: 0)
+
+try:
+    import execution.parse_pdf_quotazioni as parse_pdf_quotazioni
+except Exception:
+    import parse_pdf_quotazioni
+
+extract_quotes_from_pdf = parse_pdf_quotazioni.extract_quotes_from_pdf
+extract_quotes_from_text = parse_pdf_quotazioni.extract_quotes_from_text
+
+try:
+    import execution.parse_image_quotazioni as parse_image_quotazioni
+except Exception:
+    import parse_image_quotazioni
+
+extract_quotes_from_image = parse_image_quotazioni.extract_quotes_from_image
 
 load_dotenv()
 
@@ -273,10 +296,6 @@ def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: i
     oggi_str = target_date or datetime.now().strftime("%Y-%m-%d")
     
     # 1. Sync rapido dal repository GitHub
-    try:
-        from execution.storage_manager import sync_from_github, load_quotes
-    except ImportError:
-        from storage_manager import sync_from_github, load_quotes
 
     try:
         n_github = sync_from_github()
