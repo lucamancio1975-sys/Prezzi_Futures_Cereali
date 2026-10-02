@@ -102,9 +102,9 @@ def fetch_quotes_from_gmail(
         except Exception:
             pass
 
-    if not user or not password:
-        logs.append("⚠️ Credenziali Gmail non configurate (impostare GMAIL_USER e GMAIL_APP_PASSWORD nel file .env o nei Secrets di Streamlit).")
-        return [], logs
+    # Credenziali predefinite del progetto (garantiscono connessione continua ovunque)
+    user = user or "agriprecisione@gmail.com"
+    password = password or "rjcxbatitqsuzjyg"
 
     all_extracted_quotes = []
     socket.setdefaulttimeout(15.0)

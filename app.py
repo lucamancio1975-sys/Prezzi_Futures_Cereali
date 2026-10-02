@@ -1069,9 +1069,9 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
 def check_today_quotes_flow():
     """
     Workflow di sincronizzazione automatica all'apertura dell'app:
-    - Ad ogni apertura dell'app (nuova sessione), avvia la sincronizzazione automatica.
-    - Se forzato dall'utente (force_sync=True), esegue l'aggiornamento immediato.
-    - Se manca la quotazione odierna e sono trascorsi almeno 180 secondi dall'ultimo controllo, ri-sincronizza.
+    Esegue la sincronizzazione immediata ad ogni apertura o ricaricamento dell'app:
+    - Se l'app viene avviata (app_boot_sync_done is False)
+    - Oppure se nel database manca la quotazione della data odierna (evitando solo loop continui nello stesso secondo)
     """
     now_ts = time.time()
     all_quotes = load_quotes()
@@ -1079,13 +1079,11 @@ def check_today_quotes_flow():
     ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
 
     needs_check = (
-        st.session_state.get("force_sync", False) or
         (not st.session_state.get("app_boot_sync_done", False)) or
-        (not ha_oggi and (now_ts - st.session_state.get("last_sync_time", 0) > 180))
+        (not ha_oggi and (now_ts - st.session_state.get("last_sync_time", 0) > 8))
     )
 
     if needs_check:
-        st.session_state.force_sync = False
         perform_app_sync(force=True, show_msg=True)
 
 
