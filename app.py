@@ -1238,15 +1238,10 @@ data_estesa = f"{giorni_it[data_dt.weekday()]} {data_dt.day} {mesi_it[data_dt.mo
 # Status badge e dicitura data
 if is_today:
     status_badge = '<span class="app-sync-status status-today">🟢 Aggiornato a Oggi</span>'
-    date_display_html = f'<div class="hero-date-val">📅 <b>{data_estesa}</b></div>'
 else:
     status_badge = f'<span class="app-sync-status status-wait">⏳ Aggiornato al {data_dt.strftime("%d/%m/%Y")} (In attesa oggi)</span>'
-    date_display_html = f'''<div class="hero-date-val">
-        📅 <b>{data_estesa}</b>
-        <div style="font-size: clamp(0.68rem, 2.3vw, 0.76rem); color: #fbbf24; margin-top: 3px; font-weight: 600;">
-            ⏳ Aggiornata al {data_dt.strftime("%d/%m/%Y")} — in attesa di quotazione odierna
-        </div>
-    </div>'''
+
+date_display_html = f'<div class="hero-date-val">📅 <b>{data_estesa}</b></div>'
 
 # Pill del contratto
 contract_pill = (
