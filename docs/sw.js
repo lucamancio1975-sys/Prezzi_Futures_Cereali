@@ -1,7 +1,5 @@
-const CACHE_NAME = 'futures-grano-v1';
+const CACHE_NAME = 'futures-grano-v2';
 const STATIC_ASSETS = [
-  './',
-  './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -11,10 +9,11 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -35,7 +34,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Per asset locali della shell PWA usa cache-first con network fallback
+  // Per la navigazione della pagina principale usa Network-First così gli aggiornamenti si vedono subito
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('index.html') || url.pathname.endsWith('/')) {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        return networkResponse;
+      }).catch(() => {
+        return caches.match(event.request) || caches.match('./index.html');
+      })
+    );
+    return;
+  }
+
+  // Per gli asset statici (icone, manifest) usa cache-first con network fallback
   if (url.origin === location.origin) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
@@ -45,6 +56,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Per le richieste esterne (Streamlit Cloud, websocket, streaming dati) usa sempre la rete
+  // Per tutte le chiamate esterne (Streamlit Cloud, websocket) usa sempre la rete
   event.respondWith(fetch(event.request));
 });

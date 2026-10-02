@@ -139,7 +139,7 @@ st.markdown("""
 
     /* Ottimizzazione contenitore principale per smartphone con ampio respiro in fondo */
     .block-container {
-        padding-top: clamp(0.4rem, 2vh, 1.2rem) !important;
+        padding-top: 0px !important;
         padding-bottom: clamp(140px, 20vh, 200px) !important;
         padding-left: clamp(0.4rem, 2.5vw, 0.85rem) !important;
         padding-right: clamp(0.4rem, 2.5vw, 0.85rem) !important;
@@ -235,15 +235,15 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 4px !important;
-        margin-bottom: 10px !important;
+        margin-top: 6px !important;
+        margin-bottom: 14px !important;
         padding: 0 2px;
     }
     .futures-protection-badge {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(26, 38, 64, 0.8) 100%);
         border: 1px solid rgba(245, 158, 11, 0.4);
         border-radius: 9999px;
-        padding: 4px 14px;
+        padding: 5px 16px;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -269,9 +269,9 @@ st.markdown("""
     .main-question-card {
         background: linear-gradient(145deg, #090e1a 0%, #111c33 100%);
         border: 1.5px solid #1e293b;
-        border-radius: 12px;
-        padding: 9px 14px !important;
-        margin: 0 0 12px 0 !important;
+        border-radius: 14px;
+        padding: 12px 16px !important;
+        margin: 0 0 18px 0 !important;
         text-align: center;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         position: relative;
@@ -296,9 +296,19 @@ st.markdown("""
     .main-question-sub {
         font-size: clamp(0.75rem, 2.4vw, 0.85rem) !important;
         color: #94a3b8;
-        margin-top: 4px !important;
+        margin-top: 5px !important;
         font-weight: 500;
         line-height: 1.25 !important;
+    }
+
+    /* Separazione netta dei container dei tre bottoni */
+    div.st-key-btn_duro_pdt,
+    div.st-key-btn_tenero_pdt,
+    div.st-key-btn_tenero_pmg,
+    div[class*="st-key-btn_duro_pdt"],
+    div[class*="st-key-btn_tenero_pdt"],
+    div[class*="st-key-btn_tenero_pmg"] {
+        margin-bottom: 14px !important;
     }
 
     /* Stile comune per i tre bottoni della schermata di scelta */
@@ -312,7 +322,7 @@ st.markdown("""
     button[aria-label*="Tenero prezzo determinato"],
     button[aria-label*="prezzo minimo"] {
         width: 100% !important;
-        min-height: 52px !important;
+        min-height: 54px !important;
         border-radius: 12px !important;
         font-family: 'Space Grotesk', sans-serif !important;
         font-size: clamp(0.98rem, 3.5vw, 1.14rem) !important;
@@ -322,9 +332,8 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 8px 12px !important;
-        margin-bottom: 9px !important;
-        line-height: 1.2 !important;
+        padding: 9px 14px !important;
+        line-height: 1.25 !important;
         white-space: normal !important;
         text-align: center !important;
     }
@@ -1070,18 +1079,18 @@ if st.session_state.selected_product is None:
         ld_str = "N.D."
 
     if ha_quotazione_oggi:
-        status_banner = '<div style="text-align:center; margin-bottom:10px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+        status_banner = '<div style="text-align:center; margin-top: 6px; margin-bottom: 16px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
     else:
-        status_banner = f'<div style="text-align:center; margin-bottom:10px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+        status_banner = f'<div style="text-align:center; margin-top: 6px; margin-bottom: 16px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
 
-    # Spaziatura armoniosa tra i riquadri della schermata principale
+    # Spaziatura ampia ed elegante tra i riquadri della schermata principale
     st.markdown("""<style>
         .block-container {
             padding-top: 0px !important;
             margin-top: -10px !important;
         }
         div[data-testid="stVerticalBlock"] {
-            gap: 0.65rem !important;
+            gap: 0.95rem !important;
         }
     </style>""", unsafe_allow_html=True)
 
@@ -1223,13 +1232,14 @@ components.html("""
 </script>
 """, height=0, width=0)
 
-# Stile mirato: taglio del 50% dello spazio tra prima scritta e bordo superiore
+# Stile mirato: taglio di un ulteriore 50% dello spazio tra prima scritta e bordo superiore
 st.markdown("""<style>
     .block-container,
     div[data-testid="stMainBlockContainer"],
-    div[data-testid="stAppViewBlockContainer"] {
+    div[data-testid="stAppViewBlockContainer"],
+    section[data-testid="stMain"] > div:first-child {
         padding-top: 0px !important;
-        margin-top: -46px !important;
+        margin-top: -68px !important;
     }
     section[data-testid="stMain"] {
         padding-top: 0px !important;
@@ -1239,27 +1249,30 @@ st.markdown("""<style>
     }
     div[data-testid="stHorizontalBlock"] {
         margin-top: 0px !important;
-        margin-bottom: 2px !important;
+        margin-bottom: 0px !important;
     }
     div[data-testid="element-container"]:has(iframe[height="0"]),
     div[data-testid="element-container"]:has(style),
     div[data-testid="stVerticalBlock"] > div:has(iframe[height="0"]),
     div[data-testid="stVerticalBlock"] > div:has(style:only-child) {
         display: none !important;
+        position: absolute !important;
+        top: -9999px !important;
         height: 0 !important;
+        width: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
     .st-key-btn_back_home > button,
     .st-key-btn_switch_twin > button {
         margin-top: 0px !important;
-        padding: 4px 10px !important;
-        min-height: 36px !important;
+        padding: 3px 10px !important;
+        min-height: 34px !important;
     }
     .app-topbar {
-        margin-top: 2px !important;
-        margin-bottom: 6px !important;
-        padding: 5px 10px !important;
+        margin-top: 1px !important;
+        margin-bottom: 5px !important;
+        padding: 4px 10px !important;
     }
 </style>""", unsafe_allow_html=True)
 
