@@ -235,18 +235,18 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 0px !important;
-        margin-bottom: 2px !important;
+        margin-top: 4px !important;
+        margin-bottom: 10px !important;
         padding: 0 2px;
     }
     .futures-protection-badge {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(26, 38, 64, 0.8) 100%);
         border: 1px solid rgba(245, 158, 11, 0.4);
         border-radius: 9999px;
-        padding: 3px 12px;
+        padding: 4px 14px;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         transition: all 0.3s ease;
     }
@@ -270,8 +270,8 @@ st.markdown("""
         background: linear-gradient(145deg, #090e1a 0%, #111c33 100%);
         border: 1.5px solid #1e293b;
         border-radius: 12px;
-        padding: 7px 12px !important;
-        margin: 0 0 5px 0 !important;
+        padding: 9px 14px !important;
+        margin: 0 0 12px 0 !important;
         text-align: center;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         position: relative;
@@ -290,15 +290,15 @@ st.markdown("""
         font-weight: 800;
         color: #ffffff;
         letter-spacing: -0.02em;
-        line-height: 1.2 !important;
+        line-height: 1.25 !important;
         margin: 0;
     }
     .main-question-sub {
         font-size: clamp(0.75rem, 2.4vw, 0.85rem) !important;
         color: #94a3b8;
-        margin-top: 2px !important;
+        margin-top: 4px !important;
         font-weight: 500;
-        line-height: 1.2 !important;
+        line-height: 1.25 !important;
     }
 
     /* Stile comune per i tre bottoni della schermata di scelta */
@@ -323,7 +323,7 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         padding: 8px 12px !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 9px !important;
         line-height: 1.2 !important;
         white-space: normal !important;
         text-align: center !important;
@@ -1070,18 +1070,18 @@ if st.session_state.selected_product is None:
         ld_str = "N.D."
 
     if ha_quotazione_oggi:
-        status_banner = '<div style="text-align:center; margin-bottom:3px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
+        status_banner = '<div style="text-align:center; margin-bottom:10px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span></div>'
     else:
-        status_banner = f'<div style="text-align:center; margin-bottom:3px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
+        status_banner = f'<div style="text-align:center; margin-bottom:10px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span></div>'
 
-    # Eliminazione dell'80% dello spazio nero in testa e compattazione layout
+    # Spaziatura armoniosa tra i riquadri della schermata principale
     st.markdown("""<style>
         .block-container {
             padding-top: 0px !important;
-            margin-top: -14px !important;
+            margin-top: -10px !important;
         }
         div[data-testid="stVerticalBlock"] {
-            gap: 0.25rem !important;
+            gap: 0.65rem !important;
         }
     </style>""", unsafe_allow_html=True)
 
@@ -1218,22 +1218,33 @@ components.html("""
     setTimeout(resetToTop, 350);
     setTimeout(resetToTop, 700);
     setTimeout(resetToTop, 1200);
+    setTimeout(resetToTop, 1800);
 })();
 </script>
 """, height=0, width=0)
 
-# Stile mirato per eliminare il 50% dello spazio nero in testa alle 3 pagine di scelta
+# Stile mirato: taglio del 50% dello spazio tra prima scritta e bordo superiore
 st.markdown("""<style>
-    .block-container {
+    .block-container,
+    div[data-testid="stMainBlockContainer"],
+    div[data-testid="stAppViewBlockContainer"] {
         padding-top: 0px !important;
-        margin-top: -16px !important;
+        margin-top: -46px !important;
+    }
+    section[data-testid="stMain"] {
+        padding-top: 0px !important;
+    }
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        padding-top: 0px !important;
     }
     div[data-testid="stHorizontalBlock"] {
         margin-top: 0px !important;
         margin-bottom: 2px !important;
     }
     div[data-testid="element-container"]:has(iframe[height="0"]),
-    div[data-testid="element-container"]:has(style) {
+    div[data-testid="element-container"]:has(style),
+    div[data-testid="stVerticalBlock"] > div:has(iframe[height="0"]),
+    div[data-testid="stVerticalBlock"] > div:has(style:only-child) {
         display: none !important;
         height: 0 !important;
         margin: 0 !important;
@@ -1242,8 +1253,8 @@ st.markdown("""<style>
     .st-key-btn_back_home > button,
     .st-key-btn_switch_twin > button {
         margin-top: 0px !important;
-        padding: 5px 10px !important;
-        min-height: 38px !important;
+        padding: 4px 10px !important;
+        min-height: 36px !important;
     }
     .app-topbar {
         margin-top: 2px !important;
