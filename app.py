@@ -1036,6 +1036,17 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
     - Il push verso GitHub è differito in background.
     """
     placeholder = st.empty()
+    if show_msg:
+        placeholder.markdown("""
+        <div style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+            <div style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:12px;">🌾</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#fbbf24;letter-spacing:0.05em;">
+                    Caricamento quotazioni...
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     try:
         new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=5)
@@ -1049,6 +1060,7 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
 
         if new_q:
             st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate nel database!"
+            placeholder.empty()
             st.rerun()
         elif ha_oggi or is_t:
             st.session_state.sync_feedback = "🟢 Database aggiornato alla seduta odierna."
@@ -1077,7 +1089,7 @@ def check_today_quotes_flow():
         if ha_oggi or (now_ts - st.session_state.get("last_sync_time", 0) < 30):
             return
 
-    perform_app_sync(force=True, show_msg=False)
+    perform_app_sync(force=True, show_msg=True)
 
 
 # Esecuzione centralizzata della sincronizzazione e aggiornamento automatico all'avvio della app
