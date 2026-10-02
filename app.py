@@ -1044,7 +1044,7 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
         """, unsafe_allow_html=True)
 
     try:
-        new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=30)
+        new_q, is_t, logs = check_and_sync_today_quotes(scan_depth=8)
         st.cache_data.clear()
         st.session_state.last_sync_time = time.time()
         st.session_state.app_boot_sync_done = True

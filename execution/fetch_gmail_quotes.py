@@ -130,6 +130,11 @@ def fetch_quotes_from_gmail(
         recent_ids = mail_ids[-n_scan:]
         recent_ids.reverse()
 
+        # Carica le date già archiviate nel database per evitare download e OCR ridondanti
+        existing_quotes = load_quotes()
+        existing_dates = set(q.get("data") for q in existing_quotes if q.get("data"))
+        latest_db_date = getattr(storage_manager, "get_latest_db_date", lambda: "")()
+
         for mid in recent_ids:
             # 1. Ispezione rapida preliminare dell'header (millisecondi)
             hdr_res, hdr_data = mail.fetch(mid, '(BODY[HEADER.FIELDS (SUBJECT FROM DATE)])')
@@ -155,16 +160,9 @@ def fetch_quotes_from_gmail(
                 # Se l'email ha una data diversa da quella cercata, passa oltre senza interrompere la scansione
                 continue
 
-            # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS)
-            sender_lower = sender.lower()
-            allowed_senders_cfg = os.getenv("GMAIL_ALLOWED_SENDERS", "").strip()
-            if allowed_senders_cfg:
-                allowed_list = [s.strip().lower() for s in allowed_senders_cfg.split(",") if s.strip()]
-                if not any(a in sender_lower for a in allowed_list):
-                    continue
-
             # Filtro di pertinenza su oggetto o mittente predefinito
             subj_lower = subject.lower()
+            sender_lower = sender.lower()
             is_relevant = any(k in subj_lower for k in [
                 "quotazion", "futures", "pdt", "pmg", "grano", "prezzi", "tenero", "duro"
             ]) or "consorziagrari" in sender_lower
@@ -172,7 +170,21 @@ def fetch_quotes_from_gmail(
             if not is_relevant:
                 continue
 
-            # 2. Scarica il messaggio completo solo per l'email pertinente
+            # Ottimizzazione turbo: se questa data è già archiviata nel DB, salta download e OCR pesanti
+            if email_date and email_date in existing_dates:
+                if latest_db_date and email_date < latest_db_date:
+                    logs.append(f"Email del {email_date} già a catalogo: arresto rapido scansione.")
+                    break
+                continue
+
+            # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS)
+            allowed_senders_cfg = os.getenv("GMAIL_ALLOWED_SENDERS", "").strip()
+            if allowed_senders_cfg:
+                allowed_list = [s.strip().lower() for s in allowed_senders_cfg.split(",") if s.strip()]
+                if not any(a in sender_lower for a in allowed_list):
+                    continue
+
+            # 2. Scarica il messaggio completo solo per email pertinente e con data nuova
             res, msg_data = mail.fetch(mid, '(RFC822)')
             if res != 'OK':
                 continue
@@ -283,7 +295,7 @@ def fetch_quotes_from_gmail(
 
     return all_extracted_quotes, logs
 
-def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 25) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
+def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 8) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
     """
     Funzione completa richiamata all'apertura dell'app Streamlit:
     1. Effettua la sincronizzazione rapida dal cloud GitHub per acquisire le ultime quotazioni salvate.
