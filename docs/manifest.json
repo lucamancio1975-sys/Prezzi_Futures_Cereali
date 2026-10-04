@@ -1,7 +1,8 @@
 {
+  "id": "futures-grano-cereali",
   "name": "Futures Grano - Quotazioni Giornaliere",
   "short_name": "Futures Grano",
-  "description": "Quotazioni ufficiali contratti di protezione Futures Grano Duro e Grano Tenero",
+  "description": "Consultazione quotidiana delle quotazioni Futures Grano Duro e Grano Tenero",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -15,13 +16,31 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

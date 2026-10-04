@@ -80,7 +80,15 @@ components.html("""
         const targetDoc = window.parent ? window.parent.document : document;
         const targetNav = window.parent ? window.parent.navigator : navigator;
         const head = targetDoc.head || document.head;
+        
         targetDoc.title = 'Futures Grano - Quotazioni Giornaliere';
+        
+        // Rimuovi vecchie icone native Streamlit
+        head.querySelectorAll('link[rel*="icon"]').forEach(el => {
+            if (!el.getAttribute('href') || !el.getAttribute('href').includes('app/static')) {
+                el.remove();
+            }
+        });
         
         function createOrUpdate(tag, attrs) {
             let sel = tag;
@@ -96,9 +104,11 @@ components.html("""
             }
         }
         
-        createOrUpdate('link', { rel: 'manifest', href: '/app/static/manifest.json' });
-        createOrUpdate('link', { rel: 'apple-touch-icon', href: '/app/static/icon-180.png' });
+        createOrUpdate('link', { rel: 'manifest', href: '/app/static/manifest.json?v=3' });
+        createOrUpdate('link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/app/static/icon-180.png' });
+        createOrUpdate('link', { rel: 'apple-touch-icon-precomposed', sizes: '180x180', href: '/app/static/icon-180.png' });
         createOrUpdate('link', { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/app/static/icon-192.png' });
+        createOrUpdate('link', { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/app/static/icon-512.png' });
         createOrUpdate('link', { rel: 'shortcut icon', href: '/app/static/favicon.png' });
         createOrUpdate('meta', { name: 'theme-color', content: '#030712' });
         createOrUpdate('meta', { name: 'application-name', content: 'Futures Grano' });
@@ -107,10 +117,21 @@ components.html("""
         createOrUpdate('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
         createOrUpdate('meta', { name: 'apple-mobile-web-app-title', content: 'Futures Grano' });
         
+        // Protezione contro override titolo da parte di React
+        const titleEl = head.querySelector('title');
+        if (titleEl && window.MutationObserver) {
+            const obs = new MutationObserver(function() {
+                if (targetDoc.title !== 'Futures Grano - Quotazioni Giornaliere') {
+                    targetDoc.title = 'Futures Grano - Quotazioni Giornaliere';
+                }
+            });
+            obs.observe(titleEl, { childList: true });
+        }
+        
         if ('serviceWorker' in targetNav) {
-            targetNav.serviceWorker.register('/sw.js', { scope: '/' })
+            targetNav.serviceWorker.register('/sw.js?v=3', { scope: '/' })
                 .then(function(reg) { console.log('PWA Service Worker registrato:', reg.scope); })
-                .catch(function(err) { console.warn('PWA SW error:', err); });
+                .catch(function(err) { console.warn('PWA SW notice:', err); });
         }
     } catch(e) {
         console.warn('Errore iniezione PWA head:', e);

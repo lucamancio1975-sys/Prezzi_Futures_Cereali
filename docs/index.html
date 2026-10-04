@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Futures Grano - Quotazioni Giornaliere</title>
   
-  <!-- Configurazione PWA Standard -->
-  <link rel="manifest" href="manifest.json">
+  <!-- Configurazione PWA Standard Android, Chrome, Edge, PC & Mac -->
+  <link rel="manifest" href="manifest.json?v=3">
   <meta name="theme-color" content="#030712">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Futures Grano">
   
-  <!-- Configurazione Apple iOS (Safari & Schermata Home) -->
+  <!-- Configurazione Apple iOS (iPhone & iPad Safari Schermata Home) -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="apple-touch-icon-precomposed.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Futures Grano">
@@ -154,7 +158,7 @@
     // 1. Registrazione Service Worker per PWA Android e PC
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js', { scope: './' })
+        navigator.serviceWorker.register('sw.js?v=3', { scope: './' })
           .then(reg => console.log('PWA Service Worker registrato con successo:', reg.scope))
           .catch(err => console.warn('Errore registrazione Service Worker:', err));
       });

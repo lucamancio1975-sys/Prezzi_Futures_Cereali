@@ -1,9 +1,11 @@
-const CACHE_NAME = 'futures-grano-v2';
+const CACHE_NAME = 'futures-grano-v3';
 const STATIC_ASSETS = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-512.png',
   './apple-touch-icon.png',
+  './apple-touch-icon-precomposed.png',
   './favicon.ico',
   './favicon.png'
 ];
