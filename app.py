@@ -978,7 +978,7 @@ inject_pwa_head()
 @st.cache_data
 def get_pdf_guida(product_key: str):
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    if "DURO" in product_key:
+    if product_key and "DURO" in str(product_key):
         filename = "Guida agli Impegni e Conferimento Grano Duro.pdf"
     else:
         filename = "Guida agli Impegni e Conferimento Grano Tenero.pdf"
