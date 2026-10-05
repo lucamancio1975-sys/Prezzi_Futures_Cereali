@@ -28,16 +28,22 @@ if BASE_DIR not in sys.path:
 if EXEC_DIR not in sys.path:
     sys.path.insert(0, EXEC_DIR)
 
-# Import moduli di esecuzione locali
+import importlib
+
+# Import moduli di esecuzione locali con reload garantito (evita moduli obsoleti in cache su Streamlit Cloud)
 try:
     import execution.storage_manager as storage_manager
+    importlib.reload(storage_manager)
 except Exception:
     import storage_manager
+    importlib.reload(storage_manager)
 
 try:
     import execution.fetch_gmail_quotes as fetch_gmail_quotes
+    importlib.reload(fetch_gmail_quotes)
 except Exception:
     import fetch_gmail_quotes
+    importlib.reload(fetch_gmail_quotes)
 
 # Riferimenti sicuri alle funzioni necessarie
 load_quotes = storage_manager.load_quotes
@@ -46,8 +52,8 @@ get_quotes_for_selection = storage_manager.get_quotes_for_selection
 get_delta_for_selection = storage_manager.get_delta_for_selection
 sync_from_github = getattr(storage_manager, "sync_from_github", lambda: 0)
 get_latest_db_date = getattr(storage_manager, "get_latest_db_date", lambda: "")
-oggi_italia = getattr(storage_manager, "oggi_italia", lambda: datetime.now().date())
-get_missing_business_days = getattr(storage_manager, "get_missing_business_days", lambda: [])
+oggi_italia = getattr(storage_manager, "oggi_italia", lambda *a, **kw: datetime.now().date())
+get_missing_business_days = getattr(storage_manager, "get_missing_business_days", lambda *a, **kw: [])
 
 fetch_quotes_from_gmail = fetch_gmail_quotes.fetch_quotes_from_gmail
 check_and_sync_today_quotes = getattr(fetch_gmail_quotes, "check_and_sync_today_quotes", None)
