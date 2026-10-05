@@ -46,6 +46,8 @@ get_quotes_for_selection = storage_manager.get_quotes_for_selection
 get_delta_for_selection = storage_manager.get_delta_for_selection
 sync_from_github = getattr(storage_manager, "sync_from_github", lambda: 0)
 get_latest_db_date = getattr(storage_manager, "get_latest_db_date", lambda: "")
+oggi_italia = getattr(storage_manager, "oggi_italia", lambda: datetime.now().date())
+get_missing_business_days = getattr(storage_manager, "get_missing_business_days", lambda: [])
 
 fetch_quotes_from_gmail = fetch_gmail_quotes.fetch_quotes_from_gmail
 check_and_sync_today_quotes = getattr(fetch_gmail_quotes, "check_and_sync_today_quotes", None)
@@ -1076,15 +1078,27 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
         st.session_state.app_boot_sync_done = True
 
         all_q = load_quotes()
-        oggi_str = datetime.now().strftime("%Y-%m-%d")
+        d_oggi = oggi_italia()
+        oggi_str = d_oggi.isoformat()
         ha_oggi = any(q.get("data") == oggi_str for q in all_q)
+        missing_days = get_missing_business_days(today=d_oggi)
+
+        gh_err = getattr(storage_manager, "LAST_GITHUB_STATUS", {}).get("error", "")
 
         if new_q:
-            st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate nel database!"
+            date_estratte = sorted(set(q.get("data") for q in new_q if q.get("data")))
+            if len(date_estratte) > 1:
+                st.session_state.sync_feedback = f"✅ Recuperati {len(date_estratte)} giorni ({', '.join(date_estratte)}) - {len(new_q)} quotazioni sincronizzate su GitHub!"
+            else:
+                st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate e sincronizzate su GitHub!"
             placeholder.empty()
             st.rerun()
         elif ha_oggi or is_t:
             st.session_state.sync_feedback = "🟢 Database aggiornato alla seduta odierna."
+        elif d_oggi.weekday() >= 5 and not [d for d in missing_days if d != oggi_str]:
+            st.session_state.sync_feedback = "🟢 Database allineato (mercati chiusi nel fine settimana)."
+        elif gh_err:
+            st.session_state.sync_feedback = f"⚠️ Nota sync GitHub: {gh_err}"
         else:
             last_d = all_q[-1].get("data") if all_q else "N.D."
             st.session_state.sync_feedback = f"Verifica completata: ultima quotazione ufficiale {last_d}."
@@ -1117,9 +1131,11 @@ check_today_quotes_flow()
 # =========================================================================
 if st.session_state.selected_product is None:
     all_raw_quotes = load_quotes()
-    oggi_str = datetime.now().strftime("%Y-%m-%d")
+    d_oggi = oggi_italia()
+    oggi_str = d_oggi.isoformat()
     ha_quotazione_oggi = any(q.get("data") == oggi_str for q in all_raw_quotes)
     last_db_date = all_raw_quotes[-1].get("data") if all_raw_quotes else ""
+    missing_days = get_missing_business_days(today=d_oggi)
 
     if last_db_date:
         try:
@@ -1138,6 +1154,10 @@ if st.session_state.selected_product is None:
 
     if ha_quotazione_oggi:
         status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-today">🟢 Database aggiornato a Oggi</span>{check_badge}</div>'
+    elif d_oggi.weekday() >= 5 and not [d for d in missing_days if d != oggi_str]:
+        status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-today">🟢 Database allineato (Ultima: {ld_str})</span>{check_badge}</div>'
+    elif len(missing_days) > 1:
+        status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} ({len(missing_days)} gg lavorativi in verifica)</span>{check_badge}</div>'
     else:
         status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span>{check_badge}</div>'
 

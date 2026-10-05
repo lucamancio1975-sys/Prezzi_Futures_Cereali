@@ -7,12 +7,34 @@ e il calcolo dei KPI finanziari per Grano Duro e Grano Tenero (PDT e PMG).
 import os
 import json
 import shutil
+import base64
+import time
+import urllib.request
+import urllib.error
+from datetime import date, datetime, timedelta
 import pandas as pd
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 DB_JSON_PATH = os.path.join(DATA_DIR, "storico_prezzi.json")
 DB_CSV_PATH = os.path.join(DATA_DIR, "storico_prezzi.csv")
+
+DEFAULT_REPO = "lucamancio1975-sys/Prezzi_Futures_Cereali"
+GITHUB_BRANCH = "main"
+GH_JSON_PATH = "data/storico_prezzi.json"
+GH_CSV_PATH = "data/storico_prezzi.csv"
+
+# Esito dell'ultima operazione di sincronizzazione con GitHub (letto dalla UI per diagnostica)
+LAST_GITHUB_STATUS: Dict[str, Any] = {"pull_ok": None, "push_ok": None, "error": ""}
+
+
+def oggi_italia() -> date:
+    """Data odierna nel fuso orario italiano (i server cloud girano in UTC)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Europe/Rome")).date()
+    except Exception:
+        return datetime.now().date()
 
 def ensure_data_dir():
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -67,8 +89,9 @@ def save_quotes(quotes: List[Dict[str, Any]]) -> bool:
                 pass
 
         # 2. Scrittura atomica JSON (scrive su .tmp e rinomina istantaneamente)
+        # newline="\n": stesso contenuto byte-per-byte su Windows e Linux (evita commit inutili)
         tmp_json = DB_JSON_PATH + ".tmp"
-        with open(tmp_json, "w", encoding="utf-8") as f:
+        with open(tmp_json, "w", encoding="utf-8", newline="\n") as f:
             json.dump(quotes, f, indent=2, ensure_ascii=False)
             f.flush()
             os.fsync(f.fileno())
@@ -78,7 +101,7 @@ def save_quotes(quotes: List[Dict[str, Any]]) -> bool:
         if quotes:
             tmp_csv = DB_CSV_PATH + ".tmp"
             df = pd.DataFrame(quotes)
-            df.to_csv(tmp_csv, index=False, sep=";", encoding="utf-8-sig")
+            df.to_csv(tmp_csv, index=False, sep=";", encoding="utf-8-sig", lineterminator="\n")
             os.replace(tmp_csv, DB_CSV_PATH)
             
         return True
@@ -92,6 +115,42 @@ def get_latest_db_date() -> str:
     if not quotes:
         return ""
     return max((q.get("data", "") for q in quotes if q.get("data")), default="")
+
+def get_missing_business_days(
+    lookback_days: int = 10,
+    max_gap_days: int = 180,
+    today: Optional[date] = None
+) -> List[str]:
+    """
+    Restituisce i giorni lavorativi (lun-ven) privi di quotazioni nel database, in ordine crescente.
+    - Copre SEMPRE tutto il periodo dopo l'ultima data archiviata (anche settimane di inutilizzo
+      dell'app), fino a un massimo di `max_gap_days` giorni.
+    - Controlla anche eventuali "buchi" negli ultimi `lookback_days` giorni.
+    I giorni festivi infrasettimanali risultano "mancanti" ma la loro verifica costa solo la
+    lettura degli header delle email.
+    """
+    today = today or oggi_italia()
+    dates = set(q.get("data") for q in load_quotes() if q.get("data"))
+
+    start = today - timedelta(days=lookback_days)
+    if dates:
+        try:
+            last = datetime.strptime(max(dates), "%Y-%m-%d").date()
+            first = datetime.strptime(min(dates), "%Y-%m-%d").date()
+            start = min(start, last + timedelta(days=1))
+            start = max(start, first)
+        except ValueError:
+            pass
+    start = max(start, today - timedelta(days=max_gap_days))
+
+    missing = []
+    d = start
+    while d <= today:
+        iso = d.isoformat()
+        if d.weekday() < 5 and iso not in dates:
+            missing.append(iso)
+        d += timedelta(days=1)
+    return missing
 
 def add_quotes(new_quotes: List[Dict[str, Any]], push_github: bool = True) -> int:
     """
@@ -140,6 +199,115 @@ def add_quotes(new_quotes: List[Dict[str, Any]], push_github: bool = True) -> in
         
     return added_count
 
+# =========================================================================
+# SINCRONIZZAZIONE GITHUB
+# =========================================================================
+def get_github_config() -> Tuple[Optional[str], str]:
+    """
+    Legge GITHUB_TOKEN e GITHUB_REPO da variabili d'ambiente (.env in locale) o dai
+    Secrets di Streamlit Cloud.
+    NB: il vecchio token "di fallback" scritto nel codice è stato revocato da GitHub
+    (risponde 401 Bad credentials) ed è stato rimosso: era la causa del mancato
+    aggiornamento del database su GitHub.
+    """
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
+    except Exception:
+        pass
+    token = os.getenv("GITHUB_TOKEN")
+    repo = os.getenv("GITHUB_REPO")
+    if not token or not repo:
+        try:
+            import streamlit as st
+            token = token or st.secrets.get("GITHUB_TOKEN")
+            repo = repo or st.secrets.get("GITHUB_REPO")
+        except Exception:
+            pass
+    return (token or None), (repo or DEFAULT_REPO)
+
+def _gh_http(url: str, token: Optional[str] = None, method: str = "GET",
+             payload: Optional[dict] = None, accept: str = "application/vnd.github+json",
+             timeout: float = 10.0) -> bytes:
+    headers = {
+        "User-Agent": "FuturesGrano-SyncBot",
+        "Accept": accept,
+        "Cache-Control": "no-cache",
+    }
+    if token:
+        headers["Authorization"] = f"token {token}"
+    data = None
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.read()
+
+def _gh_get_file(repo: str, path: str, token: str) -> Tuple[Optional[str], Optional[bytes]]:
+    """Ritorna (sha, contenuto_bytes) del file su GitHub, oppure (None, None) se non esiste."""
+    url = f"https://api.github.com/repos/{repo}/contents/{path}?ref={GITHUB_BRANCH}"
+    try:
+        info = json.loads(_gh_http(url, token).decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return None, None
+        raise
+    sha = info.get("sha")
+    content = info.get("content") or ""
+    if content and info.get("encoding") == "base64":
+        return sha, base64.b64decode(content)
+    # File > 1MB: la Contents API non include il contenuto, lo scarico in formato raw
+    return sha, _gh_http(url, token, accept="application/vnd.github.raw")
+
+def fetch_remote_quotes() -> Optional[List[Dict[str, Any]]]:
+    """
+    Scarica lo storico quotazioni da GitHub. Ritorna la lista oppure None se non raggiungibile.
+    - Con token: Contents API (sempre aggiornata, nessuna cache CDN).
+    - Senza token (o se l'API fallisce): URL raw pubblico SENZA header Authorization
+      (un token non valido farebbe fallire anche il download pubblico).
+    """
+    token, repo = get_github_config()
+    if token:
+        try:
+            url = f"https://api.github.com/repos/{repo}/contents/{GH_JSON_PATH}?ref={GITHUB_BRANCH}"
+            data = json.loads(_gh_http(url, token, accept="application/vnd.github.raw", timeout=6).decode("utf-8"))
+            if isinstance(data, list):
+                LAST_GITHUB_STATUS["pull_ok"] = True
+                return data
+        except Exception as e:
+            LAST_GITHUB_STATUS["error"] = f"Lettura GitHub via API fallita: {e}"
+            print(f"[GITHUB SYNC] {LAST_GITHUB_STATUS['error']}")
+    try:
+        raw_url = f"https://raw.githubusercontent.com/{repo}/{GITHUB_BRANCH}/{GH_JSON_PATH}?_t={int(time.time())}"
+        data = json.loads(_gh_http(raw_url, None, accept="*/*", timeout=6).decode("utf-8"))
+        if isinstance(data, list):
+            LAST_GITHUB_STATUS["pull_ok"] = True
+            return data
+    except Exception as e:
+        print(f"[GITHUB SYNC] Lettura GitHub raw fallita: {e}")
+    LAST_GITHUB_STATUS["pull_ok"] = False
+    return None
+
+def _quote_key(q: Dict[str, Any]) -> tuple:
+    return (
+        q.get("data"),
+        str(q.get("prodotto", "GRANO DURO")).strip().upper(),
+        str(q.get("scadenza", "lug-27")).strip().lower(),
+        str(q.get("tipo", "PDT")).strip().upper(),
+    )
+
+def has_unpushed_changes(remote_quotes: Optional[List[Dict[str, Any]]]) -> bool:
+    """True se il DB locale contiene quotazioni assenti (o diverse) rispetto a GitHub."""
+    if remote_quotes is None:
+        return False
+    remote_map = {_quote_key(q): q.get("prezzo") for q in remote_quotes}
+    for q in load_quotes():
+        k = _quote_key(q)
+        if k not in remote_map or remote_map[k] != q.get("prezzo"):
+            return True
+    return False
+
 def sync_from_github() -> int:
     """
     Sincronizzazione in ingresso dal repository GitHub:
@@ -147,152 +315,88 @@ def sync_from_github() -> int:
     e fonde eventuali nuove quotazioni nel database locale.
     Restituisce il numero di quotazioni importate/aggiornate.
     """
-    import urllib.request
-    token = os.getenv("GITHUB_TOKEN")
-    repo = os.getenv("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
-    
-    if not repo:
-        try:
-            import streamlit as st
-            repo = st.secrets.get("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
-        except Exception:
-            repo = "lucamancio1975-sys/Prezzi_Futures_Cereali"
-            
-    if not token:
-        try:
-            import streamlit as st
-            token = st.secrets.get("GITHUB_TOKEN")
-        except Exception:
-            pass
-
-    # Fallback predefinito di progetto (garantisce sincronizzazione continua)
-    if not token:
-        import base64
-        token = base64.b64decode("Z2hwXzIzWkQxcUtBeWg3SnNMcW5vT2ltQmlGTUQ4SWxORjB6YWx1bw==").decode()
-    repo = repo or "lucamancio1975-sys/Prezzi_Futures_Cereali"
-
-    import time
-    headers = {
-        "User-Agent": "FuturesGrano-App",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache"
-    }
-    if token:
-        headers["Authorization"] = f"token {token}"
-
-    remote_quotes = None
-    
-    # 1. Prova prima con l'URL raw (con cache buster per evitare ritardi CDN di GitHub)
-    raw_url = f"https://raw.githubusercontent.com/{repo}/main/data/storico_prezzi.json?_t={int(time.time())}"
-    try:
-        req = urllib.request.Request(raw_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=2.0) as resp:
-            if resp.status == 200:
-                remote_quotes = json.loads(resp.read().decode("utf-8"))
-    except Exception:
-        pass
-
-    # 2. Fallback su GitHub Contents API se raw fallisce
-    if remote_quotes is None and token:
-        api_url = f"https://api.github.com/repos/{repo}/contents/data/storico_prezzi.json"
-        try:
-            import base64
-            req = urllib.request.Request(api_url, headers={**headers, "Accept": "application/vnd.github.v3+json"})
-            with urllib.request.urlopen(req, timeout=2.0) as resp:
-                if resp.status == 200:
-                    api_data = json.loads(resp.read().decode("utf-8"))
-                    raw_content = base64.b64decode(api_data.get("content", "")).decode("utf-8")
-                    remote_quotes = json.loads(raw_content)
-        except Exception:
-            pass
-
-    if not remote_quotes or not isinstance(remote_quotes, list):
+    remote_quotes = fetch_remote_quotes()
+    if not remote_quotes:
         return 0
-
     # Fonde le quotazioni remote nel DB locale senza rimandare indietro a GitHub
     return add_quotes(remote_quotes, push_github=False)
 
 def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]") -> bool:
     """
-    Sincronizzazione atomica di data/storico_prezzi.json e data/storico_prezzi.csv
-    sul repository GitHub tramite GitHub Contents API.
-    Funziona sia in ambiente locale sia su Streamlit Community Cloud (utilizzando GITHUB_TOKEN).
+    Pubblica data/storico_prezzi.json e data/storico_prezzi.csv su GitHub (Contents API).
+    - Prima del push FONDE il contenuto remoto nel DB locale: un'istanza con DB incompleto
+      non può mai sovrascrivere/cancellare dati già presenti su GitHub.
+    - Salta il commit se il file remoto è già identico.
+    - In caso di conflitto (409/422: un altro utente ha appena pubblicato) riprova.
+    - Registra l'esito in LAST_GITHUB_STATUS (nessun errore silenzioso).
     """
-    token = os.getenv("GITHUB_TOKEN")
-    repo = os.getenv("GITHUB_REPO", "lucamancio1975-sys/Prezzi_Futures_Cereali")
-    
+    token, repo = get_github_config()
     if not token:
-        try:
-            import streamlit as st
-            token = st.secrets.get("GITHUB_TOKEN")
-            repo = st.secrets.get("GITHUB_REPO", repo)
-        except Exception:
-            pass
-
-    # Fallback predefinito di progetto (garantisce push atomico su GitHub)
-    if not token:
-        import base64
-        token = base64.b64decode("Z2hwXzIzWkQxcUtBeWg3SnNMcW5vT2ltQmlGTUQ4SWxORjB6YWx1bw==").decode()
-    repo = repo or "lucamancio1975-sys/Prezzi_Futures_Cereali"
-            
-    if not token or not repo:
+        LAST_GITHUB_STATUS.update(push_ok=False, error="GITHUB_TOKEN non configurato (Secrets di Streamlit o file .env)")
+        print(f"[GITHUB SYNC ERROR] {LAST_GITHUB_STATUS['error']}")
         return False
-        
-    import base64
-    import urllib.request
-    
-    headers = {
-        "Authorization": f"token {token}",
-        "User-Agent": "FuturesGrano-SyncBot",
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json"
-    }
-    
-    success = True
-    files_to_sync = [
-        ("data/storico_prezzi.json", DB_JSON_PATH),
-        ("data/storico_prezzi.csv", DB_CSV_PATH)
-    ]
-    
-    for github_rel_path, local_abs_path in files_to_sync:
-        if not os.path.exists(local_abs_path):
-            continue
+
+    last_error = ""
+    for attempt in range(3):
         try:
-            with open(local_abs_path, "rb") as f:
-                content_b64 = base64.b64encode(f.read()).decode("utf-8")
-                
-            api_url = f"https://api.github.com/repos/{repo}/contents/{github_rel_path}"
-            
-            # Recupera lo SHA corrente se il file esiste già su GitHub
-            current_sha = None
-            try:
-                get_req = urllib.request.Request(api_url, headers=headers)
-                with urllib.request.urlopen(get_req, timeout=5.0) as resp:
-                    resp_data = json.loads(resp.read().decode())
-                    current_sha = resp_data.get("sha")
-            except Exception:
-                pass
-                
-            payload = {
-                "message": commit_message,
-                "content": content_b64
-            }
-            if current_sha:
-                payload["sha"] = current_sha
-                
-            put_req = urllib.request.Request(
-                api_url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers=headers,
-                method="PUT"
-            )
-            with urllib.request.urlopen(put_req, timeout=5.0) as resp:
-                pass
+            # 1. Merge del contenuto remoto (protezione da sovrascritture)
+            json_sha, remote_json = _gh_get_file(repo, GH_JSON_PATH, token)
+            if remote_json:
+                try:
+                    remote_list = json.loads(remote_json.decode("utf-8"))
+                    if isinstance(remote_list, list):
+                        add_quotes(remote_list, push_github=False)
+                except ValueError:
+                    pass
+            if not os.path.exists(DB_JSON_PATH):
+                LAST_GITHUB_STATUS.update(push_ok=False, error="Database locale assente")
+                return False
+            # Rigenera JSON e CSV in formato normalizzato
+            save_quotes(load_quotes())
+
+            # 2. Push dei file che differiscono
+            csv_sha, remote_csv = _gh_get_file(repo, GH_CSV_PATH, token)
+            for gh_path, local_path, sha, remote_bytes in [
+                (GH_JSON_PATH, DB_JSON_PATH, json_sha, remote_json),
+                (GH_CSV_PATH, DB_CSV_PATH, csv_sha, remote_csv),
+            ]:
+                if not os.path.exists(local_path):
+                    continue
+                with open(local_path, "rb") as f:
+                    local_bytes = f.read()
+                if remote_bytes is not None and remote_bytes == local_bytes:
+                    continue
+                payload = {
+                    "message": commit_message,
+                    "content": base64.b64encode(local_bytes).decode("utf-8"),
+                    "branch": GITHUB_BRANCH,
+                }
+                if sha:
+                    payload["sha"] = sha
+                _gh_http(f"https://api.github.com/repos/{repo}/contents/{gh_path}",
+                         token, method="PUT", payload=payload, timeout=15)
+                print(f"[GITHUB SYNC] Pubblicato {gh_path} su {repo}")
+
+            LAST_GITHUB_STATUS.update(push_ok=True, error="")
+            return True
+        except urllib.error.HTTPError as e:
+            last_error = f"HTTP {e.code} {e.reason}"
+            if e.code in (409, 422) and attempt < 2:
+                time.sleep(1.0 + attempt)  # conflitto di SHA: un altro utente ha appena pubblicato
+                continue
+            if e.code in (401, 403):
+                last_error += " - token GitHub non valido, scaduto o senza permesso 'contents: write'"
+            break
         except Exception as e:
-            print(f"[GITHUB SYNC ERROR] Impossibile sincronizzare {github_rel_path}: {e}")
-            success = False
-            
-    return success
+            last_error = str(e)
+            if attempt < 2:
+                time.sleep(1.0)
+                continue
+            break
+
+    LAST_GITHUB_STATUS.update(push_ok=False, error=f"Push GitHub fallito: {last_error}")
+    print(f"[GITHUB SYNC ERROR] {LAST_GITHUB_STATUS['error']}")
+    return False
 
 def get_quotes_for_selection(
     prodotto: str,

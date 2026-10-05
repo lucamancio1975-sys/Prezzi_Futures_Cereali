@@ -50,6 +50,17 @@ extract_quotes_from_image = parse_image_quotazioni.extract_quotes_from_image
 
 load_dotenv()
 
+def safe_print(msg: str):
+    """Stampa messaggi in console in modo resiliente anche con emoji su Windows (cp1252)."""
+    try:
+        print(msg)
+    except (UnicodeEncodeError, Exception):
+        try:
+            enc = sys.stdout.encoding or "utf-8"
+            print(msg.encode(enc, errors="replace").decode(enc))
+        except Exception:
+            pass
+
 def decode_mime_words(s: str) -> str:
     """Decodifica stringhe con encoding MIME headers."""
     if not s:
@@ -71,7 +82,8 @@ def fetch_quotes_from_gmail(
     search_criteria: str = 'ALL',
     max_emails: int = 35,
     target_date: Optional[str] = None,
-    stop_after_first_match: bool = False
+    stop_after_first_match: bool = False,
+    since_date: Optional[str] = None
 ) -> Tuple[List[Dict[str, Any]], List[str]]:
     """
     Si connette a Gmail via IMAP SSL, scansiona le ultime email ricevute,
@@ -87,6 +99,8 @@ def fetch_quotes_from_gmail(
     
     Ritorna una tupla: (quotazioni_estratte, log_messaggi)
     """
+    global LAST_FETCH_OK
+    LAST_FETCH_OK = False
     logs = []
     user = user or os.getenv("GMAIL_USER")
     password = password or os.getenv("GMAIL_APP_PASSWORD")
@@ -117,23 +131,31 @@ def fetch_quotes_from_gmail(
         mail.select(folder)
         logs.append("Connessione stabilita con successo.")
 
-        # FIX: invece di guardare solo le ultime N email della casella (che possono essere
-        # tutte non pertinenti), cerca tutte le email arrivate dall'ultima data in archivio.
+        # Ricerca per data: tutte le email arrivate dal primo giorno mancante (since_date)
+        # oppure, in assenza, dal giorno precedente l'ultima data in archivio.
         if search_criteria == 'ALL':
             from datetime import datetime as _dt, timedelta as _td
-            last_d = getattr(storage_manager, "get_latest_db_date", lambda: "")()
-            try:
-                since_dt = _dt.strptime(last_d, "%Y-%m-%d") - _td(days=1)
-            except Exception:
-                since_dt = _dt.now() - _td(days=30)
+            since_dt = None
+            if since_date:
+                try:
+                    since_dt = _dt.strptime(since_date, "%Y-%m-%d") - _td(days=1)
+                except Exception:
+                    since_dt = None
+            if since_dt is None:
+                last_d = getattr(storage_manager, "get_latest_db_date", lambda: "")()
+                try:
+                    since_dt = _dt.strptime(last_d, "%Y-%m-%d") - _td(days=1)
+                except Exception:
+                    since_dt = _dt.now() - _td(days=30)
             _mesi = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
             search_criteria = f'(SINCE "{since_dt.day:02d}-{_mesi[since_dt.month-1]}-{since_dt.year}")'
             # Con ricerca per data non serve limitare il numero di email
-            max_emails = max(max_emails, 200)
+            max_emails = max(max_emails, 500)
 
         status, data = mail.search(None, search_criteria)
         if status != 'OK' or not data[0]:
             logs.append("Nessuna email nuova trovata nella casella.")
+            LAST_FETCH_OK = (status == 'OK')
             mail.logout()
             return [], logs
 
@@ -148,18 +170,35 @@ def fetch_quotes_from_gmail(
         # Carica le date già archiviate nel database per evitare download e OCR ridondanti
         existing_quotes = load_quotes()
         existing_dates = set(q.get("data") for q in existing_quotes if q.get("data"))
-        latest_db_date = getattr(storage_manager, "get_latest_db_date", lambda: "")()
+
+        # Lettura degli header IN BLOCCO (una sola richiesta IMAP ogni 100 email invece di una
+        # per email): permette di coprire anche settimane di email in pochi istanti.
+        headers_map: Dict[bytes, bytes] = {}
+        for i in range(0, len(recent_ids), 100):
+            chunk = recent_ids[i:i + 100]
+            try:
+                r, hd = mail.fetch(b",".join(chunk), '(BODY.PEEK[HEADER.FIELDS (SUBJECT FROM DATE)])')
+                if r == 'OK':
+                    for item in hd:
+                        if isinstance(item, tuple) and len(item) >= 2:
+                            headers_map[item[0].split()[0]] = item[1]
+            except Exception:
+                pass
 
         for mid in recent_ids:
-            # 1. Ispezione rapida preliminare dell'header (millisecondi)
-            hdr_res, hdr_data = mail.fetch(mid, '(BODY[HEADER.FIELDS (SUBJECT FROM DATE)])')
+            # 1. Ispezione preliminare dell'header (già scaricato in blocco)
+            hdr_bytes = headers_map.get(mid)
+            if hdr_bytes is None:
+                hdr_res, hdr_data = mail.fetch(mid, '(BODY.PEEK[HEADER.FIELDS (SUBJECT FROM DATE)])')
+                if hdr_res == 'OK' and hdr_data and isinstance(hdr_data[0], tuple):
+                    hdr_bytes = hdr_data[0][1]
             subject = ""
             sender = ""
             date_hdr = ""
             email_date = None
 
-            if hdr_res == 'OK' and hdr_data and hdr_data[0]:
-                hdr_msg = email.message_from_bytes(hdr_data[0][1])
+            if hdr_bytes:
+                hdr_msg = email.message_from_bytes(hdr_bytes)
                 subject = decode_mime_words(hdr_msg.get("Subject", ""))
                 sender = decode_mime_words(hdr_msg.get("From", ""))
                 date_hdr = hdr_msg.get("Date", "")
@@ -185,11 +224,10 @@ def fetch_quotes_from_gmail(
             if not is_relevant:
                 continue
 
-            # Ottimizzazione turbo: se questa data è già archiviata nel DB, salta download e OCR pesanti
+            # Se questa data è già archiviata nel DB salta download e OCR pesanti.
+            # NB: niente più arresto della scansione qui, altrimenti i giorni mancanti
+            # più vecchi (periodi di inutilizzo dell'app) non verrebbero mai recuperati.
             if email_date and email_date in existing_dates:
-                if latest_db_date and email_date < latest_db_date:
-                    logs.append(f"Email del {email_date} già a catalogo: arresto rapido scansione.")
-                    break
                 continue
 
             # Filtro mittente consentito (opzionale tramite GMAIL_ALLOWED_SENDERS)
@@ -200,8 +238,8 @@ def fetch_quotes_from_gmail(
                     continue
 
             # 2. Scarica il messaggio completo solo per email pertinente e con data nuova
-            res, msg_data = mail.fetch(mid, '(RFC822)')
-            if res != 'OK':
+            res, msg_data = mail.fetch(mid, '(BODY.PEEK[])')
+            if res != 'OK' or not msg_data or not isinstance(msg_data[0], tuple):
                 continue
 
             raw_email = msg_data[0][1]
@@ -296,6 +334,7 @@ def fetch_quotes_from_gmail(
                     logs.append(f"Trovata quotazione per la data richiesta ({email_date}): arresto rapido scansione.")
                     break
 
+        LAST_FETCH_OK = True
     except Exception as e:
         logs.append(f"[ERRORE] Errore durante il collegamento o sincronizzazione Gmail: {str(e)}")
     finally:
@@ -316,63 +355,65 @@ def fetch_quotes_from_gmail(
 
 def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: int = 5) -> Tuple[List[Dict[str, Any]], bool, List[str]]:
     """
-    Funzione ultra-rapida richiamata all'apertura dell'app Streamlit.
-    Flusso ottimizzato per avvio < 3 secondi:
-      1. Controlla PRIMA il database locale (zero rete, < 1ms).
-      2. Se manca la data odierna, tenta sync rapido da GitHub (timeout 2s).
-      3. Se ancora assente, scansiona Gmail IMAP (solo 3-5 email recenti, early-exit).
-      4. Il push verso GitHub avviene in modo differito (non blocca l'interfaccia).
+    Workflow eseguito ad ogni apertura dell'app (click su icona o link):
+      1. Scarica il database da GitHub e lo fonde nel DB locale (se un altro utente ha già
+         aggiornato oggi, i dati arrivano da qui e Gmail non viene interrogato).
+      2. Calcola TUTTI i giorni lavorativi mancanti (anche settimane senza utilizzo dell'app).
+      3. Se ne mancano, scansiona Gmail dal primo giorno mancante e archivia le quotazioni.
+      4. Se il DB locale contiene dati che GitHub non ha (nuove quotazioni o push precedenti
+         falliti), pubblica JSON e CSV su GitHub in modo SINCRONO e ne verifica l'esito.
     """
-    from datetime import datetime
-    import threading
     logs = []
-    oggi_str = target_date or datetime.now().strftime("%Y-%m-%d")
-    
-    # FASE 0: Controlla immediatamente il DB locale (< 1ms, zero rete)
-    local_quotes = load_quotes()
-    if any(q.get("data") == oggi_str for q in local_quotes):
-        logs.append(f"🟢 Database già aggiornato alla data odierna ({oggi_str}).")
-        return [], True, logs
+    oggi_str = target_date or storage_manager.oggi_italia().isoformat()
 
-    # FASE 1: Sync rapido dal repository GitHub (timeout 2s)
+    # FASE 1: Allineamento in ingresso da GitHub
+    remote_quotes = None
     try:
-        n_github = sync_from_github()
-        if n_github > 0:
-            logs.append(f"☁️ Sincronizzate {n_github} quotazioni dal repository cloud GitHub.")
-            # Ricontrolla dopo il sync
-            refreshed = load_quotes()
-            if any(q.get("data") == oggi_str for q in refreshed):
-                logs.append(f"🟢 Database aggiornato via cloud ({oggi_str}).")
-                return [], True, logs
+        remote_quotes = storage_manager.fetch_remote_quotes()
+        if remote_quotes is not None:
+            n_github = add_quotes(remote_quotes, push_github=False)
+            if n_github > 0:
+                logs.append(f"☁️ Sincronizzate {n_github} quotazioni dal repository cloud GitHub.")
+        else:
+            logs.append("⚠️ Repository GitHub non raggiungibile: uso il database locale.")
     except Exception as e:
         logs.append(f"Nota sync cloud: {e}")
 
-    # FASE 2: Scansione Gmail IMAP (solo email recenti, early-exit appena trovata la data)
-    # FIX: recupera TUTTE le email nuove dall'ultima data in archivio (non solo la prima)
-    extracted_quotes, gmail_logs = fetch_quotes_from_gmail(
-        max_emails=scan_depth,
-        target_date=None,
-        stop_after_first_match=False
-    )
-    logs.extend(gmail_logs)
-    for line in gmail_logs:
-        print(f"[GMAIL SYNC] {line}")
+    # FASE 2: Giorni lavorativi mancanti (dopo l'ultima data + buchi recenti)
+    missing_days = storage_manager.get_missing_business_days()
+    extracted_quotes: List[Dict[str, Any]] = []
+    if missing_days:
+        logs.append(f"🔎 Giorni lavorativi mancanti: {len(missing_days)} (dal {missing_days[0]} al {missing_days[-1]}).")
+        actual_scan_depth = max(scan_depth, len(missing_days) * 20, 50)
+        extracted_quotes, gmail_logs = fetch_quotes_from_gmail(
+            max_emails=actual_scan_depth,
+            target_date=None,
+            stop_after_first_match=False,
+            since_date=missing_days[0]
+        )
+        logs.extend(gmail_logs)
+        for line in gmail_logs:
+            safe_print(f"[GMAIL SYNC] {line}")
+        still_missing = storage_manager.get_missing_business_days()
+        recovered = [d for d in missing_days if d not in still_missing]
+        if recovered:
+            logs.append(f"✅ Recuperati {len(recovered)} giorni: {', '.join(recovered)}.")
+    else:
+        logs.append(f"🟢 Nessun giorno lavorativo mancante nel database ({oggi_str}).")
 
-    # Ricarica lo storico aggiornato
+    # FASE 3: Pubblicazione su GitHub se GitHub è indietro rispetto al DB locale
+    need_push = bool(extracted_quotes) or storage_manager.has_unpushed_changes(remote_quotes)
+    if need_push:
+        if storage_manager.sync_to_github():
+            logs.append("☁️ Database CSV/JSON pubblicato su GitHub.")
+        else:
+            err = storage_manager.LAST_GITHUB_STATUS.get("error", "")
+            logs.append(f"[ERRORE] Aggiornamento GitHub non riuscito: {err}")
+        for line in logs[-1:]:
+            safe_print(f"[GITHUB SYNC] {line}")
+
     updated_quotes = load_quotes()
     is_today_present = any(q.get("data") == oggi_str for q in updated_quotes)
-    
-    # FASE 3: Push differito a GitHub in background (non blocca l'interfaccia)
-    # FIX: push sempre quando ci sono nuovi dati (prima solo se presente la data odierna,
-    # così le quotazioni dei giorni precedenti andavano perse al riavvio del server cloud)
-    if extracted_quotes:
-        def _bg_push():
-            try:
-                storage_manager.sync_to_github()
-            except Exception:
-                pass
-        threading.Thread(target=_bg_push, daemon=True).start()
-    
     return extracted_quotes, is_today_present, logs
 
 if __name__ == "__main__":
