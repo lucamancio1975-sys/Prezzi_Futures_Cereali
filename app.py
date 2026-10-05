@@ -1090,6 +1090,7 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
             st.session_state.sync_feedback = f"Verifica completata: ultima quotazione ufficiale {last_d}."
     except Exception as e:
         print(f"Errore processo aggiornamento: {e}")
+        st.session_state.app_boot_sync_done = True
         st.session_state.sync_feedback = "Verifica completata."
     finally:
         placeholder.empty()
@@ -1099,16 +1100,11 @@ def check_today_quotes_flow():
     Workflow di sincronizzazione automatica all'apertura dell'app.
     Strategia: mostra la UI il prima possibile.
     """
-    now_ts = time.time()
-
-    # Se la sincronizzazione è già stata fatta in questa sessione, salta direttamente
+    # L'apertura dell'app (click su icona/link) crea una nuova sessione: la sincronizzazione
+    # con Gmail avviene subito, PRIMA di mostrare la selezione prodotto. Durante la navigazione
+    # nella stessa sessione non viene ripetuta.
     if st.session_state.get("app_boot_sync_done", False):
-        # Risincronizza solo se non abbiamo la data odierna e sono passati almeno 30 secondi
-        all_quotes = load_quotes()
-        oggi_str = datetime.now().strftime("%Y-%m-%d")
-        ha_oggi = any(q.get("data") == oggi_str for q in all_quotes)
-        if ha_oggi or (now_ts - st.session_state.get("last_sync_time", 0) < 30):
-            return
+        return
 
     perform_app_sync(force=True, show_msg=True)
 

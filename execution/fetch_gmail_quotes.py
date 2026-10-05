@@ -107,24 +107,39 @@ def fetch_quotes_from_gmail(
     password = password or "rjcxbatitqsuzjyg"
 
     all_extracted_quotes = []
-    socket.setdefaulttimeout(3.5)
+    mail = None
 
     try:
         logs.append(f"Connessione sicura al server quotazioni ({server})...")
-        mail = imaplib.IMAP4_SSL(server, timeout=3.5)
+        # FIX: timeout realistico (il download di email con PDF supera facilmente 3.5s)
+        mail = imaplib.IMAP4_SSL(server, timeout=20)
         mail.login(user, password)
         mail.select(folder)
         logs.append("Connessione stabilita con successo.")
 
+        # FIX: invece di guardare solo le ultime N email della casella (che possono essere
+        # tutte non pertinenti), cerca tutte le email arrivate dall'ultima data in archivio.
+        if search_criteria == 'ALL':
+            from datetime import datetime as _dt, timedelta as _td
+            last_d = getattr(storage_manager, "get_latest_db_date", lambda: "")()
+            try:
+                since_dt = _dt.strptime(last_d, "%Y-%m-%d") - _td(days=1)
+            except Exception:
+                since_dt = _dt.now() - _td(days=30)
+            _mesi = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            search_criteria = f'(SINCE "{since_dt.day:02d}-{_mesi[since_dt.month-1]}-{since_dt.year}")'
+            # Con ricerca per data non serve limitare il numero di email
+            max_emails = max(max_emails, 200)
+
         status, data = mail.search(None, search_criteria)
         if status != 'OK' or not data[0]:
-            logs.append("Nessuna email trovata nella casella.")
+            logs.append("Nessuna email nuova trovata nella casella.")
             mail.logout()
             return [], logs
 
         mail_ids = data[0].split()
         n_scan = min(len(mail_ids), max_emails)
-        logs.append(f"Trovate {len(mail_ids)} email totali. Esame delle ultime {n_scan}...")
+        logs.append(f"Trovate {len(mail_ids)} email ({search_criteria}). Esame delle ultime {n_scan}...")
 
         # Esamina le email dalla più recente a ritroso
         recent_ids = mail_ids[-n_scan:]
@@ -281,17 +296,21 @@ def fetch_quotes_from_gmail(
                     logs.append(f"Trovata quotazione per la data richiesta ({email_date}): arresto rapido scansione.")
                     break
 
-        mail.logout()
-
-        # Deduplica e memorizzazione nel database (push GitHub differito in background)
-        if all_extracted_quotes:
-            added = add_quotes(all_extracted_quotes, push_github=False)
-            logs.append(f"[OK] Sincronizzazione completata: {added} nuove quotazioni archiviate nel database.")
-        else:
-            logs.append("[INFO] Nessuna nuova quotazione rilevata nelle email scansionate.")
-
     except Exception as e:
         logs.append(f"[ERRORE] Errore durante il collegamento o sincronizzazione Gmail: {str(e)}")
+    finally:
+        if mail is not None:
+            try:
+                mail.logout()
+            except Exception:
+                pass
+
+    # FIX: salva SEMPRE quanto estratto, anche se la connessione si è interrotta a metà
+    if all_extracted_quotes:
+        added = add_quotes(all_extracted_quotes, push_github=False)
+        logs.append(f"[OK] Sincronizzazione completata: {added} nuove quotazioni archiviate nel database.")
+    else:
+        logs.append("[INFO] Nessuna nuova quotazione rilevata nelle email scansionate.")
 
     return all_extracted_quotes, logs
 
@@ -329,19 +348,24 @@ def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: i
         logs.append(f"Nota sync cloud: {e}")
 
     # FASE 2: Scansione Gmail IMAP (solo email recenti, early-exit appena trovata la data)
+    # FIX: recupera TUTTE le email nuove dall'ultima data in archivio (non solo la prima)
     extracted_quotes, gmail_logs = fetch_quotes_from_gmail(
         max_emails=scan_depth,
         target_date=None,
-        stop_after_first_match=True  # Appena trova la prima email nuova, si ferma
+        stop_after_first_match=False
     )
     logs.extend(gmail_logs)
+    for line in gmail_logs:
+        print(f"[GMAIL SYNC] {line}")
 
     # Ricarica lo storico aggiornato
     updated_quotes = load_quotes()
     is_today_present = any(q.get("data") == oggi_str for q in updated_quotes)
     
     # FASE 3: Push differito a GitHub in background (non blocca l'interfaccia)
-    if extracted_quotes and is_today_present:
+    # FIX: push sempre quando ci sono nuovi dati (prima solo se presente la data odierna,
+    # così le quotazioni dei giorni precedenti andavano perse al riavvio del server cloud)
+    if extracted_quotes:
         def _bg_push():
             try:
                 storage_manager.sync_to_github()
