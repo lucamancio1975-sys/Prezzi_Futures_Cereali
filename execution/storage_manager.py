@@ -116,6 +116,31 @@ def get_latest_db_date() -> str:
         return ""
     return max((q.get("data", "") for q in quotes if q.get("data")), default="")
 
+# Serie che devono essere presenti perché un giorno sia considerato completo
+REQUIRED_SERIES = {
+    ("GRANO DURO", "PDT"),
+    ("GRANO TENERO FINO ROSSO", "PDT"),
+    ("GRANO TENERO FINO ROSSO", "PMG"),
+}
+
+def get_complete_dates(quotes: Optional[List[Dict[str, Any]]] = None) -> set:
+    """
+    Date che contengono TUTTE le serie principali (Duro PDT, Tenero PDT, Tenero PMG).
+    Un giorno con solo il Grano Duro (es. OCR parziale) resta "da completare" e la sua
+    email viene riletta alla sincronizzazione successiva.
+    """
+    if quotes is None:
+        quotes = load_quotes()
+    series: Dict[str, set] = {}
+    for q in quotes:
+        d = q.get("data")
+        if d:
+            series.setdefault(d, set()).add((
+                str(q.get("prodotto", "")).strip().upper(),
+                str(q.get("tipo", "")).strip().upper(),
+            ))
+    return {d for d, s in series.items() if REQUIRED_SERIES <= s}
+
 def get_missing_business_days(
     lookback_days: int = 10,
     max_gap_days: int = 180,
@@ -130,7 +155,9 @@ def get_missing_business_days(
     lettura degli header delle email.
     """
     today = today or oggi_italia()
-    dates = set(q.get("data") for q in load_quotes() if q.get("data"))
+    quotes = load_quotes()
+    dates = set(q.get("data") for q in quotes if q.get("data"))
+    complete_dates = get_complete_dates(quotes)
 
     start = today - timedelta(days=lookback_days)
     if dates:
@@ -147,7 +174,7 @@ def get_missing_business_days(
     d = start
     while d <= today:
         iso = d.isoformat()
-        if d.weekday() < 5 and iso not in dates:
+        if d.weekday() < 5 and iso not in complete_dates:
             missing.append(iso)
         d += timedelta(days=1)
     return missing

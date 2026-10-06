@@ -106,6 +106,28 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
 
     return []
 
+def _price_tokens(line: Dict[str, Any]) -> List[tuple]:
+    """
+    Ritorna [(valore, x, y)] per ogni numero a 3 cifre nel range 120-600 €/t della riga OCR,
+    usando le coordinate della SINGOLA parola. Necessario con Tesseract (Streamlit Cloud), che
+    raggruppa più celle della stessa riga visiva (es. "209 Eur/ton 231 Eur/ton") in un'unica riga.
+    """
+    out = []
+    for w in line.get("Words", []) or []:
+        for n in re.findall(r'(?<!\d)([1-5]\d{2})(?!\d)', str(w.get("Text", ""))):
+            if 120 <= float(n) <= 600:
+                out.append((float(n), w.get("X", 0), w.get("Y", 0)))
+    if not out:
+        # Fallback storico a livello di riga (cifre eventualmente spezzate dall'OCR)
+        txt = line.get("Text", "")
+        words = line.get("Words", []) or []
+        x0 = words[0].get("X", 0) if words else 0
+        y0 = words[0].get("Y", 0) if words else 0
+        for n in re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", "")):
+            if 120 <= float(n) <= 600:
+                out.append((float(n), x0, y0))
+    return out
+
 def extract_quotes_from_image(
     image_path: str,
     fallback_date: Optional[str] = None,
@@ -164,15 +186,9 @@ def extract_quotes_from_image(
         p_duro_28 = None
         duro_nums = []
         for line in lines_gd:
-            txt = line.get("Text", "")
-            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t
-            nums = re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", ""))
-            words = line.get("Words", [])
-            y_coord = words[0].get("Y", 0) if words else 0
-            for n in nums:
-                val = float(n)
-                if 120 <= val <= 600:
-                    duro_nums.append((val, y_coord))
+            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t (coordinate per parola)
+            for val, _x, y_coord in _price_tokens(line):
+                duro_nums.append((val, y_coord))
 
         if duro_nums:
             duro_nums.sort(key=lambda item: item[1])
@@ -235,20 +251,12 @@ def extract_quotes_from_image(
         pdt_candidates = []
 
         for l in lines_gt:
-            txt = l.get("Text", "")
-            words = l.get("Words", [])
-            y_val = words[0].get("Y", 0) if words else 0
-            x_val = words[0].get("X", 0) if words else 0
-
-            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t
-            nums = re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", ""))
-            for n in nums:
-                val = float(n)
-                if 120 <= val <= 600:
-                    if x_val < col_div:
-                        pmg_candidates.append((val, y_val, x_val))
-                    else:
-                        pdt_candidates.append((val, y_val, x_val))
+            # Cerca numeri a 3 cifre coerenti con il range 120-600 €/t (coordinate per parola)
+            for val, x_val, y_val in _price_tokens(l):
+                if x_val < col_div:
+                    pmg_candidates.append((val, y_val, x_val))
+                else:
+                    pdt_candidates.append((val, y_val, x_val))
 
         pmg_candidates.sort(key=lambda item: item[1])
         pdt_candidates.sort(key=lambda item: item[1])
@@ -291,6 +299,8 @@ def extract_quotes_from_image(
             for q in extracted:
                 if not q.get("data"):
                     q["data"] = final_date
+            # Scarta valori anomali dell'OCR (es. "27" letto da "lug-27")
+            extracted = [q for q in extracted if 120 <= float(q.get("prezzo") or 0) <= 600]
             if extracted:
                 results.extend(extracted)
         except Exception:

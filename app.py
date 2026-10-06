@@ -1090,10 +1090,15 @@ def perform_app_sync(force: bool = False, show_msg: bool = True):
         missing_days = get_missing_business_days(today=d_oggi)
 
         gh_err = getattr(storage_manager, "LAST_GITHUB_STATUS", {}).get("error", "")
+        # Salvato in sessione: storage_manager viene ricaricato a ogni rerun e perderebbe l'esito
+        st.session_state.gh_push_status = dict(getattr(storage_manager, "LAST_GITHUB_STATUS", {}))
 
         if new_q:
             date_estratte = sorted(set(q.get("data") for q in new_q if q.get("data")))
-            if len(date_estratte) > 1:
+            push_ok = getattr(storage_manager, "LAST_GITHUB_STATUS", {}).get("push_ok")
+            if push_ok is False:
+                st.session_state.sync_feedback = f"⚠️ {len(new_q)} nuove quotazioni salvate, ma GitHub NON è stato aggiornato: {gh_err}"
+            elif len(date_estratte) > 1:
                 st.session_state.sync_feedback = f"✅ Recuperati {len(date_estratte)} giorni ({', '.join(date_estratte)}) - {len(new_q)} quotazioni sincronizzate su GitHub!"
             else:
                 st.session_state.sync_feedback = f"✅ Trovate {len(new_q)} nuove quotazioni archiviate e sincronizzate su GitHub!"
@@ -1166,6 +1171,13 @@ if st.session_state.selected_product is None:
         status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} ({len(missing_days)} gg lavorativi in verifica)</span>{check_badge}</div>'
     else:
         status_banner = f'<div style="text-align:center; margin-top: 4px; margin-bottom: 8px;"><span class="app-sync-status status-wait">⏳ Aggiornato al {ld_str} (in attesa di quotazione odierna)</span>{check_badge}</div>'
+
+    # Avviso visibile se l'ultima pubblicazione su GitHub è fallita (prima l'errore restava nascosto)
+    _gh_status = st.session_state.get("gh_push_status", {}) or {}
+    if _gh_status.get("push_ok") is False:
+        import html as _html
+        _gh_err_txt = _html.escape(str(_gh_status.get("error", "")))
+        status_banner += f'<div style="text-align:center; font-size: 0.74rem; color: #f87171; margin-bottom: 6px;">⚠️ Database GitHub non aggiornato: {_gh_err_txt}</div>'
 
     # Spaziatura ampia ed elegante tra i riquadri della schermata principale
     st.markdown("""<style>

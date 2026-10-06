@@ -167,9 +167,11 @@ def fetch_quotes_from_gmail(
         recent_ids = mail_ids[-n_scan:]
         recent_ids.reverse()
 
-        # Carica le date già archiviate nel database per evitare download e OCR ridondanti
+        # Carica le date già archiviate (e COMPLETE: duro + tenero PDT/PMG) nel database per
+        # evitare download e OCR ridondanti. Le date con dati parziali vengono rilette.
         existing_quotes = load_quotes()
-        existing_dates = set(q.get("data") for q in existing_quotes if q.get("data"))
+        _complete = getattr(storage_manager, "get_complete_dates", None)
+        existing_dates = _complete(existing_quotes) if _complete else set(q.get("data") for q in existing_quotes if q.get("data"))
 
         # Lettura degli header IN BLOCCO (una sola richiesta IMAP ogni 100 email invece di una
         # per email): permette di coprire anche settimane di email in pochi istanti.
