@@ -389,47 +389,47 @@ st.markdown("""
     /* ANIMAZIONI LAMPEGGIAMENTO TENUE (SOLO SCRITTA, RITMO LENTO)  */
     /* ------------------------------------------------------------- */
     @keyframes gentle-text-blink-ocra {
-        0%, 100% {
+        0%, 75%, 100% {
             opacity: 1;
             filter: brightness(1);
             color: #df9e38 !important;
             text-shadow: 0 0 10px rgba(223, 158, 56, 0.45);
         }
-        50% {
-            opacity: 0.78;
-            filter: brightness(0.92);
+        87.5% {
+            opacity: 0.25;
+            filter: brightness(0.8);
             color: #df9e38 !important;
-            text-shadow: 0 0 3px rgba(223, 158, 56, 0.15);
+            text-shadow: none;
         }
     }
 
     @keyframes gentle-text-blink-lampone {
-        0%, 100% {
+        0%, 75%, 100% {
             opacity: 1;
             filter: brightness(1);
             color: #e02b55 !important;
             text-shadow: 0 0 10px rgba(224, 43, 85, 0.50);
         }
-        50% {
-            opacity: 0.78;
-            filter: brightness(0.92);
+        87.5% {
+            opacity: 0.25;
+            filter: brightness(0.8);
             color: #e02b55 !important;
-            text-shadow: 0 0 3px rgba(224, 43, 85, 0.15);
+            text-shadow: none;
         }
     }
 
     @keyframes gentle-text-blink-cobalto {
-        0%, 100% {
+        0%, 75%, 100% {
             opacity: 1;
             filter: brightness(1);
             color: #388bfd !important;
             text-shadow: 0 0 10px rgba(56, 139, 253, 0.50);
         }
-        50% {
-            opacity: 0.78;
-            filter: brightness(0.92);
+        87.5% {
+            opacity: 0.25;
+            filter: brightness(0.8);
             color: #388bfd !important;
-            text-shadow: 0 0 3px rgba(56, 139, 253, 0.15);
+            text-shadow: none;
         }
     }
 
