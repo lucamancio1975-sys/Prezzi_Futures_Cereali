@@ -4398,5 +4398,13 @@
     "tipo": "PDT",
     "prodotto": "GRANO DURO",
     "fonte": "Email"
+  },
+  {
+    "data": "2026-10-06",
+    "scadenza": "lug-28",
+    "prezzo": 262.0,
+    "tipo": "PDT",
+    "prodotto": "GRANO DURO",
+    "fonte": "Email"
   }
 ]
