@@ -526,6 +526,27 @@ st.markdown("""
         color: #bfdbfe !important;
     }
 
+    /* Stile pulsante sincronizzazione manuale */
+    .st-key-btn_sync_manual_home button,
+    div[class*="st-key-btn_sync_manual_home"] button {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(148, 163, 184, 0.25) !important;
+        border-radius: 10px !important;
+        color: #94a3b8 !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        min-height: 40px !important;
+        transition: all 0.2s ease !important;
+    }
+    .st-key-btn_sync_manual_home button:hover,
+    div[class*="st-key-btn_sync_manual_home"] button:hover {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border-color: #38bdf8 !important;
+        color: #f1f5f9 !important;
+        transform: translateY(-1px) !important;
+    }
+
     /* ------------------------------------------------------------- */
     /* INDICATORE DI CARICAMENTO / ATTENDI (PULSAZIONE MORBIDA)      */
     /* ------------------------------------------------------------- */
@@ -1217,6 +1238,12 @@ if st.session_state.selected_product is None:
     # 3. Grano Tenero PMG
     if st.button("🌱 Grano Tenero prezzo minimo garantito - Raccolto Luglio 2027", use_container_width=True, key="btn_tenero_pmg"):
         st.session_state.selected_product = "TENERO_PMG"
+        st.rerun()
+
+    # 4. Pulsante aggiornamento / sincronizzazione manuale
+    st.markdown("<div style='margin-top: 6px;'></div>", unsafe_allow_html=True)
+    if st.button("🔄 Controlla nuove quotazioni (Gmail / Cloud)", use_container_width=True, key="btn_sync_manual_home"):
+        perform_app_sync(force=True, show_msg=True)
         st.rerun()
 
     # Iniezione sicura per garantire colori del carattere, lampeggiamento tenue e reset scroll al tocco

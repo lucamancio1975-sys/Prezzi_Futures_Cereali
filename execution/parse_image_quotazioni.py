@@ -21,7 +21,7 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
     """
     Esegue l'OCR sull'immagine.
     Su Windows utilizza l'engine nativo Windows.Media.Ocr ad altissima precisione.
-    Su Linux / altri sistemi operativi prova pytesseract se disponibile.
+    Su Linux / altri sistemi operativi prova pytesseract con preprocessing Pillow e configurazioni multiple.
     """
     # 1. Su Windows, usa lo script PowerShell nativo ad alta fedeltà
     if os.name == 'nt':
@@ -37,70 +37,99 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
                     data = json.loads(res.stdout.strip(), strict=False)
                     if isinstance(data, dict):
                         data = [data]
-                    return data
+                    if data:
+                        return data
             except Exception as e:
                 print(f"[OCR] Errore esecuzione win_ocr: {e}")
 
-    # 2. Fallback universale con pytesseract (Linux / Streamlit Community Cloud)
+    # 2. Fallback universale con pytesseract (Linux / Streamlit Community Cloud / GitHub Actions)
     try:
         import pytesseract
         from pytesseract import Output
-        
-        # Assicura modalità RGB (rimuovendo canale alpha che confonde Tesseract)
+        from PIL import ImageEnhance, ImageOps
+
         img_raw = Image.open(image_path)
+        # Assicura modalità RGB rimuovendo canale alpha
         if img_raw.mode == "RGBA":
             bg = Image.new("RGB", img_raw.size, (255, 255, 255))
             bg.paste(img_raw, mask=img_raw.split()[3])
-            img_ocr = bg
+            img_rgb = bg
         else:
-            img_ocr = img_raw.convert("RGB")
+            img_rgb = img_raw.convert("RGB")
 
-        langs_to_try = ['ita', 'eng', 'ita+eng', None]
-        for lang in langs_to_try:
-            try:
-                kwargs = {'output_type': Output.DICT}
-                if lang:
-                    kwargs['lang'] = lang
-                data = pytesseract.image_to_data(img_ocr, **kwargs)
-                lines_dict = {}
-                n_boxes = len(data.get('text', []))
-                for i in range(n_boxes):
-                    w_text = str(data['text'][i]).strip()
-                    if not w_text:
+        # Prepariamo 2 varianti: RGB standard e Scala di grigi ad alto contrasto
+        img_gray = ImageOps.grayscale(img_rgb)
+        enhancer = ImageEnhance.Contrast(img_gray)
+        img_contrast = enhancer.enhance(2.0)
+
+        variants = [img_rgb, img_contrast, img_gray]
+        configs = ['--oem 3 --psm 6', '--oem 3 --psm 11', '--oem 3 --psm 4', '--oem 3 --psm 3', '']
+        langs_to_try = ['ita+eng', 'ita', 'eng', None]
+
+        for img_variant in variants:
+            for lang in langs_to_try:
+                for cfg in configs:
+                    try:
+                        kwargs = {'output_type': Output.DICT}
+                        if lang:
+                            kwargs['lang'] = lang
+                        if cfg:
+                            kwargs['config'] = cfg
+                        data = pytesseract.image_to_data(img_variant, **kwargs)
+                        lines_dict = {}
+                        n_boxes = len(data.get('text', []))
+                        has_prices = False
+                        for i in range(n_boxes):
+                            w_text = str(data['text'][i]).strip()
+                            if not w_text:
+                                continue
+                            line_key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
+                            if line_key not in lines_dict:
+                                lines_dict[line_key] = []
+                            lines_dict[line_key].append({
+                                "Text": w_text,
+                                "X": data['left'][i],
+                                "Y": data['top'][i],
+                                "Width": data['width'][i],
+                                "Height": data['height'][i]
+                            })
+                            # Verifica se contiene numeri nel range tipico 120-600
+                            clean_n = re.sub(r'[^\d,.]', '', w_text).replace(',', '.')
+                            try:
+                                if clean_n and 120 <= float(clean_n) <= 600:
+                                    has_prices = True
+                            except ValueError:
+                                pass
+
+                        lines = []
+                        for line_key, words in lines_dict.items():
+                            full_text = " ".join([w["Text"] for w in words])
+                            lines.append({"Text": full_text, "Words": words})
+
+                        if lines and (has_prices or len(lines) >= 2):
+                            return lines
+                    except Exception:
                         continue
-                    line_key = (data['block_num'][i], data['par_num'][i], data['line_num'][i])
-                    if line_key not in lines_dict:
-                        lines_dict[line_key] = []
-                    lines_dict[line_key].append({
-                        "Text": w_text,
-                        "X": data['left'][i],
-                        "Y": data['top'][i],
-                        "Width": data['width'][i],
-                        "Height": data['height'][i]
-                    })
-                lines = []
-                for line_key, words in lines_dict.items():
-                    full_text = " ".join([w["Text"] for w in words])
-                    lines.append({"Text": full_text, "Words": words})
-                if lines:
-                    return lines
-            except Exception:
-                pass
 
-            try:
-                kwargs = {}
-                if lang:
-                    kwargs['lang'] = lang
-                text = pytesseract.image_to_string(img_ocr, **kwargs)
-                lines = []
-                for line in text.split('\n'):
-                    line_s = line.strip()
-                    if line_s:
-                        lines.append({"Text": line_s, "Words": []})
-                if lines:
-                    return lines
-            except Exception:
-                pass
+            # Fallback a image_to_string
+            for lang in langs_to_try:
+                for cfg in configs:
+                    try:
+                        kwargs = {}
+                        if lang:
+                            kwargs['lang'] = lang
+                        if cfg:
+                            kwargs['config'] = cfg
+                        text = pytesseract.image_to_string(img_variant, **kwargs)
+                        lines = []
+                        for line in text.split('\n'):
+                            line_s = line.strip()
+                            if line_s:
+                                lines.append({"Text": line_s, "Words": []})
+                        if lines and any(re.search(r'\b[1-5]\d{2}\b', l["Text"]) for l in lines):
+                            return lines
+                    except Exception:
+                        continue
     except Exception as e:
         print(f"[OCR] Errore generale pytesseract: {e}")
 
@@ -109,23 +138,35 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
 def _price_tokens(line: Dict[str, Any]) -> List[tuple]:
     """
     Ritorna [(valore, x, y)] per ogni numero a 3 cifre nel range 120-600 €/t della riga OCR,
-    usando le coordinate della SINGOLA parola. Necessario con Tesseract (Streamlit Cloud), che
-    raggruppa più celle della stessa riga visiva (es. "209 Eur/ton 231 Eur/ton") in un'unica riga.
+    usando le coordinate della SINGOLA parola (o della riga come fallback).
+    Gestisce anche formati con virgola/punto decimale (es. 258,00 o 258.0).
     """
     out = []
     for w in line.get("Words", []) or []:
-        for n in re.findall(r'(?<!\d)([1-5]\d{2})(?!\d)', str(w.get("Text", ""))):
-            if 120 <= float(n) <= 600:
-                out.append((float(n), w.get("X", 0), w.get("Y", 0)))
+        raw_w = str(w.get("Text", "")).strip()
+        # Cerca numeri interi o decimali (es. 258, 258.0, 258,00)
+        cleaned_matches = re.findall(r'(?<!\d)([1-5]\d{2}(?:[.,]\d{1,2})?)(?!\d)', raw_w)
+        for n_str in cleaned_matches:
+            try:
+                val = float(n_str.replace(',', '.'))
+                if 120 <= val <= 600:
+                    out.append((val, w.get("X", 0), w.get("Y", 0)))
+            except ValueError:
+                pass
+
     if not out:
-        # Fallback storico a livello di riga (cifre eventualmente spezzate dall'OCR)
         txt = line.get("Text", "")
         words = line.get("Words", []) or []
         x0 = words[0].get("X", 0) if words else 0
         y0 = words[0].get("Y", 0) if words else 0
-        for n in re.findall(r'\b([1-5]\d{2})\b', txt.replace(" ", "")):
-            if 120 <= float(n) <= 600:
-                out.append((float(n), x0, y0))
+        cleaned_matches = re.findall(r'(?<!\d)([1-5]\d{2}(?:[.,]\d{1,2})?)(?!\d)', txt)
+        for n_str in cleaned_matches:
+            try:
+                val = float(n_str.replace(',', '.'))
+                if 120 <= val <= 600:
+                    out.append((val, x0, y0))
+            except ValueError:
+                pass
     return out
 
 def extract_quotes_from_image(

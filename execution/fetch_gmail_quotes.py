@@ -295,13 +295,21 @@ def fetch_quotes_from_gmail(
                         logs.append(f" -> Avviso parsing PDF '{fname}': {err}")
 
                 # -------------------------------------------------------------
-                # PASSAGGIO 2: Se assente PDF o senza dati, OCR su immagini
+                # PASSAGGIO 2: Se assente PDF o senza dati, OCR su immagini (priorità immagini più grandi)
                 # -------------------------------------------------------------
-                if not extracted_from_this_email:
+                if not extracted_from_this_email and image_parts:
+                    image_parts_loaded = []
                     for part, fname in image_parts:
+                        p_data = part.get_payload(decode=True)
+                        if p_data:
+                            image_parts_loaded.append((fname, p_data))
+                    # Analizza prima le immagini con payload maggiore (tabelle quotazioni > firme/loghi)
+                    image_parts_loaded.sort(key=lambda item: len(item[1]), reverse=True)
+
+                    for fname, p_data in image_parts_loaded:
                         filepath = os.path.join(tmp_dir, fname)
                         with open(filepath, "wb") as f:
-                            f.write(part.get_payload(decode=True))
+                            f.write(p_data)
                         try:
                             quotes = extract_quotes_from_image(filepath, fallback_date=email_date)
                             if quotes:
@@ -312,7 +320,7 @@ def fetch_quotes_from_gmail(
                             logs.append(f" -> Avviso parsing immagine '{fname}': {err}")
 
                 # -------------------------------------------------------------
-                # PASSAGGIO 3: Se assenti immagini, interpretazione corpo email
+                # PASSAGGIO 3: Se assenti immagini o non estratte, interpretazione corpo email
                 # -------------------------------------------------------------
                 if not extracted_from_this_email and is_relevant:
                     for part, ctype in text_parts:

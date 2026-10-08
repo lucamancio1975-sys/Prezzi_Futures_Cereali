@@ -2,8 +2,12 @@ name: Sync Giornaliero Prezzi Futures da Gmail
 
 on:
   schedule:
-    # Esecuzione consolidamento database ogni mattina alle ore 08:00 italiane (06:00 UTC)
-    - cron: '0 6 * * *'
+    # Esecuzioni pianificate nei giorni lavorativi (lun-ven):
+    # Ore italiane: 08:00 (apertura), 11:00, 11:30, 12:00, 12:30, 13:00, 14:00, 15:00, 16:00, 17:00, 18:00 (chiusura)
+    # Fuso orario UTC: -2 ore rispetto all'Italia
+    - cron: '0 6 * * 1-5'
+    - cron: '0,30 9,10,11 * * 1-5'
+    - cron: '0 12,13,14,15,16 * * 1-5'
   workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions
 
 jobs:
@@ -27,7 +31,7 @@ jobs:
       - name: Installazione dipendenze e OCR di sistema
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-ita
+          sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-ita tesseract-ocr-eng
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytesseract

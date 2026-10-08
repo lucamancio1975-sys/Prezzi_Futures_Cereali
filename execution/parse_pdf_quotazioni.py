@@ -45,9 +45,15 @@ def extract_quotes_from_text(text: str, source_name: str = "Email/PDF") -> List[
         
     if not data_quotazione:
         # Cerca 'odierne: 18 settembre 2026' o 'del: 18 settembre 2026'
-        m_odierne = re.search(r'(?:odierne|del)\s*:\s*([0-9]{1,2}\s+[a-z]+\s+[0-9]{4})', text, re.IGNORECASE)
+        m_odierne = re.search(r'(?:odierne|del|il|data)\s*:\s*([0-9]{1,2}\s+[a-z]+\s+[0-9]{4})', text, re.IGNORECASE)
         if m_odierne:
             data_quotazione = parse_data_string(m_odierne.group(1))
+
+    if not data_quotazione:
+        # Cerca qualsiasi data estesa italiana: es. '8 ottobre 2026'
+        m_estesa = re.search(r'\b([0-3]?[0-9]\s+(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\s+202[0-9])\b', text, re.IGNORECASE)
+        if m_estesa:
+            data_quotazione = parse_data_string(m_estesa.group(1))
 
     # ==========================
     # 2. GRANO DURO (PDT)
