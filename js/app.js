@@ -435,7 +435,7 @@ function renderDetailView(productKey) {
         </div>
       </div>
 
-      <!-- Grafico Interattivo Wall Street -->
+      <!-- Grafico Interattivo Wall Street (Sola Linea) -->
       <div class="chart-card">
         <div class="chart-header">
           <span class="chart-title">Andamento Quotazioni</span>
@@ -450,89 +450,14 @@ function renderDetailView(productKey) {
           <canvas id="futuresChart"></canvas>
         </div>
       </div>
-
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Minimo</div>
-          <div class="kpi-val">${stats.minPrice.toFixed(2)} €</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Massimo</div>
-          <div class="kpi-val">${stats.maxPrice.toFixed(2)} €</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Media</div>
-          <div class="kpi-val">${stats.avgPrice.toFixed(2)} €</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Range</div>
-          <div class="kpi-val">${(stats.maxPrice - stats.minPrice).toFixed(2)} €</div>
-        </div>
-      </div>
-
-      <!-- Simulatore Impegni / Calcolatore Valore Totale -->
-      <div class="calculator-card">
-        <div class="calc-title">
-          <span>🧮 Calcolatore Valore Impegno di Vendita</span>
-        </div>
-        <div class="calc-inputs-row">
-          <div class="calc-field">
-            <label for="input-quintali">Quantità (Quintali q.li):</label>
-            <input type="number" id="input-quintali" value="500" step="50" min="0">
-          </div>
-          <div class="calc-field">
-            <label for="input-tonnellate">Oppure Tonnellate (t):</label>
-            <input type="number" id="input-tonnellate" value="50" step="5" min="0">
-          </div>
-        </div>
-        <div class="calc-result-box">
-          <span class="calc-result-label">Valore Lordo Stimato (@ ${stats.lastPrice.toFixed(2)} €/t):</span>
-          <span class="calc-result-val" id="calc-total-val">0,00 €</span>
-        </div>
-      </div>
-
-      <!-- Tabella Storico -->
-      <div class="history-card">
-        <div class="history-header">
-          <span class="history-title">Storico Recente Quotazioni</span>
-        </div>
-        <div class="history-table-wrapper">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Prezzo</th>
-                <th>Variazione</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${quotes.slice().reverse().map((q, idx, arr) => {
-                const prev = arr[idx + 1];
-                const delta = prev ? (q.prezzo - prev.prezzo) : 0;
-                const dSign = delta > 0 ? '+' : '';
-                const dCls = delta > 0 ? 'delta-up' : (delta < 0 ? 'delta-down' : 'delta-zero');
-                return `
-                  <tr>
-                    <td class="td-date">${formatDateItalian(q.data)}</td>
-                    <td class="td-price">${parseFloat(q.prezzo).toFixed(2)} €/t</td>
-                    <td class="td-delta ${dCls}">${prev ? `${dSign}${delta.toFixed(2)} €` : '-'}</td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   `;
 
-  // Inizializza Grafico
+  // Inizializza Grafico a sola linea
   renderChart(quotes, chartLineColor, chartFillColor);
 
   // Setup Event Listeners
   setupTimeframeButtons(quotes, chartLineColor, chartFillColor);
-  setupCalculator(stats.lastPrice);
 
   document.getElementById('btn-open-pdf')?.addEventListener('click', () => {
     openPdfModal(pdfGuideName, titleShort);
@@ -540,7 +465,7 @@ function renderDetailView(productKey) {
 }
 
 // =========================================================================
-// GRAFICO CHART.JS DINAMICO & RESPONSIVE
+// GRAFICO CHART.JS DINAMICO (SOLA LINEA SENZA TOOLTIP)
 // =========================================================================
 function filterQuotesByTimeframe(quotes, tf) {
   if (!quotes || quotes.length === 0) return [];
@@ -589,47 +514,23 @@ function renderChart(quotes, lineColor, fillColor) {
           label: 'Quotazione €/t',
           data: dataPoints,
           borderColor: lineColor,
-          backgroundColor: fillColor,
+          backgroundColor: 'transparent',
           borderWidth: 2.5,
-          pointRadius: 2.5,
-          pointHoverRadius: 6,
-          pointBackgroundColor: lineColor,
-          pointBorderColor: '#ffffff',
-          pointBorderWidth: 1,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          pointHitRadius: 0,
           tension: 0.15,
-          fill: true
+          fill: false
         }
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false
-      },
+      events: [], // Disattiva tutti gli eventi mouse/touch per evitare tooltip o highlight su punti
       plugins: {
         legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(3, 7, 18, 0.95)',
-          titleColor: '#f8fafc',
-          bodyColor: lineColor,
-          titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
-          bodyFont: { family: 'JetBrains Mono', size: 14, weight: 'bold' },
-          borderColor: 'rgba(255, 255, 255, 0.15)',
-          borderWidth: 1,
-          padding: 10,
-          displayColors: false,
-          callbacks: {
-            title: (items) => {
-              if (!items.length) return '';
-              return formatDateItalian(items[0].label);
-            },
-            label: (item) => {
-              return `Prezzo: ${parseFloat(item.raw).toFixed(2)} €/t`;
-            }
-          }
-        }
+        tooltip: { enabled: false }
       },
       scales: {
         x: {
@@ -670,34 +571,6 @@ function setupTimeframeButtons(quotes, lineColor, fillColor) {
       renderChart(quotes, lineColor, fillColor);
     });
   });
-}
-
-// =========================================================================
-// SIMULATORE IMPEGNI
-// =========================================================================
-function setupCalculator(pricePerTon) {
-  const inputQ = document.getElementById('input-quintali');
-  const inputT = document.getElementById('input-tonnellate');
-  const resultVal = document.getElementById('calc-total-val');
-
-  function updateFromQuintali() {
-    const q = parseFloat(inputQ.value) || 0;
-    const tons = q / 10;
-    inputT.value = tons.toFixed(1);
-    const total = tons * pricePerTon;
-    resultVal.textContent = total.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-  }
-
-  function updateFromTonnellate() {
-    const tons = parseFloat(inputT.value) || 0;
-    inputQ.value = (tons * 10).toFixed(0);
-    const total = tons * pricePerTon;
-    resultVal.textContent = total.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-  }
-
-  inputQ?.addEventListener('input', updateFromQuintali);
-  inputT?.addEventListener('input', updateFromTonnellate);
-  updateFromQuintali();
 }
 
 // =========================================================================
