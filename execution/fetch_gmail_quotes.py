@@ -275,29 +275,28 @@ def fetch_quotes_from_gmail(
                     elif content_type in ["text/plain", "text/html"]:
                         text_parts.append((part, content_type))
 
-                # -------------------------------------------------------------
-                # PASSAGGIO 1: Priorità ad allegati PDF (il metodo più veloce)
-                # -------------------------------------------------------------
-                for part, fname in pdf_parts:
-                    filepath = os.path.join(tmp_dir, fname)
-                    with open(filepath, "wb") as f:
-                        f.write(part.get_payload(decode=True))
-                    logs.append(f"Trovato allegato PDF: '{fname}' (Email: '{subject}')")
-                    try:
-                        quotes = extract_quotes_from_pdf(filepath)
-                        for q in quotes:
-                            if email_date and (not q.get("data") or q.get("data") == email_date):
-                                q["data"] = email_date
-                        if quotes:
-                            extracted_from_this_email.extend(quotes)
-                            logs.append(f" -> Estratte {len(quotes)} quotazioni dal PDF '{fname}'.")
-                    except Exception as err:
-                        logs.append(f" -> Avviso parsing PDF '{fname}': {err}")
+                # Helper per verificare se sono presenti tutte le serie principali
+                def _has_all_series(quotes_list):
+                    keys = set((q.get("prodotto", "").upper(), q.get("tipo", "").upper()) for q in quotes_list)
+                    has_duro = any("DURO" in p for p, _ in keys)
+                    has_tenero_pmg = ("GRANO TENERO FINO ROSSO", "PMG") in keys
+                    has_tenero_pdt = ("GRANO TENERO FINO ROSSO", "PDT") in keys
+                    return has_duro and has_tenero_pmg and has_tenero_pdt
+
+                def _merge_quotes(primary, secondary):
+                    """Unisce secondary in primary senza sovrascrivere le chiavi già estratte."""
+                    existing_keys = set((q.get("data"), q.get("prodotto"), q.get("tipo"), q.get("scadenza")) for q in primary)
+                    for q in secondary:
+                        k = (q.get("data"), q.get("prodotto"), q.get("tipo"), q.get("scadenza"))
+                        if k not in existing_keys:
+                            primary.append(q)
+                            existing_keys.add(k)
+                    return primary
 
                 # -------------------------------------------------------------
-                # PASSAGGIO 2: Se assente PDF o senza dati, OCR su immagini (priorità immagini più grandi)
+                # PASSAGGIO 1 (Priorità 1): OCR su immagini e tabelle inserite nel corpo email / allegati
                 # -------------------------------------------------------------
-                if not extracted_from_this_email and image_parts:
+                if image_parts:
                     image_parts_loaded = []
                     for part, fname in image_parts:
                         p_data = part.get_payload(decode=True)
@@ -313,16 +312,39 @@ def fetch_quotes_from_gmail(
                         try:
                             quotes = extract_quotes_from_image(filepath, fallback_date=email_date)
                             if quotes:
-                                extracted_from_this_email.extend(quotes)
-                                logs.append(f" -> Estratte {len(quotes)} quotazioni da immagine/tabella '{fname}' (Email: '{subject}').")
-                                break
+                                _merge_quotes(extracted_from_this_email, quotes)
+                                logs.append(f" -> Estratte {len(quotes)} quotazioni da immagine/tabella OCR '{fname}' (Email: '{subject}').")
+                                if _has_all_series(extracted_from_this_email):
+                                    break
                         except Exception as err:
                             logs.append(f" -> Avviso parsing immagine '{fname}': {err}")
 
                 # -------------------------------------------------------------
-                # PASSAGGIO 3: Se assenti immagini o non estratte, interpretazione corpo email
+                # PASSAGGIO 2 (Priorità 2): Allegato PDF (se assenti immagini o dati incompleti)
                 # -------------------------------------------------------------
-                if not extracted_from_this_email and is_relevant:
+                if pdf_parts and not _has_all_series(extracted_from_this_email):
+                    for part, fname in pdf_parts:
+                        filepath = os.path.join(tmp_dir, fname)
+                        with open(filepath, "wb") as f:
+                            f.write(part.get_payload(decode=True))
+                        logs.append(f"Ispezione allegato PDF: '{fname}' (Email: '{subject}')")
+                        try:
+                            quotes = extract_quotes_from_pdf(filepath)
+                            for q in quotes:
+                                if email_date and (not q.get("data") or q.get("data") == email_date):
+                                    q["data"] = email_date
+                            if quotes:
+                                _merge_quotes(extracted_from_this_email, quotes)
+                                logs.append(f" -> Integrate {len(quotes)} quotazioni dal PDF '{fname}'.")
+                                if _has_all_series(extracted_from_this_email):
+                                    break
+                        except Exception as err:
+                            logs.append(f" -> Avviso parsing PDF '{fname}': {err}")
+
+                # -------------------------------------------------------------
+                # PASSAGGIO 3 (Priorità 3): Interpretazione testo / tabelle HTML nel corpo email
+                # -------------------------------------------------------------
+                if not _has_all_series(extracted_from_this_email) and is_relevant:
                     for part, ctype in text_parts:
                         try:
                             payload = part.get_payload(decode=True).decode('utf-8', errors='ignore')
@@ -332,9 +354,10 @@ def fetch_quotes_from_gmail(
                                     if email_date and (not q.get("data") or q.get("data") == email_date):
                                         q["data"] = email_date
                                 if quotes:
-                                    extracted_from_this_email.extend(quotes)
-                                    logs.append(f" -> Estratte {len(quotes)} quotazioni dal corpo/tabella email: '{subject}'.")
-                                    break
+                                    _merge_quotes(extracted_from_this_email, quotes)
+                                    logs.append(f" -> Integrate {len(quotes)} quotazioni dal corpo/tabella email: '{subject}'.")
+                                    if _has_all_series(extracted_from_this_email):
+                                        break
                         except Exception:
                             pass
 

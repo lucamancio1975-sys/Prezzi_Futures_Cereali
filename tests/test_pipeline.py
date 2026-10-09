@@ -63,21 +63,40 @@ class TestPipeline(unittest.TestCase):
         self.assertTrue(len(pmg) > 0 and pmg[0]["prezzo"] == 215.0)
         self.assertTrue(len(pdt) > 0 and pdt[0]["prezzo"] == 240.0)
 
-    def test_storage_deduplication(self):
-        """Verifica la logica di deduplicazione della chiave composta."""
-        fake_quote = [{
-            "data": "2099-01-01",
-            "prodotto": "GRANO DURO",
-            "scadenza": "lug-27",
-            "tipo": "PDT",
-            "prezzo": 299.0,
-            "fonte": "UnitTest"
-        }]
+    def test_price_tokens_filtering(self):
+        """Verifica la normalizzazione di token spezzati e il filtraggio per range di prezzo."""
+        from execution.parse_image_quotazioni import _price_tokens
         
-        # Test deduplicazione su dati finti
-        from execution.storage_manager import load_quotes
-        current = load_quotes()
-        self.assertIsInstance(current, list)
+        # Test 1: parole con spazi interni (es. '20 7' -> 207, '2 29' -> 229)
+        line_split = {
+            "Text": "20 7   2 29   435",
+            "Words": [
+                {"Text": "20", "X": 100, "Y": 50},
+                {"Text": "7", "X": 115, "Y": 50},
+                {"Text": "2", "X": 200, "Y": 50},
+                {"Text": "29", "X": 210, "Y": 50},
+                {"Text": "435", "X": 300, "Y": 50}
+            ]
+        }
+        
+        # Grano Tenero: range 140 - 330 (deve accettare 207 e 229, scartare 435)
+        tokens_tenero = _price_tokens(line_split, min_val=140.0, max_val=330.0)
+        vals_tenero = [v for v, _, _ in tokens_tenero]
+        self.assertIn(207.0, vals_tenero)
+        self.assertIn(229.0, vals_tenero)
+        self.assertNotIn(435.0, vals_tenero)
+        
+        # Grano Duro: range 180 - 420
+        line_duro = {
+            "Text": "lug-27 258.00  lug-28 260.00",
+            "Words": [
+                {"Text": "258.00", "X": 100, "Y": 100},
+                {"Text": "260.00", "X": 200, "Y": 100}
+            ]
+        }
+        tokens_duro = _price_tokens(line_duro, min_val=180.0, max_val=420.0)
+        vals_duro = [v for v, _, _ in tokens_duro]
+        self.assertEqual(vals_duro, [258.0, 260.0])
 
 if __name__ == "__main__":
     unittest.main()
