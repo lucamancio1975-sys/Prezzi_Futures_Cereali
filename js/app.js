@@ -622,11 +622,22 @@ function setupPwaInstall() {
 // INIZIALIZZAZIONE GLOBALE
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. Registra Service Worker PWA
+  // 1. Registra Service Worker PWA con auto-aggiornamento immediato
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-      .then((reg) => console.log('PWA Service Worker registered:', reg.scope))
+      .then((reg) => {
+        console.log('PWA Service Worker registered:', reg.scope);
+        reg.update();
+      })
       .catch((err) => console.warn('PWA SW failed:', err));
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
   }
 
   // 2. Setup Modale & Installazione
