@@ -407,7 +407,16 @@ function renderDetailView(productKey) {
           </div>
           <div>${statusBadge}</div>
         </div>
-        <img src="./logo_optimized.webp" class="app-brand-logo" alt="Logo" onerror="this.style.display='none'">
+        <button class="hero-law-btn" id="btn-open-pdf" title="Visualizza Guida agli Impegni e Conferimento">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18"/>
+            <path d="M7 21h10"/>
+            <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+            <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+            <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+          </svg>
+          <span>GUIDA</span>
+        </button>
       </div>
 
       <!-- Hero Card Prezzo Attuale -->
@@ -417,16 +426,6 @@ function renderDetailView(productKey) {
             <div class="hero-price-val ${heroClass}">${stats.lastPrice.toFixed(2)} <span class="hero-price-unit">€/t</span></div>
             <div class="hero-date-val">📅 <b>${formatDateItalian(stats.lastDate)}</b></div>
           </div>
-          <button class="hero-law-btn" id="btn-open-pdf" title="Visualizza Guida agli Impegni e Conferimento">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3v18"/>
-              <path d="M7 21h10"/>
-              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
-              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-            </svg>
-            <span>GUIDA</span>
-          </button>
         </div>
         ${specsHtml}
         <div class="hero-delta-row">

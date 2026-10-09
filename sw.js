@@ -1,9 +1,9 @@
-const CACHE_NAME = 'futures-grano-v2.2';
+const CACHE_NAME = 'futures-grano-v2.3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './css/style.css?v=2.2',
-  './js/app.js?v=2.2',
+  './css/style.css?v=2.3',
+  './js/app.js?v=2.3',
   './manifest.json',
   './favicon.ico',
   './favicon.png',
