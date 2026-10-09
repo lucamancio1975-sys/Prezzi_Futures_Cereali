@@ -1,0 +1,48 @@
+name: Deploy Web App su GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'NUOVA APP SENZA STREAMLIT/**'
+      - 'data/storico_prezzi.json'
+      - 'data/storico_prezzi.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Sincronizza ultimi dati e asset nella cartella Web App
+        run: |
+          mkdir -p "NUOVA APP SENZA STREAMLIT/data"
+          cp -f data/storico_prezzi.json "NUOVA APP SENZA STREAMLIT/data/" 2>/dev/null || true
+          cp -f data/storico_prezzi.csv "NUOVA APP SENZA STREAMLIT/data/" 2>/dev/null || true
+
+      - name: Configurazione GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Caricamento Artifacts Web App
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'NUOVA APP SENZA STREAMLIT'
+
+      - name: Pubblicazione su GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,37 @@
+{
+  "id": "futures-grano-cereali-app",
+  "name": "Futures Grano - Quotazioni Giornaliere",
+  "short_name": "Futures Grano",
+  "description": "Monitoraggio e quotazioni in tempo reale dei Futures Grano Duro e Grano Tenero (PDT e PMG)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "categories": [
+    "business",
+    "finance"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
