@@ -141,9 +141,9 @@ def _run_ocr_on_image(image_path: str) -> List[Dict[str, Any]]:
 
     return []
 
-def _price_tokens(line: Dict[str, Any], min_val: float = 120.0, max_val: float = 600.0) -> List[tuple]:
+def _price_tokens(line: Dict[str, Any], min_val: float = 100.0, max_val: float = 600.0) -> List[tuple]:
     """
-    Ritorna [(valore, x, y)] per ogni numero nel range [min_val, max_val] €/t della riga OCR.
+    Ritorna [(valore, x, y)] per ogni numero nel range generale [min_val, max_val] €/t della riga OCR.
     Gestisce:
       - Numeri nella singola parola (es. 258, 258.0, 258,00)
       - Parole con cifre spezzate dall'OCR (es. '20 7' -> 207, '2 29' -> 229, '2 24' -> 224)
@@ -215,7 +215,6 @@ def extract_quotes_from_image(
 
     # ==============================================================
     # 1. ESTRAZIONE GRANO DURO (Sezione inferiore: circa Y 620-720)
-    # Range plausibilità Grano Duro: 180 - 420 €/t
     # ==============================================================
     try:
         y1_gd = int(620 * scale_y)
@@ -245,7 +244,7 @@ def extract_quotes_from_image(
         p_duro_28 = None
         duro_nums = []
         for line in lines_gd:
-            for val, _x, y_coord in _price_tokens(line, min_val=180.0, max_val=420.0):
+            for val, _x, y_coord in _price_tokens(line):
                 duro_nums.append((val, y_coord))
 
         if duro_nums:
@@ -277,7 +276,6 @@ def extract_quotes_from_image(
 
     # ==============================================================
     # 2. ESTRAZIONE GRANO TENERO (Sezione centrale: circa Y 390-485)
-    # Range plausibilità Grano Tenero: 140 - 330 €/t (esclude rigorosamente Colza/Soia > 350)
     # ==============================================================
     try:
         y1_gt = int(390 * scale_y)
@@ -310,7 +308,7 @@ def extract_quotes_from_image(
         pdt_candidates = []
 
         for l in lines_gt:
-            for val, x_val, y_val in _price_tokens(l, min_val=140.0, max_val=330.0):
+            for val, x_val, y_val in _price_tokens(l):
                 if x_val < col_div:
                     pmg_candidates.append((val, y_val, x_val))
                 else:
@@ -358,13 +356,8 @@ def extract_quotes_from_image(
             for q in extracted:
                 if not q.get("data"):
                     q["data"] = final_date
-                
-                # Applica filtri di coerenza per coltura
-                prod = str(q.get("prodotto", "")).upper()
                 prz = float(q.get("prezzo") or 0)
-                if "TENERO" in prod and 140 <= prz <= 330:
-                    results.append(q)
-                elif "DURO" in prod and 180 <= prz <= 420:
+                if 100 <= prz <= 600:
                     results.append(q)
         except Exception:
             pass

@@ -10,13 +10,13 @@ I dati estratti devono essere archiviati in modo deterministico e visualizzati n
 - **Priorità 3 (Corpo Testo / Tabelle HTML):** Scansione testuale dell'email per messaggi senza immagini o allegati.
 
 ## 3. Strumenti di Esecuzione (Livello 3)
-- `execution/parse_image_quotazioni.py`: Parser OCR per estrarre data, scadenze e prezzi dalle immagini della tabella (PNG/JPG inline o allegate), con filtri di range agronomici deterministici (Grano Tenero 140-330 €/t, Grano Duro 180-420 €/t) e normalizzazione caratteri spezzati.
+- `execution/parse_image_quotazioni.py`: Parser OCR per estrarre data, scadenze e prezzi dalle immagini della tabella (PNG/JPG inline o allegate), con ritagli geometrici per coltura, normalizzazione caratteri spezzati e mappatura ordinata delle scadenze.
 - `execution/win_ocr.ps1`: Engine OCR Windows ad altissima affidabilità per la lettura delle tabelle copiate da Excel/Outlook.
 - `execution/parse_pdf_quotazioni.py`: Parser per estrarre data, scadenze e prezzi dal testo/PDF.
 - `execution/storage_manager.py`: Motore di persistenza atomica per `data/storico_prezzi.json` e CSV con sincronizzazione bidirezionale GitHub.
 - `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB.
 
 ## 4. Casi Limite e Gestione Errori
-- **Filtri di Coerenza Prezzi:** Rigetto automatico di valori fuori range (es. scarto di colture limitrofe come Colza/Soia a > 400 €/t per il Grano Tenero).
+- **Isolamento Geometrico delle Sezioni:** Ritaglio mirato per evitare interferenze di colture sovrastanti/sottostanti.
 - **Deduplicazione e Integrazione Serie:** Deduplicazione su chiave `(data, prodotto, tipo, scadenza)`. Se una fonte parziale manca di una serie, le fonti successive completano i dati mancanti.
 
