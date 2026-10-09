@@ -435,17 +435,8 @@ function renderDetailView(productKey) {
         </div>
       </div>
 
-      <!-- Grafico Interattivo Wall Street (Sola Linea) -->
+      <!-- Grafico (Sola Linea Pulita) -->
       <div class="chart-card">
-        <div class="chart-header">
-          <span class="chart-title">Andamento Quotazioni</span>
-          <div class="timeframe-selector">
-            <button class="tf-btn ${STATE.timeframe === '1m' ? 'active' : ''}" data-tf="1m">1M</button>
-            <button class="tf-btn ${STATE.timeframe === '3m' ? 'active' : ''}" data-tf="3m">3M</button>
-            <button class="tf-btn ${STATE.timeframe === 'june' ? 'active' : ''}" data-tf="june">Da Giu '26</button>
-            <button class="tf-btn ${STATE.timeframe === 'all' ? 'active' : ''}" data-tf="all">Tutto</button>
-          </div>
-        </div>
         <div class="chart-wrapper">
           <canvas id="futuresChart"></canvas>
         </div>
@@ -454,10 +445,7 @@ function renderDetailView(productKey) {
   `;
 
   // Inizializza Grafico a sola linea
-  renderChart(quotes, chartLineColor, chartFillColor);
-
-  // Setup Event Listeners
-  setupTimeframeButtons(quotes, chartLineColor, chartFillColor);
+  renderChart(quotes, chartLineColor);
 
   document.getElementById('btn-open-pdf')?.addEventListener('click', () => {
     openPdfModal(pdfGuideName, titleShort);
@@ -465,40 +453,19 @@ function renderDetailView(productKey) {
 }
 
 // =========================================================================
-// GRAFICO CHART.JS DINAMICO (SOLA LINEA SENZA TOOLTIP)
+// GRAFICO CHART.JS (SOLA LINEA SENZA TOOLTIP NÉ TIMEFRAME)
 // =========================================================================
-function filterQuotesByTimeframe(quotes, tf) {
-  if (!quotes || quotes.length === 0) return [];
-  const latestDateStr = quotes[quotes.length - 1].data;
-  const latestDt = new Date(latestDateStr);
-
-  if (tf === '1m') {
-    const cutoff = new Date(latestDt);
-    cutoff.setMonth(cutoff.getMonth() - 1);
-    return quotes.filter((q) => new Date(q.data) >= cutoff);
-  } else if (tf === '3m') {
-    const cutoff = new Date(latestDt);
-    cutoff.setMonth(cutoff.getMonth() - 3);
-    return quotes.filter((q) => new Date(q.data) >= cutoff);
-  } else if (tf === 'june') {
-    const juneQuotes = quotes.filter((q) => q.data >= '2026-06-01');
-    return juneQuotes.length >= 10 ? juneQuotes : quotes.slice(-80);
-  }
-  return quotes;
-}
-
-function renderChart(quotes, lineColor, fillColor) {
+function renderChart(quotes, lineColor) {
   const ctx = document.getElementById('futuresChart');
-  if (!ctx || typeof Chart === 'undefined') return;
+  if (!ctx || typeof Chart === 'undefined' || !quotes || quotes.length === 0) return;
 
   if (STATE.chartInstance) {
     STATE.chartInstance.destroy();
     STATE.chartInstance = null;
   }
 
-  const filtered = filterQuotesByTimeframe(quotes, STATE.timeframe);
-  const labels = filtered.map((q) => q.data);
-  const dataPoints = filtered.map((q) => parseFloat(q.prezzo));
+  const labels = quotes.map((q) => q.data);
+  const dataPoints = quotes.map((q) => parseFloat(q.prezzo));
 
   const pMin = Math.min(...dataPoints);
   const pMax = Math.max(...dataPoints);
@@ -527,7 +494,7 @@ function renderChart(quotes, lineColor, fillColor) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      events: [], // Disattiva tutti gli eventi mouse/touch per evitare tooltip o highlight su punti
+      events: [], // Disattiva interazioni/tooltip
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false }
@@ -541,7 +508,7 @@ function renderChart(quotes, lineColor, fillColor) {
             maxRotation: 0,
             autoSkip: true,
             maxTicksLimit: 6,
-            callback: function(val, index) {
+            callback: function(val) {
               const dStr = this.getLabelForValue(val);
               return formatDateShort(dStr);
             }
@@ -559,17 +526,6 @@ function renderChart(quotes, lineColor, fillColor) {
         }
       }
     }
-  });
-}
-
-function setupTimeframeButtons(quotes, lineColor, fillColor) {
-  document.querySelectorAll('.tf-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.tf-btn').forEach((b) => b.classList.remove('active'));
-      e.target.classList.add('active');
-      STATE.timeframe = e.target.dataset.tf;
-      renderChart(quotes, lineColor, fillColor);
-    });
   });
 }
 
@@ -622,51 +578,43 @@ function setupPwaInstall() {
 // INIZIALIZZAZIONE GLOBALE
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. Registra Service Worker PWA con auto-aggiornamento immediato
-  if ('caches' in window) {
-    caches.keys().then((names) => {
-      names.forEach((name) => {
-        if (name !== 'futures-grano-v2.1') {
-          caches.delete(name);
-        }
-      });
-    });
-  }
+  // 1. Carica subito i dati da localStorage per evitare flash o ritardi
+  try {
+    const cached = localStorage.getItem('futures_quotes_cache');
+    if (cached) {
+      STATE.allQuotes = JSON.parse(cached);
+    }
+  } catch (e) {}
 
+  // 2. Registra Service Worker PWA senza ricaricamenti aggressivi
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=2.1')
+    navigator.serviceWorker.register('./sw.js?v=2.2')
       .then((reg) => {
         console.log('PWA Service Worker registered:', reg.scope);
-        reg.update();
       })
       .catch((err) => console.warn('PWA SW failed:', err));
-
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
-    });
   }
 
-  // 2. Setup Modale & Installazione
+  // 3. Setup Modale & Installazione
   document.getElementById('modal-close-btn')?.addEventListener('click', closePdfModal);
   document.getElementById('modal-pdf')?.addEventListener('click', (e) => {
     if (e.target.id === 'modal-pdf') closePdfModal();
   });
   setupPwaInstall();
 
-  // 3. Setup Pulsante Sincronizzazione Header
+  // 4. Setup Pulsante Sincronizzazione Header
   document.getElementById('btn-sync')?.addEventListener('click', () => {
     fetchQuotesData();
   });
 
-  // 4. Ascolto Cambi Hash URL
+  // 5. Ascolto Cambi Hash URL
   window.addEventListener('hashchange', () => {
     renderApp();
   });
 
-  // 5. Caricamento Dati
+  // 6. Primo render immediato
+  renderApp();
+
+  // 7. Aggiornamento dati in background
   fetchQuotesData();
 });
