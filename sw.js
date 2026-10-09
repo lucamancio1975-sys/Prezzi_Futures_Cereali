@@ -1,9 +1,9 @@
-const CACHE_NAME = 'futures-grano-v2.0';
+const CACHE_NAME = 'futures-grano-v2.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './css/style.css?v=2.0',
-  './js/app.js?v=2.0',
+  './css/style.css?v=2.1',
+  './js/app.js?v=2.1',
   './manifest.json',
   './favicon.ico',
   './favicon.png',
@@ -17,12 +17,12 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch((err) => console.warn('PWA Cache pre-fetch warning:', err));
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => console.warn('PWA Cache install warning:', err));
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -31,48 +31,33 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
+            console.log('Eliminazione vecchia cache PWA:', cache);
             return caches.delete(cache);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Strategia Network First: cerca sempre prima in rete la versione fresca, fallback su cache se offline
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  // Per i dati JSON delle quotazioni: Network First con fallback a Cache
-  if (url.pathname.includes('storico_prezzi.json')) {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response.status === 200) {
-            const respClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
+  if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
     return;
   }
 
-  // Per le risorse statiche: Stale-While-Revalidate
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const respClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
-          }
-          return networkResponse;
-        })
-        .catch(() => cachedResponse);
-
-      return cachedResponse || fetchPromise;
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const respClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, respClone));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
+

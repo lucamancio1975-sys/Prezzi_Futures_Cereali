@@ -623,8 +623,18 @@ function setupPwaInstall() {
 // =========================================================================
 window.addEventListener('DOMContentLoaded', () => {
   // 1. Registra Service Worker PWA con auto-aggiornamento immediato
+  if ('caches' in window) {
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        if (name !== 'futures-grano-v2.1') {
+          caches.delete(name);
+        }
+      });
+    });
+  }
+
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('./sw.js?v=2.1')
       .then((reg) => {
         console.log('PWA Service Worker registered:', reg.scope);
         reg.update();
