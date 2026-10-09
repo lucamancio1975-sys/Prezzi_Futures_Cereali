@@ -5,9 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'NUOVA APP SENZA STREAMLIT/**'
-      - 'data/storico_prezzi.json'
-      - 'data/storico_prezzi.csv'
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'data/**'
+      - 'manifest.json'
+      - 'sw.js'
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -29,19 +33,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Sincronizza ultimi dati e asset nella cartella Web App
-        run: |
-          mkdir -p "NUOVA APP SENZA STREAMLIT/data"
-          cp -f data/storico_prezzi.json "NUOVA APP SENZA STREAMLIT/data/" 2>/dev/null || true
-          cp -f data/storico_prezzi.csv "NUOVA APP SENZA STREAMLIT/data/" 2>/dev/null || true
-
       - name: Configurazione GitHub Pages
         uses: actions/configure-pages@v5
 
       - name: Caricamento Artifacts Web App
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'NUOVA APP SENZA STREAMLIT'
+          path: '.'
 
       - name: Pubblicazione su GitHub Pages
         id: deployment
