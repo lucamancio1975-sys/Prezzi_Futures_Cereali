@@ -63,24 +63,24 @@ async function fetchQuotesData() {
   const timestamp = Date.now();
 
   try {
-    // 1. Prova prima il file locale (stesso host / server statico)
-    const resp = await fetch(`${CONFIG.DATA_LOCAL_URL}?_t=${timestamp}`, { cache: 'no-store' });
-    if (resp.ok) {
-      data = await resp.json();
+    // 1. Prova prima GitHub Raw (sempre aggiornato in tempo reale al secondo da GitHub Actions)
+    const remoteResp = await fetch(`${CONFIG.DATA_REMOTE_URL}?_t=${timestamp}`, { cache: 'no-store' });
+    if (remoteResp.ok) {
+      data = await remoteResp.json();
     }
   } catch (err) {
-    console.warn('Fallback a GitHub Raw per caricamento dati...');
+    console.warn('Fallback a file locale per caricamento dati...', err);
   }
 
   if (!data || !Array.isArray(data) || data.length === 0) {
     try {
-      // 2. Fallback diretto a GitHub Raw (sempre aggiornato via Actions)
-      const remoteResp = await fetch(`${CONFIG.DATA_REMOTE_URL}?_t=${timestamp}`, { cache: 'no-store' });
-      if (remoteResp.ok) {
-        data = await remoteResp.json();
+      // 2. Fallback al file locale dello stesso host
+      const resp = await fetch(`${CONFIG.DATA_LOCAL_URL}?_t=${timestamp}`, { cache: 'no-store' });
+      if (resp.ok) {
+        data = await resp.json();
       }
     } catch (err) {
-      console.error('Errore download da GitHub:', err);
+      console.error('Errore download da file locale:', err);
     }
   }
 

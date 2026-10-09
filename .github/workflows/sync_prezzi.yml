@@ -60,7 +60,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Nessuna variazione al database, nessun commit necessario."
           else
-            git commit -m "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]"
+            git commit -m "Auto-sync: nuove quotazioni futures cereali da Gmail"
             git pull --rebase origin main || true
             git push
           fi
