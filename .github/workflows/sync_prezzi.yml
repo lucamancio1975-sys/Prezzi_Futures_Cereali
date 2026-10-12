@@ -3,9 +3,10 @@ name: Sync Giornaliero Prezzi Futures da Gmail
 on:
   schedule:
     # Esecuzioni pianificate ogni 30 minuti nei giorni lavorativi (lun-ven):
-    # Ore italiane: 08:15, 08:45, 09:15, 09:45, 10:15, ..., 18:15, 18:45
-    # Fuso orario UTC: 06:15 - 16:45 (l'uso dei minuti :15 e :45 evita la congestione dei runner GitHub a :00 e :30)
-    - cron: '15,45 6-16 * * 1-5'
+    # Fuso orario UTC: 06:15 - 16:45 (Ore italiane: 08:15 - 18:45)
+    # L'uso dei minuti :15 e :45 su due righe separate garantisce la massima compatibilità con GitHub Actions
+    - cron: '15 6-16 * * 1-5'
+    - cron: '45 6-16 * * 1-5'
   workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions
 
 jobs:
