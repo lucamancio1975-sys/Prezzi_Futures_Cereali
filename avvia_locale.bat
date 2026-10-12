@@ -4,13 +4,13 @@ chcp 65001 > nul
 
 echo ===============================================================
 echo   FUTURES CEREALI (GRANO DURO + TENERO PDT / PMG)
-echo   Avvio Web App PWA Ultra-Veloce (Zero Streamlit)
+echo   Avvio Web App PWA con Sincronizzazione Intelligente
 echo ===============================================================
 echo.
 
 cd /d "%~dp0"
 
-:: Cerca Python per avviare il micro-server HTTP locale
+:: Cerca Python per l'esecuzione
 set "PY_CMD=python"
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
@@ -20,20 +20,23 @@ if %errorlevel% neq 0 (
     )
 )
 
-:: Trova una porta libera (8088 o 8080)
 set PORT=8088
 
-echo [INFO] Avvio Web Server locale sulla porta %PORT%...
+:: Fase 1: Verifica preliminare e allineamento quotazioni odierne
+%PY_CMD% execution\boot_sync.py
+
+echo.
+echo [INFO] Avvio Micro Web Server locale sulla porta %PORT%...
 echo [INFO] Apertura automatica del browser all'indirizzo: http://localhost:%PORT%
 echo.
 echo NOTA: Per arrestare il server, chiudi questa finestra.
 echo ===============================================================
 echo.
 
-:: Avvia il browser predefinito
+:: Fase 2: Apertura automatica del browser predefinito
 start http://localhost:%PORT%
 
-:: Avvia micro-server Python
-%PY_CMD% -m http.server %PORT%
+:: Fase 3: Avvio server con API di sincronizzazione live (/api/sync)
+%PY_CMD% local_server.py %PORT%
 
 pause

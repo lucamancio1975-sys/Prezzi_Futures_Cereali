@@ -53,34 +53,61 @@ function getTodayItalianStr() {
 }
 
 // =========================================================================
-// DATA FETCHING CON STRATEGIA RESILIENTE
+// DATA FETCHING & LIVE SYNC CON STRATEGIA RESILIENTE
 // =========================================================================
+async function triggerManualSync() {
+  const syncBtn = document.getElementById('btn-sync');
+  if (syncBtn) syncBtn.classList.add('spinning');
+
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+  if (isLocalHost) {
+    try {
+      // Sul PC locale: invoca il micro-server Python per verificare Gmail e aggiornare GitHub
+      const apiResp = await fetch(`/api/sync?_t=${Date.now()}`);
+      if (apiResp.ok) {
+        const syncResult = await apiResp.json();
+        console.log('[LOCAL SERVER SYNC]', syncResult);
+      }
+    } catch (err) {
+      console.warn('[LOCAL SERVER] Endpoint /api/sync non disponibile, fallback a fetch diretto...', err);
+    }
+  }
+
+  await fetchQuotesData();
+
+  if (syncBtn) syncBtn.classList.remove('spinning');
+}
+
 async function fetchQuotesData() {
   const syncBtn = document.getElementById('btn-sync');
   if (syncBtn) syncBtn.classList.add('spinning');
 
   let data = null;
   const timestamp = Date.now();
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+  // In locale privilegia il file locale aggiornato; su GitHub Pages privilegia GitHub Raw
+  const firstUrl = isLocalHost ? CONFIG.DATA_LOCAL_URL : CONFIG.DATA_REMOTE_URL;
+  const fallbackUrl = isLocalHost ? CONFIG.DATA_REMOTE_URL : CONFIG.DATA_LOCAL_URL;
 
   try {
-    // 1. Prova prima GitHub Raw (sempre aggiornato in tempo reale al secondo da GitHub Actions)
-    const remoteResp = await fetch(`${CONFIG.DATA_REMOTE_URL}?_t=${timestamp}`, { cache: 'no-store' });
-    if (remoteResp.ok) {
-      data = await remoteResp.json();
+    const resp1 = await fetch(`${firstUrl}?_t=${timestamp}`, { cache: 'no-store' });
+    if (resp1.ok) {
+      data = await resp1.json();
     }
   } catch (err) {
-    console.warn('Fallback a file locale per caricamento dati...', err);
+    console.warn(`Fallback da ${firstUrl} a ${fallbackUrl}...`, err);
   }
 
   if (!data || !Array.isArray(data) || data.length === 0) {
     try {
-      // 2. Fallback al file locale dello stesso host
-      const resp = await fetch(`${CONFIG.DATA_LOCAL_URL}?_t=${timestamp}`, { cache: 'no-store' });
-      if (resp.ok) {
-        data = await resp.json();
+      const resp2 = await fetch(`${fallbackUrl}?_t=${timestamp}`, { cache: 'no-store' });
+      if (resp2.ok) {
+        data = await resp2.json();
       }
     } catch (err) {
-      console.error('Errore download da file locale:', err);
+      console.error('Errore download da fallback URL:', err);
     }
   }
 
@@ -603,7 +630,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 4. Setup Pulsante Sincronizzazione Header
   document.getElementById('btn-sync')?.addEventListener('click', () => {
-    fetchQuotesData();
+    triggerManualSync();
   });
 
   // 5. Ascolto Cambi Hash URL
