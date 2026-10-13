@@ -55,6 +55,20 @@ function getTodayItalianStr() {
 // =========================================================================
 // DATA FETCHING & LIVE SYNC CON STRATEGIA RESILIENTE
 // =========================================================================
+function showToast(message, type = 'wait') {
+  let toast = document.getElementById('app-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'app-toast';
+    document.body.appendChild(toast);
+  }
+  toast.className = `app-toast toast-${type} show`;
+  toast.innerText = message;
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3500);
+}
+
 async function triggerManualSync() {
   const syncBtn = document.getElementById('btn-sync');
   if (syncBtn) syncBtn.classList.add('spinning');
@@ -63,7 +77,7 @@ async function triggerManualSync() {
 
   if (isLocalHost) {
     try {
-      // Sul PC locale: invoca il micro-server Python per verificare Gmail e aggiornare GitHub
+      showToast('Controllo casella Gmail in corso...', 'wait');
       const apiResp = await fetch(`/api/sync?_t=${Date.now()}`);
       if (apiResp.ok) {
         const syncResult = await apiResp.json();
@@ -72,11 +86,23 @@ async function triggerManualSync() {
     } catch (err) {
       console.warn('[LOCAL SERVER] Endpoint /api/sync non disponibile, fallback a fetch diretto...', err);
     }
+  } else {
+    showToast('Verifica nuove quotazioni...', 'wait');
   }
 
   await fetchQuotesData();
 
   if (syncBtn) syncBtn.classList.remove('spinning');
+
+  const todayStr = getTodayItalianStr();
+  const hasToday = STATE.allQuotes && STATE.allQuotes.some(q => q.data === todayStr);
+  if (hasToday) {
+    showToast('Quotazioni di oggi confermate e caricate!', 'success');
+  } else {
+    const dates = STATE.allQuotes ? STATE.allQuotes.map(q => q.data).sort() : [];
+    const lastD = dates.length > 0 ? dates[dates.length - 1] : 'N.D.';
+    showToast(`Ultima seduta disponibile: ${formatDateShort(lastD)}`, 'wait');
+  }
 }
 
 async function fetchQuotesData() {
@@ -85,30 +111,42 @@ async function fetchQuotesData() {
 
   let data = null;
   const timestamp = Date.now();
-  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-  // In locale privilegia il file locale aggiornato; su GitHub Pages privilegia GitHub Raw
-  const firstUrl = isLocalHost ? CONFIG.DATA_LOCAL_URL : CONFIG.DATA_REMOTE_URL;
-  const fallbackUrl = isLocalHost ? CONFIG.DATA_REMOTE_URL : CONFIG.DATA_LOCAL_URL;
+  let data1 = null;
+  let data2 = null;
 
   try {
-    const resp1 = await fetch(`${firstUrl}?_t=${timestamp}`, { cache: 'no-store' });
+    const resp1 = await fetch(`${CONFIG.DATA_LOCAL_URL}?_t=${timestamp}`, { cache: 'no-store' });
     if (resp1.ok) {
-      data = await resp1.json();
+      data1 = await resp1.json();
     }
   } catch (err) {
-    console.warn(`Fallback da ${firstUrl} a ${fallbackUrl}...`, err);
+    console.warn('Download da DATA_LOCAL_URL non riuscito:', err);
   }
 
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    try {
-      const resp2 = await fetch(`${fallbackUrl}?_t=${timestamp}`, { cache: 'no-store' });
-      if (resp2.ok) {
-        data = await resp2.json();
-      }
-    } catch (err) {
-      console.error('Errore download da fallback URL:', err);
+  try {
+    const resp2 = await fetch(`${CONFIG.DATA_REMOTE_URL}?_t=${timestamp}`, { cache: 'no-store' });
+    if (resp2.ok) {
+      data2 = await resp2.json();
     }
+  } catch (err) {
+    console.warn('Download da DATA_REMOTE_URL non riuscito:', err);
+  }
+
+  function getLatestDate(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) return '';
+    return arr.map(q => q.data || '').sort().pop() || '';
+  }
+
+  const d1Date = getLatestDate(data1);
+  const d2Date = getLatestDate(data2);
+
+  if (d1Date >= d2Date && Array.isArray(data1) && data1.length > 0) {
+    data = data1;
+  } else if (Array.isArray(data2) && data2.length > 0) {
+    data = data2;
+  } else if (Array.isArray(data1) && data1.length > 0) {
+    data = data1;
   }
 
   if (syncBtn) syncBtn.classList.remove('spinning');

@@ -1,9 +1,9 @@
-const CACHE_NAME = 'futures-grano-v2.4';
+const CACHE_NAME = 'futures-grano-v2.5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './css/style.css?v=2.4',
-  './js/app.js?v=2.4',
+  './css/style.css?v=2.5',
+  './js/app.js?v=2.5',
   './manifest.json',
   './favicon.ico',
   './favicon.png',
@@ -40,12 +40,24 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Strategia Network First: cerca sempre prima in rete la versione fresca, fallback su cache se offline
+// Strategia differenziata: Dati SEMPRE live da rete (zero cache), Asset statici Network First
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
     return;
   }
 
+  const url = event.request.url;
+
+  // I dati dinamici (JSON, CSV, chiamate API) NON devono MAI essere bloccati da cache SW
+  if (url.includes('storico_prezzi') || url.includes('/api/') || url.includes('raw.githubusercontent.com') || url.includes('api.github.com')) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Risorse statiche: Network First con fallback cache per funzionamento offline
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
@@ -55,9 +67,6 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request))
   );
 });
-

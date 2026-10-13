@@ -348,7 +348,7 @@ def sync_from_github() -> int:
     # Fonde le quotazioni remote nel DB locale senza rimandare indietro a GitHub
     return add_quotes(remote_quotes, push_github=False)
 
-def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail [skip ci]") -> bool:
+def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail") -> bool:
     """
     Pubblica data/storico_prezzi.json e data/storico_prezzi.csv su GitHub (Contents API).
     - Prima del push FONDE il contenuto remoto nel DB locale: un'istanza con DB incompleto
