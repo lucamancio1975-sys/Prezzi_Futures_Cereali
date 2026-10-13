@@ -1,15 +1,7 @@
 name: Sync Giornaliero Prezzi Futures da Gmail
 
 on:
-  schedule:
-    # Fasce orarie nei giorni lavorativi (lun-ven):
-    # Mattina presto (08:12 - 09:42 italiane / 06:12 - 07:42 UTC) ogni 30 min
-    - cron: '12,42 6-7 * * 1-5'
-    # Finestra principale arrivo email (10:07 - 13:52 italiane / 08:07 - 11:52 UTC) OGNI 15 MINUTI
-    - cron: '7,22,37,52 8-11 * * 1-5'
-    # Pomeriggio e chiusura (14:12 - 18:42 italiane / 12:12 - 16:42 UTC) ogni 30 min
-    - cron: '12,42 12-16 * * 1-5'
-  workflow_dispatch: # Permette anche l'avvio manuale dal pannello Actions o da API
+  workflow_dispatch: # Attivato esclusivamente da webhook API (cron-job.org) o manualmente
 
 permissions:
   contents: write
