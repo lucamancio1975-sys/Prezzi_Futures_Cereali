@@ -294,9 +294,31 @@ def fetch_quotes_from_gmail(
                     return primary
 
                 # -------------------------------------------------------------
-                # PASSAGGIO 1 (Priorità 1): OCR su immagini e tabelle inserite nel corpo email / allegati
+                # PASSAGGIO 1 (Priorità 1): Allegato PDF (massima accuratezza vettoriale)
                 # -------------------------------------------------------------
-                if image_parts:
+                if pdf_parts:
+                    for part, fname in pdf_parts:
+                        filepath = os.path.join(tmp_dir, fname)
+                        with open(filepath, "wb") as f:
+                            f.write(part.get_payload(decode=True))
+                        logs.append(f"Ispezione allegato PDF: '{fname}' (Email: '{subject}')")
+                        try:
+                            quotes = extract_quotes_from_pdf(filepath)
+                            for q in quotes:
+                                if email_date and (not q.get("data") or q.get("data") == email_date):
+                                    q["data"] = email_date
+                            if quotes:
+                                _merge_quotes(extracted_from_this_email, quotes)
+                                logs.append(f" -> Integrate {len(quotes)} quotazioni dal PDF '{fname}'.")
+                                if _has_all_series(extracted_from_this_email):
+                                    break
+                        except Exception as err:
+                            logs.append(f" -> Avviso parsing PDF '{fname}': {err}")
+
+                # -------------------------------------------------------------
+                # PASSAGGIO 2 (Priorità 2): OCR su immagini e tabelle (fallback se assente PDF o serie incomplete)
+                # -------------------------------------------------------------
+                if image_parts and not _has_all_series(extracted_from_this_email):
                     image_parts_loaded = []
                     for part, fname in image_parts:
                         p_data = part.get_payload(decode=True)
@@ -318,28 +340,6 @@ def fetch_quotes_from_gmail(
                                     break
                         except Exception as err:
                             logs.append(f" -> Avviso parsing immagine '{fname}': {err}")
-
-                # -------------------------------------------------------------
-                # PASSAGGIO 2 (Priorità 2): Allegato PDF (se assenti immagini o dati incompleti)
-                # -------------------------------------------------------------
-                if pdf_parts and not _has_all_series(extracted_from_this_email):
-                    for part, fname in pdf_parts:
-                        filepath = os.path.join(tmp_dir, fname)
-                        with open(filepath, "wb") as f:
-                            f.write(part.get_payload(decode=True))
-                        logs.append(f"Ispezione allegato PDF: '{fname}' (Email: '{subject}')")
-                        try:
-                            quotes = extract_quotes_from_pdf(filepath)
-                            for q in quotes:
-                                if email_date and (not q.get("data") or q.get("data") == email_date):
-                                    q["data"] = email_date
-                            if quotes:
-                                _merge_quotes(extracted_from_this_email, quotes)
-                                logs.append(f" -> Integrate {len(quotes)} quotazioni dal PDF '{fname}'.")
-                                if _has_all_series(extracted_from_this_email):
-                                    break
-                        except Exception as err:
-                            logs.append(f" -> Avviso parsing PDF '{fname}': {err}")
 
                 # -------------------------------------------------------------
                 # PASSAGGIO 3 (Priorità 3): Interpretazione testo / tabelle HTML nel corpo email

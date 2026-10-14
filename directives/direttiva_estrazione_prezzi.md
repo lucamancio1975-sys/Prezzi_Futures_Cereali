@@ -5,8 +5,8 @@ Monitorare quotidianamente le quotazioni dei contratti Futures Grano Duro (PDT/P
 I dati estratti devono essere archiviati in modo deterministico e visualizzati nella dashboard analitica in stile Bloomberg / Wall Street.
 
 ## 2. Ingressi e Gerarchia di Estrazione
-- **Priorità 1 (Immagini/Tabelle OCR):** Scansione e OCR deterministico su immagini PNG/JPG inserite nel corpo dell'email o allegate (metodo primario ad altissima frequenza).
-- **Priorità 2 (Allegato PDF):** File denominato tipicamente `PDT  PMG.pdf` o con codice identificativo (es. `PDT  PMG-PCE001376-2.pdf`), utilizzato come completamento o fallback.
+- **Priorità 1 (Allegato PDF):** File denominato tipicamente `PDT  PMG.pdf` o con codice identificativo (es. `PDT  PMG-PCE001376-2.pdf`), che garantisce massima precisione vettoriale senza ambiguità di layout o OCR.
+- **Priorità 2 (Immagini/Tabelle OCR):** Scansione e OCR deterministico su immagini PNG/JPG inserite nel corpo dell'email o allegate (fallback in caso di assenza PDF o dati mancanti).
 - **Priorità 3 (Corpo Testo / Tabelle HTML):** Scansione testuale dell'email per messaggi senza immagini o allegati.
 
 ## 3. Strumenti di Esecuzione (Livello 3)

@@ -245,7 +245,8 @@ def extract_quotes_from_image(
         duro_nums = []
         for line in lines_gd:
             for val, _x, y_coord in _price_tokens(line):
-                duro_nums.append((val, y_coord))
+                if 180.0 <= val <= 420.0:
+                    duro_nums.append((val, y_coord))
 
         if duro_nums:
             duro_nums.sort(key=lambda item: item[1])
@@ -309,6 +310,10 @@ def extract_quotes_from_image(
 
         for l in lines_gt:
             for val, x_val, y_val in _price_tokens(l):
+                # Limita i prezzi del Grano Tenero al range agronomico reale (140 - 330 €/t)
+                # per evitare che numeri spuri dell'OCR o righe limitrofe (es. Colza a ~425 €/t) vengano scambiati per PMG
+                if not (140.0 <= val <= 330.0):
+                    continue
                 if x_val < col_div:
                     pmg_candidates.append((val, y_val, x_val))
                 else:

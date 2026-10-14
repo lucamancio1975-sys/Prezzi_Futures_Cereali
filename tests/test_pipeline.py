@@ -93,5 +93,18 @@ class TestPipeline(unittest.TestCase):
         vals_duro = [v for v, _, _ in tokens_duro]
         self.assertEqual(vals_duro, [258.0, 260.0])
 
+    def test_pdf_quotes_parsing(self):
+        """Verifica che l'estrazione da PDF assegni correttamente PDT 229 e PMG 207 per lug-27."""
+        pdf_path = os.path.join(os.path.dirname(__file__), "..", "scratch", "email_210", "PDT  PMG.pdf")
+        if os.path.exists(pdf_path):
+            from execution.parse_pdf_quotazioni import extract_quotes_from_pdf
+            quotes = extract_quotes_from_pdf(pdf_path)
+            tenero_pdt = next((q for q in quotes if "TENERO" in q["prodotto"] and q["tipo"] == "PDT" and q["scadenza"] == "lug-27"), None)
+            tenero_pmg = next((q for q in quotes if "TENERO" in q["prodotto"] and q["tipo"] == "PMG" and q["scadenza"] == "lug-27"), None)
+            self.assertIsNotNone(tenero_pdt)
+            self.assertEqual(tenero_pdt["prezzo"], 229.0)
+            self.assertIsNotNone(tenero_pmg)
+            self.assertEqual(tenero_pmg["prezzo"], 207.0)
+
 if __name__ == "__main__":
     unittest.main()

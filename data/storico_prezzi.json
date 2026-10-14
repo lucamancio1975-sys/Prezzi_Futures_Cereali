@@ -4614,19 +4614,19 @@
   {
     "data": "2026-10-14",
     "scadenza": "lug-27",
-    "prezzo": 224.0,
+    "prezzo": 229.0,
     "tipo": "PDT",
     "prodotto": "GRANO TENERO FINO ROSSO",
     "premio_bologna_giorgione": 30.0,
-    "fonte": "Email"
+    "fonte": "PDF (PDT  PMG.pdf)"
   },
   {
     "data": "2026-10-14",
     "scadenza": "lug-27",
-    "prezzo": 425.0,
+    "prezzo": 207.0,
     "tipo": "PMG",
     "prodotto": "GRANO TENERO FINO ROSSO",
     "premio_bologna_giorgione": 30.0,
-    "fonte": "Email"
+    "fonte": "PDF (PDT  PMG.pdf)"
   }
 ]
