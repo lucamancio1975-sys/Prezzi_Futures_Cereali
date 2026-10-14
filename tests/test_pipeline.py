@@ -106,5 +106,33 @@ class TestPipeline(unittest.TestCase):
             self.assertIsNotNone(tenero_pmg)
             self.assertEqual(tenero_pmg["prezzo"], 207.0)
 
+    def test_deviation_validation(self):
+        """Verifica che scostamenti <= 5 siano accettati e che scostamenti > 5.01 vengano impostati a 0.0."""
+        from execution.fetch_gmail_quotes import validate_quote_deviations
+        
+        # Test 1: scostamento normale di 1 €/t (258 -> 259)
+        sample_ok = [{
+            "data": "2026-10-15",
+            "prodotto": "GRANO DURO",
+            "tipo": "PDT",
+            "scadenza": "lug-27",
+            "prezzo": 259.0
+        }]
+        res_ok, anom_ok, _ = validate_quote_deviations(sample_ok, max_allowed_delta=5.01, send_email=False)
+        self.assertEqual(len(anom_ok), 0)
+        self.assertEqual(res_ok[0]["prezzo"], 259.0)
+
+        # Test 2: scostamento anomalo di 200 €/t (207 -> 425) come avvenuto per il Grano Tenero PMG
+        sample_bad = [{
+            "data": "2026-10-15",
+            "prodotto": "GRANO TENERO FINO ROSSO",
+            "tipo": "PMG",
+            "scadenza": "lug-27",
+            "prezzo": 425.0
+        }]
+        res_bad, anom_bad, _ = validate_quote_deviations(sample_bad, max_allowed_delta=5.01, send_email=False)
+        self.assertEqual(len(anom_bad), 1)
+        self.assertEqual(res_bad[0]["prezzo"], 0.0)
+
 if __name__ == "__main__":
     unittest.main()

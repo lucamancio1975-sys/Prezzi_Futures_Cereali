@@ -207,32 +207,42 @@ function calculateProductStats(quotes) {
       lastDate: '',
       minPrice: 0,
       maxPrice: 0,
-      avgPrice: 0
+      avgPrice: 0,
+      isOutOfStandard: false
     };
   }
 
   const lastRow = quotes[quotes.length - 1];
-  const prevRow = quotes.length > 1 ? quotes[quotes.length - 2] : lastRow;
-
   const lastP = parseFloat(lastRow.prezzo) || 0;
-  const prevP = parseFloat(prevRow.prezzo) || lastP;
-  const delta = lastP - prevP;
-  const pctChange = prevP > 0 ? (delta / prevP) * 100 : 0;
+  const isOutOfStandard = lastP <= 0;
 
-  const prices = quotes.map((q) => parseFloat(q.prezzo) || 0);
-  const minP = Math.min(...prices);
-  const maxP = Math.max(...prices);
-  const avgP = prices.reduce((a, b) => a + b, 0) / prices.length;
+  // Trova le quotazioni con prezzo valido (> 0)
+  const validQuotes = quotes.filter((q) => (parseFloat(q.prezzo) || 0) > 0);
+  const lastValidRow = validQuotes.length > 0 ? validQuotes[validQuotes.length - 1] : lastRow;
+  const prevValidRow = validQuotes.length > 1 ? validQuotes[validQuotes.length - 2] : lastValidRow;
+
+  const prevP = parseFloat(prevValidRow.prezzo) || 0;
+  const refP = isOutOfStandard ? (parseFloat(lastValidRow.prezzo) || 0) : lastP;
+  const delta = isOutOfStandard ? 0 : (lastP - prevP);
+  const pctChange = (prevP > 0 && !isOutOfStandard) ? (delta / prevP) * 100 : 0;
+
+  const validPrices = validQuotes.map((q) => parseFloat(q.prezzo) || 0);
+  const minP = validPrices.length > 0 ? Math.min(...validPrices) : 0;
+  const maxP = validPrices.length > 0 ? Math.max(...validPrices) : 0;
+  const avgP = validPrices.length > 0 ? (validPrices.reduce((a, b) => a + b, 0) / validPrices.length) : 0;
 
   return {
     lastPrice: lastP,
+    lastValidPrice: refP,
     prevPrice: prevP,
     delta: delta,
     pctChange: pctChange,
     lastDate: lastRow.data,
+    lastValidDate: lastValidRow.data,
     minPrice: minP,
     maxPrice: maxP,
-    avgPrice: avgP
+    avgPrice: avgP,
+    isOutOfStandard: isOutOfStandard
   };
 }
 
@@ -279,7 +289,18 @@ function renderHomeView() {
 
   const lastSyncStr = STATE.lastSyncTime ? STATE.lastSyncTime.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) : '';
 
-  function getDeltaHtml(delta) {
+  function getPricePreviewHtml(stats) {
+    if (stats.isOutOfStandard) {
+      return `<span class="product-price-preview" style="color: #ef4444;" title="Quotazione fuori standard: rilevata variazione anomala > 5 €/t">000 <small style="font-size:0.75rem;">(Fuori std)</small></span>`;
+    }
+    return `<span class="product-price-preview">${stats.lastPrice.toFixed(2)} <small style="font-size:0.75rem;">€/t</small></span>`;
+  }
+
+  function getDeltaHtml(stats) {
+    if (stats.isOutOfStandard) {
+      return `<span class="delta-zero" style="color:#f87171;">⚠️ Alert inviato</span>`;
+    }
+    const delta = stats.delta;
     const sign = delta > 0 ? '+' : '';
     const cls = delta > 0 ? 'delta-up' : (delta < 0 ? 'delta-down' : 'delta-zero');
     return `<span class="${cls}">${sign}${delta.toFixed(2)} €/t</span>`;
@@ -318,8 +339,8 @@ function renderHomeView() {
             </div>
           </div>
           <div class="product-card-right">
-            <span class="product-price-preview">${duroStats.lastPrice.toFixed(2)} <small style="font-size:0.75rem;">€/t</small></span>
-            <span class="product-delta-preview">${getDeltaHtml(duroStats.delta)}</span>
+            ${getPricePreviewHtml(duroStats)}
+            <span class="product-delta-preview">${getDeltaHtml(duroStats)}</span>
           </div>
         </a>
 
@@ -336,8 +357,8 @@ function renderHomeView() {
             </div>
           </div>
           <div class="product-card-right">
-            <span class="product-price-preview">${teneroPdtStats.lastPrice.toFixed(2)} <small style="font-size:0.75rem;">€/t</small></span>
-            <span class="product-delta-preview">${getDeltaHtml(teneroPdtStats.delta)}</span>
+            ${getPricePreviewHtml(teneroPdtStats)}
+            <span class="product-delta-preview">${getDeltaHtml(teneroPdtStats)}</span>
           </div>
         </a>
 
@@ -354,8 +375,8 @@ function renderHomeView() {
             </div>
           </div>
           <div class="product-card-right">
-            <span class="product-price-preview">${teneroPmgStats.lastPrice.toFixed(2)} <small style="font-size:0.75rem;">€/t</small></span>
-            <span class="product-delta-preview">${getDeltaHtml(teneroPmgStats.delta)}</span>
+            ${getPricePreviewHtml(teneroPmgStats)}
+            <span class="product-delta-preview">${getDeltaHtml(teneroPmgStats)}</span>
           </div>
         </a>
       </div>
@@ -488,14 +509,21 @@ function renderDetailView(productKey) {
       <div class="hero-box ${heroClass}">
         <div class="hero-top-row">
           <div>
-            <div class="hero-price-val ${heroClass}">${stats.lastPrice.toFixed(2)} <span class="hero-price-unit">€/t</span></div>
-            <div class="hero-date-val">📅 <b>${formatDateItalian(stats.lastDate)}</b></div>
+            ${stats.isOutOfStandard
+              ? `<div class="hero-price-val ${heroClass}" style="color: #ef4444;">000 <span class="hero-price-unit" style="font-size:0.9rem; color:#ef4444;">(Fuori standard)</span></div>
+                 <div class="hero-date-val">📅 <b>${formatDateItalian(stats.lastDate)}</b> — ⚠️ Rilevato scostamento anomalo (> 5 €/t). Email di allerta inviata. Ultimo prezzo valido: <b>${stats.lastValidPrice.toFixed(2)} €/t</b> (${formatDateShort(stats.lastValidDate)})</div>`
+              : `<div class="hero-price-val ${heroClass}">${stats.lastPrice.toFixed(2)} <span class="hero-price-unit">€/t</span></div>
+                 <div class="hero-date-val">📅 <b>${formatDateItalian(stats.lastDate)}</b></div>`
+            }
           </div>
         </div>
         ${specsHtml}
         <div class="hero-delta-row">
-          <span class="hero-delta-label">Differenziale da quotazione precedente:</span>
-          <span class="hero-badge-delta ${deltaClass}">${deltaSign}${stats.delta.toFixed(2)} €/t (${deltaSign}${stats.pctChange.toFixed(2)}%)</span>
+          <span class="hero-delta-label">${stats.isOutOfStandard ? 'Stato validazione:' : 'Differenziale da quotazione precedente:'}</span>
+          ${stats.isOutOfStandard
+            ? `<span class="hero-badge-delta" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">⚠️ Fuori standard (> 5 €/t)</span>`
+            : `<span class="hero-badge-delta ${deltaClass}">${deltaSign}${stats.delta.toFixed(2)} €/t (${deltaSign}${stats.pctChange.toFixed(2)}%)</span>`
+          }
         </div>
       </div>
 
@@ -528,8 +556,12 @@ function renderChart(quotes, lineColor) {
     STATE.chartInstance = null;
   }
 
-  const labels = quotes.map((q) => q.data);
-  const dataPoints = quotes.map((q) => parseFloat(q.prezzo));
+  // Considera per il grafico solo le quotazioni con prezzo valido (> 0)
+  const chartQuotes = quotes.filter((q) => (parseFloat(q.prezzo) || 0) > 0);
+  if (chartQuotes.length === 0) return;
+
+  const labels = chartQuotes.map((q) => q.data);
+  const dataPoints = chartQuotes.map((q) => parseFloat(q.prezzo));
 
   const pMin = Math.min(...dataPoints);
   const pMax = Math.max(...dataPoints);

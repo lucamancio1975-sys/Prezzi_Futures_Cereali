@@ -141,6 +141,40 @@ def get_complete_dates(quotes: Optional[List[Dict[str, Any]]] = None) -> set:
             ))
     return {d for d, s in series.items() if REQUIRED_SERIES <= s}
 
+def get_last_valid_price(prodotto: str, tipo: str, scadenza: str, before_date: Optional[str] = None, quotes: Optional[List[Dict[str, Any]]] = None) -> Optional[float]:
+    """
+    Trova l'ultima quotazione valida (strettamente > 0) per una specifica serie
+    (prodotto, tipo, scadenza) registrata prima di 'before_date' (o prima di oggi).
+    Supporta il confronto dello scostamento giornaliero (es. dal venerdì al lunedì).
+    """
+    if quotes is None:
+        quotes = load_quotes()
+    p_norm = prodotto.strip().upper()
+    t_norm = tipo.strip().upper()
+    s_norm = scadenza.strip().lower()
+
+    filtered = []
+    for q in quotes:
+        d = q.get("data")
+        if not d:
+            continue
+        if before_date and d >= before_date:
+            continue
+        if (str(q.get("prodotto", "")).strip().upper() == p_norm and
+            str(q.get("tipo", "")).strip().upper() == t_norm and
+            str(q.get("scadenza", "")).strip().lower() == s_norm):
+            try:
+                prz = float(q.get("prezzo", 0) or 0)
+                if prz > 0:
+                    filtered.append((d, prz))
+            except Exception:
+                pass
+
+    if not filtered:
+        return None
+    filtered.sort(key=lambda x: x[0])
+    return filtered[-1][1]
+
 def get_missing_business_days(
     lookback_days: int = 10,
     max_gap_days: int = 180,

@@ -17,6 +17,9 @@ I dati estratti devono essere archiviati in modo deterministico e visualizzati n
 - `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB.
 
 ## 4. Casi Limite e Gestione Errori
+- **Validazione Scostamento Massimo (Regola 5 €/t):** Prima di salvare una nuova quotazione giornaliera nel database, il sistema la confronta con l'ultima quotazione valida precedente registrata (o venerdì prima per il lunedì):
+  - Se la variazione assoluta è `<= 5.00 €/t` (o `< 5.01 €/t`), la quotazione è accettata e registrata regolarmente.
+  - Se la variazione è `>= 5.01 €/t`, la quotazione viene considerata fuori standard per possibile anomalia di lettura: nel database viene scritto il valore `0.0` (visualizzato come `000 (Fuori standard)`) e viene immediatamente inviata un'email di allerta ad `agriprecisione@gmail.com` con il dettaglio dell'anomalia per consentire la verifica e correzione immediata.
 - **Isolamento Geometrico delle Sezioni:** Ritaglio mirato per evitare interferenze di colture sovrastanti/sottostanti.
 - **Deduplicazione e Integrazione Serie:** Deduplicazione su chiave `(data, prodotto, tipo, scadenza)`. Se una fonte parziale manca di una serie, le fonti successive completano i dati mancanti.
 

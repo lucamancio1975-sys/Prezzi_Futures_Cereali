@@ -74,6 +74,147 @@ def decode_mime_words(s: str) -> str:
             res.append(str(fragment))
     return "".join(res)
 
+def send_alert_email(
+    anomalies: List[Dict[str, Any]],
+    user: Optional[str] = None,
+    password: Optional[str] = None,
+    recipient: str = "agriprecisione@gmail.com"
+) -> bool:
+    """
+    Invia un'email di alert alla casella specificata quando una o più quotazioni
+    estratte presentano uno scostamento anomalo (> 5.01 €/t) rispetto all'ultimo prezzo valido.
+    """
+    import smtplib
+    from email.mime.text import MIMEText
+
+    user = user or os.getenv("GMAIL_USER") or "agriprecisione@gmail.com"
+    password = password or os.getenv("GMAIL_APP_PASSWORD") or "rjcxbatitqsuzjyg"
+
+    corpo_righe = [
+        "ATTENZIONE: Rilevata anomalia nell'estrazione delle quotazioni Cereali / Futures.",
+        "Una o piu' quotazioni presentano uno scostamento superiore a 5.01 Eur/ton rispetto all'ultima quotazione valida registrata.",
+        "Nel database il valore anomalo e' stato impostato cautelativamente a 0.0 (Dato non disponibile / Fuori standard).",
+        "",
+        "--- DETTAGLIO ANOMALIE RILEVATE ---"
+    ]
+
+    for an in anomalies:
+        d = an.get("data", "N.D.")
+        prod = an.get("prodotto", "")
+        tipo = an.get("tipo", "")
+        scad = an.get("scadenza", "")
+        p_estratto = an.get("prezzo_estratto", 0.0)
+        p_prec = an.get("prezzo_precedente", 0.0)
+        scost = an.get("scostamento", 0.0)
+        fonte = an.get("fonte", "Email")
+        corpo_righe.append(
+            f"- Data: {d} | Prodotto: {prod} ({tipo}) Scadenza: {scad}\n"
+            f"  Prezzo estratto rilevato: {p_estratto:.2f} Eur/ton\n"
+            f"  Ultimo prezzo valido precedente: {p_prec:.2f} Eur/ton\n"
+            f"  Scostamento rilevato: {scost:+.2f} Eur/ton (Soglia max tollerata: 5.00 Eur/ton)\n"
+            f"  Fonte: {fonte}\n"
+        )
+
+    corpo_righe.extend([
+        "Azione consigliata: verificare il layout dell'email ricevuta da CAI o eventuali variazioni straordinarie di mercato,",
+        "e correggere manualmente la quotazione nel database se il prezzo era effettivo o correggere il parser.",
+        "",
+        "Messaggio generato automaticamente dal Monitor Futures Cereali."
+    ])
+
+    corpo_msg = "\n".join(corpo_righe)
+
+    msg = MIMEText(corpo_msg, 'plain', 'utf-8')
+    msg['Subject'] = f"ALLERTA: Quotazione fuori standard ({len(anomalies)} serie con scostamento > 5 Eur/ton)"
+    msg['From'] = user
+    msg['To'] = recipient
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as srv:
+            srv.login(user, password)
+            srv.send_message(msg)
+        safe_print(f"[ALERT EMAIL] Inviata email di allerta a {recipient} con successo.")
+        return True
+    except Exception as e:
+        safe_print(f"[ALERT EMAIL] Errore invio email di allerta a {recipient}: {e}")
+        return False
+
+def validate_quote_deviations(
+    quotes_list: List[Dict[str, Any]],
+    max_allowed_delta: float = 5.01,
+    send_email: bool = True
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[str]]:
+    """
+    Confronta ogni quotazione estratta con l'ultima quotazione valida precedente (prezzo > 0)
+    per la medesima serie (prodotto, tipo, scadenza):
+      - Se lo scostamento è <= 5.00 €/t (o < 5.01 €/t), la quotazione è accettata.
+      - Se lo scostamento è > 5.01 €/t (o >= 5.01 €/t), imposta cautelativamente il prezzo a 0.0 (000),
+        registra l'anomalia e invia una email di allerta ad agriprecisione@gmail.com.
+    Ritorna: (quotes_sanificate, lista_anomalie, log_messaggi)
+    """
+    get_last_price = getattr(storage_manager, "get_last_valid_price", None)
+    sanitized_quotes = []
+    anomalies = []
+    logs = []
+
+    # Ordina cronologicamente per verificare con coerenza
+    quotes_sorted = sorted(quotes_list, key=lambda x: x.get("data", ""))
+
+    for q in quotes_sorted:
+        d = q.get("data")
+        prod = q.get("prodotto", "GRANO DURO")
+        tipo = q.get("tipo", "PDT")
+        scad = q.get("scadenza", "lug-27")
+        try:
+            prz = float(q.get("prezzo", 0) or 0)
+        except Exception:
+            prz = 0.0
+
+        # Se già 0, non valutare scostamento
+        if prz <= 0:
+            sanitized_quotes.append(q)
+            continue
+
+        prev_price = None
+        if get_last_price:
+            prev_price = get_last_price(prod, tipo, scad, before_date=d)
+
+        # Se non esiste storico precedente valido, accetta il dato come primo riferimento
+        if prev_price is None or prev_price <= 0:
+            sanitized_quotes.append(q)
+            continue
+
+        delta = abs(prz - prev_price)
+        if delta >= max_allowed_delta:
+            anomalia = {
+                "data": d,
+                "prodotto": prod,
+                "tipo": tipo,
+                "scadenza": scad,
+                "prezzo_estratto": prz,
+                "prezzo_precedente": prev_price,
+                "scostamento": prz - prev_price,
+                "fonte": q.get("fonte", "Email")
+            }
+            anomalies.append(anomalia)
+            logs.append(
+                f"[SCARTATO PER ANOMALIA] {d} {prod} {tipo} {scad}: letto {prz:.2f} €/t "
+                f"ma ultimo precedente era {prev_price:.2f} €/t (delta={delta:.2f} > {max_allowed_delta:.2f} €/t). "
+                f"Impostato cautelativamente a 0.0 nel database."
+            )
+            # Clona dizionario e imposta prezzo a 0.0 (000)
+            q_anomalo = dict(q)
+            q_anomalo["prezzo"] = 0.0
+            q_anomalo["note_anomalia"] = f"Prezzo rilevato fuori standard ({prz:.2f} vs prec {prev_price:.2f})"
+            sanitized_quotes.append(q_anomalo)
+        else:
+            sanitized_quotes.append(q)
+
+    if anomalies and send_email:
+        send_alert_email(anomalies)
+
+    return sanitized_quotes, anomalies, logs
+
 def fetch_quotes_from_gmail(
     user: str = None,
     password: str = None,
@@ -377,10 +518,14 @@ def fetch_quotes_from_gmail(
             except Exception:
                 pass
 
-    # FIX: salva SEMPRE quanto estratto, anche se la connessione si è interrotta a metà
+    # Validazione scostamento giornaliero prima di salvare nel database
+    # Se il discostamento > 5.01 €/t scrive 0.0 (000) e manda alert email ad agriprecisione@gmail.com
     if all_extracted_quotes:
-        added = add_quotes(all_extracted_quotes, push_github=False)
+        validated_quotes, anomalies, val_logs = validate_quote_deviations(all_extracted_quotes, max_allowed_delta=5.01, send_email=True)
+        logs.extend(val_logs)
+        added = add_quotes(validated_quotes, push_github=False)
         logs.append(f"[OK] Sincronizzazione completata: {added} nuove quotazioni archiviate nel database.")
+        all_extracted_quotes = validated_quotes
     else:
         logs.append("[INFO] Nessuna nuova quotazione rilevata nelle email scansionate.")
 
