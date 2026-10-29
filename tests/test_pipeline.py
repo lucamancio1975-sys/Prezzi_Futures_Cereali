@@ -1,9 +1,10 @@
 """
 Suite di test unitari per la pipeline di elaborazione quotazioni futures cereali.
 Verifica:
-1. Normalizzazione date e dizionario mesi italiani (utils.py)
+1. Normalizzazione date e dizionario mesi italiane (utils.py)
 2. Estrazione regex e parser testuale (parse_pdf_quotazioni.py)
 3. Deduplicazione e gestione storage atomico (storage_manager.py)
+4. Riconoscimento mittenti autorizzati CAI (Citroni e Stocco) (fetch_gmail_quotes.py)
 """
 
 import os
@@ -17,6 +18,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from execution.utils import parse_data_string, MESI_IT
 from execution.parse_pdf_quotazioni import extract_quotes_from_text
 from execution.storage_manager import add_quotes, load_quotes, get_quotes_for_selection
+from execution.fetch_gmail_quotes import is_relevant_email, OFFICIAL_SENDERS
 
 class TestPipeline(unittest.TestCase):
 
@@ -38,6 +40,25 @@ class TestPipeline(unittest.TestCase):
         self.assertIsNone(parse_data_string(""))
         self.assertIsNone(parse_data_string(None))
         self.assertIsNone(parse_data_string("testo generico"))
+
+    def test_authorized_senders_relevance(self):
+        """Verifica che le email provenienti sia da Citroni sia da Stocco siano riconosciute come pertinenti."""
+        self.assertIn("carlo.citroni@consorziagrariditalia.it", OFFICIAL_SENDERS)
+        self.assertIn("giacomo.stocco@consorziagrariditalia.it", OFFICIAL_SENDERS)
+
+        # Mittente Citroni
+        self.assertTrue(is_relevant_email("Listino", "carlo.citroni@consorziagrariditalia.it"))
+        self.assertTrue(is_relevant_email("Aggiornamento", "CAI - Carlo Citroni <carlo.citroni@consorziagrariditalia.it>"))
+
+        # Mittente Stocco
+        self.assertTrue(is_relevant_email("Listino", "giacomo.stocco@consorziagrariditalia.it"))
+        self.assertTrue(is_relevant_email("Aggiornamento", "CAI - Giacomo Stocco <giacomo.stocco@consorziagrariditalia.it>"))
+
+        # Mittente non autorizzato con oggetto irrilevante
+        self.assertFalse(is_relevant_email("Offerta promozionale", "newsletter@spam.com"))
+
+        # Mittente generico ma con oggetto pertinente
+        self.assertTrue(is_relevant_email("Quotazioni futures grano duro", "mario.rossi@example.com"))
 
     def test_extract_quotes_from_sample_text(self):
         """Verifica l'estrazione corretta di Grano Duro e Grano Tenero da testo tipico CAI."""

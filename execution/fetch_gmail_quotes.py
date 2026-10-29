@@ -50,6 +50,40 @@ extract_quotes_from_image = parse_image_quotazioni.extract_quotes_from_image
 
 load_dotenv()
 
+# Indirizzi email autorizzati dai quali pervengono le quotazioni ufficiali CAI
+OFFICIAL_SENDERS = [
+    "carlo.citroni@consorziagrariditalia.it",
+    "giacomo.stocco@consorziagrariditalia.it",
+]
+
+def is_relevant_email(subject: str, sender: str) -> bool:
+    """
+    Verifica se un'email è pertinente per l'estrazione delle quotazioni.
+    Riconosce:
+      1. I due mittenti ufficiali CAI:
+         - Carlo Citroni (carlo.citroni@consorziagrariditalia.it)
+         - Giacomo Stocco (giacomo.stocco@consorziagrariditalia.it)
+         oltre a parole chiave mittente ('citroni', 'stocco', 'consorziagrariditalia', 'consorziagrari').
+      2. Parole chiave nell'oggetto della mail relative alle quotazioni futures cereali.
+    """
+    subj_lower = (subject or "").lower()
+    sender_lower = (sender or "").lower()
+
+    sender_matches = any(s in sender_lower for s in [
+        "carlo.citroni@consorziagrariditalia.it",
+        "giacomo.stocco@consorziagrariditalia.it",
+        "citroni",
+        "stocco",
+        "consorziagrariditalia",
+        "consorziagrari"
+    ])
+
+    subject_matches = any(k in subj_lower for k in [
+        "quotazion", "futures", "pdt", "pmg", "grano", "prezzi", "tenero", "duro"
+    ])
+
+    return sender_matches or subject_matches
+
 def safe_print(msg: str):
     """Stampa messaggi in console in modo resiliente anche con emoji su Windows (cp1252)."""
     try:
@@ -357,12 +391,9 @@ def fetch_quotes_from_gmail(
                 # Se l'email ha una data diversa da quella cercata, passa oltre senza interrompere la scansione
                 continue
 
-            # Filtro di pertinenza su oggetto o mittente predefinito
-            subj_lower = subject.lower()
+            # Filtro di pertinenza su oggetto o mittente autorizzato (Citroni, Stocco, CAI)
             sender_lower = sender.lower()
-            is_relevant = any(k in subj_lower for k in [
-                "quotazion", "futures", "pdt", "pmg", "grano", "prezzi", "tenero", "duro"
-            ]) or "consorziagrari" in sender_lower
+            is_relevant = is_relevant_email(subject, sender)
 
             if not is_relevant:
                 continue

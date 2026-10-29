@@ -5,6 +5,10 @@ Monitorare quotidianamente le quotazioni dei contratti Futures Grano Duro (PDT/P
 I dati estratti devono essere archiviati in modo deterministico e visualizzati nella dashboard analitica in stile Bloomberg / Wall Street.
 
 ## 2. Ingressi e Gerarchia di Estrazione
+- **Mittenti Autorizzati Desk Cereali CAI:**
+  - `carlo.citroni@consorziagrariditalia.it` (Carlo Citroni)
+  - `giacomo.stocco@consorziagrariditalia.it` (Giacomo Stocco)
+  (oltre a messaggi recanti nell'oggetto o mittente parole chiave relative a quotazioni futures cereali e Consorzi Agrari d'Italia).
 - **Priorità 1 (Allegato PDF):** File denominato tipicamente `PDT  PMG.pdf` o con codice identificativo (es. `PDT  PMG-PCE001376-2.pdf`), che garantisce massima precisione vettoriale senza ambiguità di layout o OCR.
 - **Priorità 2 (Immagini/Tabelle OCR):** Scansione e OCR deterministico su immagini PNG/JPG inserite nel corpo dell'email o allegate (fallback in caso di assenza PDF o dati mancanti).
 - **Priorità 3 (Corpo Testo / Tabelle HTML):** Scansione testuale dell'email per messaggi senza immagini o allegati.
@@ -14,7 +18,7 @@ I dati estratti devono essere archiviati in modo deterministico e visualizzati n
 - `execution/win_ocr.ps1`: Engine OCR Windows ad altissima affidabilità per la lettura delle tabelle copiate da Excel/Outlook.
 - `execution/parse_pdf_quotazioni.py`: Parser per estrarre data, scadenze e prezzi dal testo/PDF.
 - `execution/storage_manager.py`: Motore di persistenza atomica per `data/storico_prezzi.json` e CSV con sincronizzazione bidirezionale GitHub.
-- `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB.
+- `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB. Supporta ricezione da entrambi i desk CAI (Citroni e Stocco).
 
 ## 4. Casi Limite e Gestione Errori
 - **Validazione Scostamento Massimo (Regola 5 €/t):** Prima di salvare una nuova quotazione giornaliera nel database, il sistema la confronta con l'ultima quotazione valida precedente registrata (o venerdì prima per il lunedì):
@@ -22,4 +26,3 @@ I dati estratti devono essere archiviati in modo deterministico e visualizzati n
   - Se la variazione è `>= 5.01 €/t`, la quotazione viene considerata fuori standard per possibile anomalia di lettura: nel database viene scritto il valore `0.0` (visualizzato come `000 (Fuori standard)`) e viene immediatamente inviata un'email di allerta ad `agriprecisione@gmail.com` con il dettaglio dell'anomalia per consentire la verifica e correzione immediata.
 - **Isolamento Geometrico delle Sezioni:** Ritaglio mirato per evitare interferenze di colture sovrastanti/sottostanti.
 - **Deduplicazione e Integrazione Serie:** Deduplicazione su chiave `(data, prodotto, tipo, scadenza)`. Se una fonte parziale manca di una serie, le fonti successive completano i dati mancanti.
-

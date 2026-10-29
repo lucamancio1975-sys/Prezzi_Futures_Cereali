@@ -31,3 +31,5 @@ Desktop.ini
 WhatsApp Image*
 scratch/
 *.bak
+# File token o credenziali di testo
+*token*.txt
