@@ -178,10 +178,10 @@ def send_alert_email(
             f"  - Prezzo estratto rilevato: {p_estratto:.2f} Eur/ton\n"
             f"  - Ultimo prezzo precedente: {p_prec:.2f} Eur/ton (Scostamento: {scost:+.2f} Eur/ton)\n"
             f"  - Fonte: {fonte}\n"
-            f"  -> Per CONFERMARE o RETTIFICARE apri questo link:\n"
-            f"     {gui_link}\n"
-            f"  -> Oppure Conferma Rapida (1 click su GitHub):\n"
+            f"  -> Per CONFERMARE SUBITO (1 click su GitHub):\n"
             f"     {github_quick_confirm}\n"
+            f"  -> Per RETTIFICARE O INSERIRE UN VALORE DIVERSO:\n"
+            f"     {github_custom_confirm}\n"
         )
 
         blocchi_html.append(f"""
