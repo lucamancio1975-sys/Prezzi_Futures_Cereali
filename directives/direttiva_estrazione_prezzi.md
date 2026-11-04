@@ -18,7 +18,10 @@ I dati estratti devono essere archiviati in modo deterministico e visualizzati n
 - `execution/win_ocr.ps1`: Engine OCR Windows ad altissima affidabilità per la lettura delle tabelle copiate da Excel/Outlook.
 - `execution/parse_pdf_quotazioni.py`: Parser per estrarre data, scadenze e prezzi dal testo/PDF.
 - `execution/storage_manager.py`: Motore di persistenza atomica per `data/storico_prezzi.json` e CSV con sincronizzazione bidirezionale GitHub.
-- `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB. Supporta ricezione da entrambi i desk CAI (Citroni e Stocco).
+- `execution/fetch_gmail_quotes.py`: Client IMAP SSL per scansione casella, elaborazione gerarchica delle email e popolamento DB. Supporta ricezione da entrambi i desk CAI (Citroni e Stocco) e invio email interattiva di alert con link di conferma/modifica.
+- `execution/override_quote.py`: Modulo per confermare o rettificare manualmente una quotazione salvata come fuori standard.
+- `.github/workflows/override_quotazione.yml`: GitHub Action per processare in tempo reale le richieste di override generate dai link dell'email.
+- `gestisci_allerta.html`: Interfaccia grafica intuitiva per confermare con 1 click la quotazione rilevata o inserire un valore alternativo.
 
 ## 4. Casi Limite e Gestione Errori
 - **Validazione Scostamento Massimo (Regola 5 €/t):** Prima di salvare una nuova quotazione giornaliera nel database, il sistema la confronta con l'ultima quotazione valida precedente registrata (o venerdì prima per il lunedì):

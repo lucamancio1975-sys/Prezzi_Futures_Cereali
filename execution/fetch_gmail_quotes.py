@@ -117,57 +117,146 @@ def send_alert_email(
     """
     Invia un'email di alert alla casella specificata quando una o più quotazioni
     estratte presentano uno scostamento anomalo (> 5.01 €/t) rispetto all'ultimo prezzo valido.
+    Include per ogni anomalia i link diretti per:
+      1. Confermare la quotazione rilevata (es. forte movimento reale di mercato).
+      2. Inserire un valore manuale alternativo e aggiornare il database su GitHub.
     """
     import smtplib
+    import urllib.parse
+    from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
 
     user = user or os.getenv("GMAIL_USER") or "agriprecisione@gmail.com"
     password = password or os.getenv("GMAIL_APP_PASSWORD") or "rjcxbatitqsuzjyg"
 
-    corpo_righe = [
-        "ATTENZIONE: Rilevata anomalia nell'estrazione delle quotazioni Cereali / Futures.",
-        "Una o piu' quotazioni presentano uno scostamento superiore a 5.01 Eur/ton rispetto all'ultima quotazione valida registrata.",
-        "Nel database il valore anomalo e' stato impostato cautelativamente a 0.0 (Dato non disponibile / Fuori standard).",
+    # Preparazione corpo testuale e corpo HTML
+    corpo_righe_txt = [
+        "ATTENZIONE: Rilevata quotazione fuori standard nell'estrazione Cereali / Futures.",
+        "Una o piu' quotazioni presentano uno scostamento superiore a 5.01 Eur/ton rispetto all'ultimo prezzo valido.",
+        "Nel database il valore e' stato impostato cautelativamente a 0.0 (Dato fuori standard).",
         "",
-        "--- DETTAGLIO ANOMALIE RILEVATE ---"
+        "--- DETTAGLIO ANOMALIE RILEVATE E OPZIONI DI AGGIORNAMENTO ---"
     ]
 
-    for an in anomalies:
+    blocchi_html = []
+
+    for idx, an in enumerate(anomalies, 1):
         d = an.get("data", "N.D.")
-        prod = an.get("prodotto", "")
-        tipo = an.get("tipo", "")
-        scad = an.get("scadenza", "")
+        prod = an.get("prodotto", "GRANO DURO")
+        tipo = an.get("tipo", "PDT")
+        scad = an.get("scadenza", "lug-27")
         p_estratto = an.get("prezzo_estratto", 0.0)
         p_prec = an.get("prezzo_precedente", 0.0)
         scost = an.get("scostamento", 0.0)
         fonte = an.get("fonte", "Email")
-        corpo_righe.append(
-            f"- Data: {d} | Prodotto: {prod} ({tipo}) Scadenza: {scad}\n"
-            f"  Prezzo estratto rilevato: {p_estratto:.2f} Eur/ton\n"
-            f"  Ultimo prezzo valido precedente: {p_prec:.2f} Eur/ton\n"
-            f"  Scostamento rilevato: {scost:+.2f} Eur/ton (Soglia max tollerata: 5.00 Eur/ton)\n"
-            f"  Fonte: {fonte}\n"
+
+        # URL per pagina web guidata
+        params_gui = urllib.parse.urlencode({
+            "data": d,
+            "prod": prod,
+            "tipo": tipo,
+            "scad": scad,
+            "rilevato": f"{p_estratto:.2f}",
+            "prec": f"{p_prec:.2f}",
+            "issue": "1"
+        })
+        gui_link = f"https://lucamancio1975-sys.github.io/Prezzi_Futures_Cereali/gestisci_allerta.html?{params_gui}"
+
+        # URL per conferma immediata con 1 Click su GitHub
+        cmd_conferma = f'/conferma DATA="{d}" PROD="{prod}" TIPO="{tipo}" SCAD="{scad}" PREZZO={p_estratto:.2f}'
+        github_quick_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/1#issuecomment-new?body={urllib.parse.quote(cmd_conferma)}"
+
+        corpo_righe_txt.append(
+            f"\n[{idx}] {d} | {prod} ({tipo}) Scadenza: {scad}\n"
+            f"  - Prezzo estratto rilevato: {p_estratto:.2f} Eur/ton\n"
+            f"  - Ultimo prezzo precedente: {p_prec:.2f} Eur/ton (Scostamento: {scost:+.2f} Eur/ton)\n"
+            f"  - Fonte: {fonte}\n"
+            f"  -> Per CONFERMARE o RETTIFICARE apri questo link:\n"
+            f"     {gui_link}\n"
+            f"  -> Oppure Conferma Rapida (1 click su GitHub):\n"
+            f"     {github_quick_confirm}\n"
         )
 
-    corpo_righe.extend([
-        "Azione consigliata: verificare il layout dell'email ricevuta da CAI o eventuali variazioni straordinarie di mercato,",
-        "e correggere manualmente la quotazione nel database se il prezzo era effettivo o correggere il parser.",
+        blocchi_html.append(f"""
+        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <div style="font-size: 16px; font-weight: bold; color: #0f172a; margin-bottom: 8px;">
+            {d} &bull; {prod} ({tipo}) &bull; Scadenza: <span style="color: #2563eb;">{scad}</span>
+          </div>
+          <table style="width: 100%; font-size: 14px; border-collapse: collapse; margin-bottom: 14px;">
+            <tr>
+              <td style="color: #64748b; padding: 3px 0;">Prezzo rilevato da email:</td>
+              <td style="font-weight: bold; color: #b45309;">{p_estratto:.2f} &euro;/t</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 3px 0;">Ultimo prezzo valido precedente:</td>
+              <td style="font-weight: bold; color: #334155;">{p_prec:.2f} &euro;/t</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 3px 0;">Scostamento rilevato:</td>
+              <td style="font-weight: bold; color: #dc2626;">{scost:+.2f} &euro;/t (Soglia max: &plusmn;5.00 &euro;/t)</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 3px 0;">Fonte:</td>
+              <td style="color: #475569;">{fonte}</td>
+            </tr>
+          </table>
+
+          <div style="margin-top: 12px;">
+            <a href="{gui_link}" target="_blank" style="background-color: #10b981; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 6px; display: inline-block; font-size: 14px; margin-right: 8px; margin-bottom: 8px;">
+              ✓ Gestisci / Conferma / Inserisci Valore
+            </a>
+            <a href="{github_quick_confirm}" target="_blank" style="background-color: #3b82f6; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 6px; display: inline-block; font-size: 14px; margin-bottom: 8px;">
+              ⚡ Conferma Subito {p_estratto:.2f} &euro;/t
+            </a>
+          </div>
+        </div>
+        """)
+
+    corpo_righe_txt.extend([
         "",
-        "Messaggio generato automaticamente dal Monitor Futures Cereali."
+        "Se confermi la quotazione (o inserisci un valore), il database GitHub viene aggiornato automaticamente",
+        "tramite GitHub Actions e i grafici dell'app rifletteranno istantaneamente la variazione.",
+        "",
+        "Monitor Futures Cereali - Consorzi Agrari d'Italia"
     ])
 
-    corpo_msg = "\n".join(corpo_righe)
+    corpo_msg_txt = "\n".join(corpo_righe_txt)
 
-    msg = MIMEText(corpo_msg, 'plain', 'utf-8')
+    corpo_html = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; background-color: #f1f5f9; padding: 20px; color: #334155;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; padding: 24px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 20px; font-weight: bold; color: #b45309; margin-bottom: 10px;">
+            ⚠️ ALLERTA: Quotazione Cereali Fuori Standard
+          </div>
+          <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 20px;">
+            È stata rilevata una quotazione con scostamento superiore a <strong>5,01 &euro;/t</strong> rispetto all'ultima seduta valida.<br>
+            Nel database è stato impostato cautelativamente il valore <strong>0.0 (Fuori standard)</strong>.
+          </p>
+          
+          {''.join(blocchi_html)}
+
+          <p style="font-size: 13px; color: #64748b; line-height: 1.4; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+            Alla ricezione della tua conferma o rettifica, GitHub aggiornerà automaticamente il database e riallineerà i grafici dell'applicazione web.
+          </p>
+        </div>
+      </body>
+    </html>
+    """
+
+    msg = MIMEMultipart('alternative')
     msg['Subject'] = f"ALLERTA: Quotazione fuori standard ({len(anomalies)} serie con scostamento > 5 Eur/ton)"
     msg['From'] = user
     msg['To'] = recipient
+
+    msg.attach(MIMEText(corpo_msg_txt, 'plain', 'utf-8'))
+    msg.attach(MIMEText(corpo_html, 'html', 'utf-8'))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as srv:
             srv.login(user, password)
             srv.send_message(msg)
-        safe_print(f"[ALERT EMAIL] Inviata email di allerta a {recipient} con successo.")
+        safe_print(f"[ALERT EMAIL] Inviata email interattiva di allerta a {recipient} con successo.")
         return True
     except Exception as e:
         safe_print(f"[ALERT EMAIL] Errore invio email di allerta a {recipient}: {e}")
