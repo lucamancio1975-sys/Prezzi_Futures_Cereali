@@ -50,9 +50,7 @@ def apply_quote_override(
         q_tipo = str(q.get("tipo", "")).strip().upper()
         q_scad = str(q.get("scadenza", "")).strip().lower()
 
-        # Rimuove categoricamente eventuali record lug-28 rimasti per la stessa data
-        if q_data == data and q_scad == "lug-28":
-            continue
+# Preserva i record di archivio per scadenze diverse (es. lug-28)
 
         if (q_data == data and
             q_prod == p_norm and

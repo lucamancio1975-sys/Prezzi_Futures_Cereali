@@ -298,8 +298,10 @@ def validate_quote_deviations(
         prod = q.get("prodotto", "GRANO DURO")
         tipo = q.get("tipo", "PDT")
         scad = q.get("scadenza", "lug-27")
-        # Esclude tassativamente scadenze diverse da lug-27 (es. lug-28)
+        # Per scadenze storiche di archivio non monitorate attivamente dall'app (es. lug-28):
+        # salviamo direttamente il valore reale estratto nel database senza generare anomalie o allarmi
         if str(scad).strip().lower() != "lug-27":
+            sanitized_quotes.append(q)
             continue
         try:
             prz = float(q.get("prezzo", 0) or 0)

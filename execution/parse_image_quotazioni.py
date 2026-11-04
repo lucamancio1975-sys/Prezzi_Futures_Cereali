@@ -263,9 +263,15 @@ def extract_quotes_from_image(
                 "prodotto": "GRANO DURO",
                 "fonte": source_name
             })
-        # lug-28 disabilitato: l'applicazione monitora esclusivamente lug-27
-        # if p_duro_28:
-        #     results.append({...})
+        if p_duro_28:
+            results.append({
+                "data": final_date,
+                "scadenza": "lug-28",
+                "prezzo": p_duro_28,
+                "tipo": "PDT",
+                "prodotto": "GRANO DURO",
+                "fonte": source_name
+            })
     except Exception as e:
         print(f"[OCR] Errore estrazione Grano Duro: {e}")
 

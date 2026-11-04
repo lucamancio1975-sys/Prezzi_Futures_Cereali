@@ -75,14 +75,14 @@ def extract_quotes_from_text(text: str, source_name: str = "Email/PDF") -> List[
         scad = scadenza.lower()
         if scad == 'lug-26':
             continue  # Escludi le scadenze passate
-        if scad == 'lug-27':
+        if scad in ['lug-27', 'lug-28']:
             try:
                 prezzo_val = float(prezzo_str)
                 # Verifica che non sia confuso con un anno o un valore anomalo
                 if 120 <= prezzo_val <= 600:
                     results.append({
                         "data": data_quotazione,
-                        "scadenza": "lug-27",
+                        "scadenza": scad,
                         "prezzo": prezzo_val,
                         "tipo": "PDT",
                         "prodotto": "GRANO DURO",
