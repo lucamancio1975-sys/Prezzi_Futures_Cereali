@@ -59,11 +59,10 @@ def apply_quote_override(
             
             vecchio_prezzo = q.get("prezzo")
             q["prezzo"] = float(prezzo)
-            q["confermato_da_utente"] = True
-            q["note_override"] = nota
-            # Rimuove note_anomalia per eliminare definitivamente "Prezzo rilevato fuori standard"
-            if "note_anomalia" in q:
-                del q["note_anomalia"]
+            # Rimuove eventuali note di anomalia o override per avere un record pulito e identico agli altri
+            q.pop("note_anomalia", None)
+            q.pop("note_override", None)
+            q.pop("confermato_da_utente", None)
             found = True
             print(f"[OK] Quotazione trovata e aggiornata: {data} {p_norm} {t_norm} {s_norm} da {vecchio_prezzo} a {prezzo} Eur/ton.")
             cleaned_quotes.append(q)
@@ -78,9 +77,7 @@ def apply_quote_override(
             "prezzo": float(prezzo),
             "tipo": t_norm,
             "prodotto": p_norm,
-            "fonte": "Manuale / Override utente",
-            "confermato_da_utente": True,
-            "note_override": nota
+            "fonte": "Email/PDF"
         }
         if "TENERO" in p_norm:
             new_q["premio_bologna_giorgione"] = 30.0

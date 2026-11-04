@@ -147,11 +147,19 @@ def process_github_pending_commands(repo: str = "lucamancio1975-sys/Prezzi_Futur
         with urllib.request.urlopen(req, context=ctx) as resp:
             comments = json.loads(resp.read().decode())
             
+        # Identifica gli ID dei commenti o comandi già processati in risposte precedenti
+        processed_cids = set()
+        for c in comments:
+            b = c.get("body", "")
+            for m in re.finditer(r'commento\s+([0-9]+)', b):
+                processed_cids.add(int(m.group(1)))
+
         for c in comments:
             body = c.get("body", "")
             cid = c.get("id")
-            # Se è già stato processato (indicato da reaction o risposta del bot), salta
             if "[BOT_PROCESSED]" in body or "✅" in body:
+                continue
+            if cid in processed_cids:
                 continue
                 
             cmd = parse_command_text(body)
@@ -166,15 +174,7 @@ def process_github_pending_commands(repo: str = "lucamancio1975-sys/Prezzi_Futur
                     nota=f"Confermato da utente via GitHub Issue #1 (commento {cid})"
                 )
                 if success:
-                    # Rimuovi eventuali record lug-28 rimasti per quella data
-                    quotes = storage_manager.load_quotes()
-                    filtered = [
-                        q for q in quotes
-                        if not (q.get("data") == cmd["data"] and str(q.get("scadenza", "")).strip().lower() == "lug-28")
-                    ]
-                    if len(filtered) != len(quotes):
-                        storage_manager.save_quotes(filtered)
-                        logs.append(f"[CLEANUP] Rimosso residuo lug-28 per la data {cmd['data']}.")
+                    # Preserva intatti i record storici di archivio (es. lug-28)
                     
                     # Push delle modifiche
                     storage_manager.sync_to_github(merge_remote=False)
@@ -224,15 +224,7 @@ def process_github_pending_commands(repo: str = "lucamancio1975-sys/Prezzi_Futur
                     nota=f"Confermato da utente via GitHub Issue #{inum}"
                 )
                 if success:
-                    # Rimuovi eventuali record lug-28 rimasti per quella data
-                    quotes = storage_manager.load_quotes()
-                    filtered = [
-                        q for q in quotes
-                        if not (q.get("data") == cmd["data"] and str(q.get("scadenza", "")).strip().lower() == "lug-28")
-                    ]
-                    if len(filtered) != len(quotes):
-                        storage_manager.save_quotes(filtered)
-                        logs.append(f"[CLEANUP] Rimosso residuo lug-28 per la data {cmd['data']}.")
+                    # Preserva intatti i record storici di archivio (es. lug-28)
                         
                     storage_manager.sync_to_github(merge_remote=False)
                     

@@ -154,27 +154,24 @@ def send_alert_email(
         scost = an.get("scostamento", 0.0)
         fonte = an.get("fonte", "Email")
 
-        # URL per pagina web guidata
-        params_gui = urllib.parse.urlencode({
-            "data": d,
-            "prod": prod,
-            "tipo": tipo,
-            "scad": scad,
-            "rilevato": f"{p_estratto:.2f}",
-            "prec": f"{p_prec:.2f}",
-            "issue": "1"
-        })
-        gui_link = f"https://lucamancio1975-sys.github.io/Prezzi_Futures_Cereali/gestisci_allerta.html?{params_gui}"
-
-        # URL per conferma immediata con 1 Click su GitHub (precompila titolo e testo automaticamente)
-        cmd_conferma = f'/conferma {d} {p_estratto:.2f}'
-        issue_title = f'Conferma Quotazione {d} {prod} {tipo} {scad}: {p_estratto:.2f} Eur/ton'
-        issue_params = urllib.parse.urlencode({
-            "title": issue_title,
+        # 1. URL per conferma immediata con 1 Click su GitHub (precompilato)
+        issue_title_confirm = f'Conferma Quotazione {d} {prod} {tipo} {scad}: {p_estratto:.2f} Eur/ton'
+        issue_params_confirm = urllib.parse.urlencode({
+            "title": issue_title_confirm,
             "body": f"/conferma {d} {p_estratto:.2f}",
             "labels": "override-quotazione"
         })
-        github_quick_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/new?{issue_params}"
+        github_quick_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/new?{issue_params_confirm}"
+
+        # 2. URL per rettifica / valore alternativo su GitHub
+        issue_title_update = f'Rettifica Quotazione {d} {prod} {tipo} {scad}'
+        issue_body_update = f'/conferma {d} {p_estratto:.2f}\n\n(Nota: sostituisci {p_estratto:.2f} con il prezzo desiderato prima di cliccare Submit)'
+        issue_params_update = urllib.parse.urlencode({
+            "title": issue_title_update,
+            "body": issue_body_update,
+            "labels": "override-quotazione"
+        })
+        github_custom_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/new?{issue_params_update}"
 
         corpo_righe_txt.append(
             f"\n[{idx}] {d} | {prod} ({tipo}) Scadenza: {scad}\n"
@@ -211,12 +208,12 @@ def send_alert_email(
             </tr>
           </table>
 
-          <div style="margin-top: 12px;">
-            <a href="{gui_link}" target="_blank" style="background-color: #10b981; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 6px; display: inline-block; font-size: 14px; margin-right: 8px; margin-bottom: 8px;">
-              ✓ Gestisci / Conferma / Inserisci Valore
+          <div style="margin-top: 14px;">
+            <a href="{github_quick_confirm}" target="_blank" style="background-color: #16a34a; color: #ffffff; text-decoration: none; font-weight: bold; padding: 12px 20px; border-radius: 8px; display: inline-block; font-size: 15px; margin-right: 10px; margin-bottom: 8px;">
+              ⚡ CONFERMA SUBITO {p_estratto:.2f} &euro;/t (1 Click)
             </a>
-            <a href="{github_quick_confirm}" target="_blank" style="background-color: #3b82f6; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 6px; display: inline-block; font-size: 14px; margin-bottom: 8px;">
-              ⚡ Conferma Subito {p_estratto:.2f} &euro;/t (1 Click GitHub)
+            <a href="{github_custom_confirm}" target="_blank" style="background-color: #475569; color: #ffffff; text-decoration: none; font-weight: bold; padding: 12px 18px; border-radius: 8px; display: inline-block; font-size: 14px; margin-bottom: 8px;">
+              ✏️ Inserisci Valore Diverso
             </a>
           </div>
         </div>
