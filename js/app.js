@@ -133,20 +133,11 @@ async function fetchQuotesData() {
     console.warn('Download da DATA_REMOTE_URL non riuscito:', err);
   }
 
-  function getLatestDate(arr) {
-    if (!Array.isArray(arr) || arr.length === 0) return '';
-    return arr.map(q => q.data || '').sort().pop() || '';
-  }
-
-  const d1Date = getLatestDate(data1);
-  const d2Date = getLatestDate(data2);
-
-  if (d1Date >= d2Date && Array.isArray(data1) && data1.length > 0) {
+  // Priorità: il file locale di GitHub Pages contiene l'allineamento più recente
+  if (Array.isArray(data1) && data1.length > 0) {
     data = data1;
   } else if (Array.isArray(data2) && data2.length > 0) {
     data = data2;
-  } else if (Array.isArray(data1) && data1.length > 0) {
-    data = data1;
   }
 
   if (syncBtn) syncBtn.classList.remove('spinning');
