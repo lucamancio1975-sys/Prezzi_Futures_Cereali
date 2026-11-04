@@ -114,6 +114,10 @@ def send_alert_email(
     password: Optional[str] = None,
     recipient: str = "agriprecisione@gmail.com"
 ) -> bool:
+    # Filtra rigorosamente solo le scadenze monitorate dall'app (lug-27), escludendo categoricamente il 2028
+    anomalies = [a for a in anomalies if a.get("scadenza") == "lug-27"]
+    if not anomalies:
+        return True
     """
     Invia un'email di alert alla casella specificata quando una o più quotazioni
     estratte presentano uno scostamento anomalo (> 5.01 €/t) rispetto all'ultimo prezzo valido.
@@ -162,9 +166,15 @@ def send_alert_email(
         })
         gui_link = f"https://lucamancio1975-sys.github.io/Prezzi_Futures_Cereali/gestisci_allerta.html?{params_gui}"
 
-        # URL per conferma immediata con 1 Click su GitHub
-        cmd_conferma = f'/conferma DATA="{d}" PROD="{prod}" TIPO="{tipo}" SCAD="{scad}" PREZZO={p_estratto:.2f}'
-        github_quick_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/1#issuecomment-new?body={urllib.parse.quote(cmd_conferma)}"
+        # URL per conferma immediata con 1 Click su GitHub (precompila titolo e testo automaticamente)
+        cmd_conferma = f'/conferma {d} {p_estratto:.2f}'
+        issue_title = f'Conferma Quotazione {d} {prod} {tipo} {scad}: {p_estratto:.2f} Eur/ton'
+        issue_params = urllib.parse.urlencode({
+            "title": issue_title,
+            "body": f"/conferma {d} {p_estratto:.2f}",
+            "labels": "override-quotazione"
+        })
+        github_quick_confirm = f"https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/new?{issue_params}"
 
         corpo_righe_txt.append(
             f"\n[{idx}] {d} | {prod} ({tipo}) Scadenza: {scad}\n"
@@ -206,7 +216,7 @@ def send_alert_email(
               ✓ Gestisci / Conferma / Inserisci Valore
             </a>
             <a href="{github_quick_confirm}" target="_blank" style="background-color: #3b82f6; color: #ffffff; text-decoration: none; font-weight: bold; padding: 10px 18px; border-radius: 6px; display: inline-block; font-size: 14px; margin-bottom: 8px;">
-              ⚡ Conferma Subito {p_estratto:.2f} &euro;/t
+              ⚡ Conferma Subito {p_estratto:.2f} &euro;/t (1 Click GitHub)
             </a>
           </div>
         </div>
@@ -288,6 +298,9 @@ def validate_quote_deviations(
         prod = q.get("prodotto", "GRANO DURO")
         tipo = q.get("tipo", "PDT")
         scad = q.get("scadenza", "lug-27")
+        # Esclude tassativamente scadenze diverse da lug-27 (es. lug-28)
+        if str(scad).strip().lower() != "lug-27":
+            continue
         try:
             prz = float(q.get("prezzo", 0) or 0)
         except Exception:
@@ -663,6 +676,14 @@ def check_and_sync_today_quotes(target_date: Optional[str] = None, scan_depth: i
     """
     logs = []
     oggi_str = target_date or storage_manager.oggi_italia().isoformat()
+
+    # FASE 0: Verifica ed elaborazione immediata comandi pendenti (conferme utente da GitHub Issues/Commenti)
+    try:
+        from execution.process_github_commands import process_github_pending_commands
+        cmd_logs = process_github_pending_commands()
+        logs.extend(cmd_logs)
+    except Exception as e:
+        logs.append(f"Nota verifica comandi GitHub: {e}")
 
     # FASE 1: Allineamento in ingresso da GitHub
     remote_quotes = None

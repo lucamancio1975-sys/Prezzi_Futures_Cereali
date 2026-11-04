@@ -147,13 +147,19 @@
       padding: 0 1.25rem;
     }
     .btn-update:hover { background: var(--blue-hover); }
-    
     .instructions {
-      font-size: 0.75rem;
-      color: #64748b;
+      font-size: 0.8rem;
+      color: #94a3b8;
       margin-top: 1.25rem;
       text-align: center;
       line-height: 1.4;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+    }
+    .instructions strong {
+      color: #38bdf8;
     }
   </style>
 </head>
@@ -161,7 +167,7 @@
   <div class="card">
     <div class="badge">Gestione Alert Quotazione</div>
     <h1>Conferma o Rettifica Prezzo</h1>
-    <p class="desc">Lo scostamento giornaliero ha superato la soglia automatica di 5,00 €/t. Seleziona una delle 2 opzioni sottostanti:</p>
+    <p class="desc">Lo scostamento giornaliero ha superato la soglia di sicurezza di 5,00 €/t. Seleziona una delle opzioni:</p>
     
     <div class="quote-box">
       <div class="quote-row">
@@ -190,7 +196,7 @@
       <!-- Opzione 1: Conferma il valore rilevato -->
       <div>
         <a id="btn-conferma" class="btn btn-confirm" href="#">
-          ✓ Conferma Quotazione Rilevata e Aggiorna Database
+          ✓ Conferma Valore Rilevato e Aggiorna Database
         </a>
       </div>
 
@@ -205,8 +211,8 @@
     </div>
 
     <p class="instructions">
-      Il link aprirà la richiesta protetta su GitHub con il comando già compilato.<br>
-      Basterà cliccare <strong>"Comment"</strong> per aggiornare immediatamente database e grafici via GitHub Actions.
+      ⚡ Il link aprirà GitHub con comando e parametri già <strong>compilati al 100%</strong>.<br>
+      Basterà cliccare il pulsante verde <strong>"Submit new issue"</strong>: il bot aggiornerà il database, cancellerà il vecchio dato anomalo e riallineerà i grafici dell'app.
     </p>
   </div>
 
@@ -216,22 +222,30 @@
     const prodVal = params.get('prod') || 'GRANO DURO';
     const tipoVal = params.get('tipo') || 'PDT';
     const scadVal = params.get('scad') || 'lug-27';
-    const rilevatoVal = params.get('rilevato') || '0.0';
-    const precVal = params.get('prec') || '0.0';
-    const issueNum = params.get('issue') || '1';
+    const rilevatoVal = parseFloat(params.get('rilevato') || '0.0');
+    const precVal = parseFloat(params.get('prec') || '0.0');
 
     document.getElementById('lbl-data').textContent = dataVal || 'N.D.';
     document.getElementById('lbl-prodotto').textContent = `${prodVal} (${tipoVal})`;
     document.getElementById('lbl-scadenza').textContent = scadVal;
-    document.getElementById('lbl-prec').textContent = `${parseFloat(precVal).toFixed(2)} €/t`;
-    document.getElementById('lbl-rilevato').textContent = `${parseFloat(rilevatoVal).toFixed(2)} €/t`;
+    document.getElementById('lbl-prec').textContent = `${precVal.toFixed(2)} €/t`;
+    document.getElementById('lbl-rilevato').textContent = `${rilevatoVal.toFixed(2)} €/t`;
 
     const inputPrice = document.getElementById('txt-custom-price');
-    inputPrice.value = parseFloat(rilevatoVal).toFixed(2);
+    if (!isNaN(rilevatoVal) && rilevatoVal > 0) {
+      inputPrice.value = rilevatoVal.toFixed(2);
+    }
 
     function buildGithubCommentUrl(prezzo) {
-      const commentBody = `/conferma DATA="${dataVal}" PROD="${prodVal}" TIPO="${tipoVal}" SCAD="${scadVal}" PREZZO=${prezzo}`;
-      return `https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/${issueNum}#issuecomment-new?body=${encodeURIComponent(commentBody)}`;
+      const pNum = parseFloat(prezzo);
+      const issueTitle = `Conferma Quotazione ${dataVal} ${prodVal} ${tipoVal} ${scadVal}: ${pNum.toFixed(2)} Eur/ton`;
+      const issueBody = `/conferma DATA="${dataVal}" PROD="${prodVal}" TIPO="${tipoVal}" SCAD="${scadVal}" PREZZO=${pNum.toFixed(2)}\n\nConferma automatica richiesta dall'interfaccia allerta.`;
+      const qParams = new URLSearchParams({
+        title: issueTitle,
+        body: issueBody,
+        labels: 'override-quotazione'
+      });
+      return `https://github.com/lucamancio1975-sys/Prezzi_Futures_Cereali/issues/new?${qParams.toString()}`;
     }
 
     const btnConferma = document.getElementById('btn-conferma');

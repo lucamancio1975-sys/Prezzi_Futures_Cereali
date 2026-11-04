@@ -245,8 +245,15 @@ def add_quotes(new_quotes: List[Dict[str, Any]], push_github: bool = True) -> in
             existing_map[key] = nq
             added_count += 1
         else:
+            # Protezione override utente: non sovrascrivere MAI un valore valido o confermato dall'utente
+            # con un record remoto a 0.0 o con anomalie
+            curr = existing_map[key]
+            if curr.get("confermato_da_utente") and not nq.get("confermato_da_utente"):
+                continue
+            if float(curr.get("prezzo", 0) or 0) > 0 and float(nq.get("prezzo", 0) or 0) <= 0:
+                continue
             # Aggiorna se il prezzo o altri attributi differiscono
-            if existing_map[key].get("prezzo") != nq.get("prezzo"):
+            if curr.get("prezzo") != nq.get("prezzo"):
                 existing_map[key] = nq
                 added_count += 1
                 
@@ -382,11 +389,10 @@ def sync_from_github() -> int:
     # Fonde le quotazioni remote nel DB locale senza rimandare indietro a GitHub
     return add_quotes(remote_quotes, push_github=False)
 
-def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail") -> bool:
+def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures cereali da Gmail", merge_remote: bool = True) -> bool:
     """
     Pubblica data/storico_prezzi.json e data/storico_prezzi.csv su GitHub (Contents API).
-    - Prima del push FONDE il contenuto remoto nel DB locale: un'istanza con DB incompleto
-      non può mai sovrascrivere/cancellare dati già presenti su GitHub.
+    - Se merge_remote=True, fonde prima le quote remote proteggendo i valori locali confermati.
     - Salta il commit se il file remoto è già identico.
     - In caso di conflitto (409/422: un altro utente ha appena pubblicato) riprova.
     - Registra l'esito in LAST_GITHUB_STATUS (nessun errore silenzioso).
@@ -400,9 +406,9 @@ def sync_to_github(commit_message: str = "Auto-sync: nuove quotazioni futures ce
     last_error = ""
     for attempt in range(3):
         try:
-            # 1. Merge del contenuto remoto (protezione da sovrascritture)
+            # 1. Merge del contenuto remoto (se richiesto)
             json_sha, remote_json = _gh_get_file(repo, GH_JSON_PATH, token)
-            if remote_json:
+            if merge_remote and remote_json:
                 try:
                     remote_list = json.loads(remote_json.decode("utf-8"))
                     if isinstance(remote_list, list):
