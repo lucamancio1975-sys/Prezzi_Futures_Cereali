@@ -551,10 +551,10 @@ function renderChart(quotes, lineColor) {
   const validQuotes = quotes.filter((q) => (parseFloat(q.prezzo) || 0) > 0);
   if (validQuotes.length === 0) return;
 
-  // Finestra mobile dinamica di 30 sedute lavorative (circa 1 mese e mezzo).
+  // Finestra mobile dinamica di 90 sedute lavorative (circa 3 mesi e mezzo).
   // Ogni nuova quotazione inserita spinge simultaneamente fuori una vecchia quotazione a sinistra,
   // preservando l'ampiezza delle oscillazioni ed evitando che la curva si appiattisca.
-  const CHART_WINDOW_DAYS = 30;
+  const CHART_WINDOW_DAYS = 90;
   const chartQuotes = validQuotes.length > CHART_WINDOW_DAYS
     ? validQuotes.slice(-CHART_WINDOW_DAYS)
     : validQuotes;
