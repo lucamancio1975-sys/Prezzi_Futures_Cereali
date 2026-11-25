@@ -24,10 +24,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    name: Preparazione Artifacts Web App
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -41,6 +39,14 @@ jobs:
         with:
           path: '.'
 
+  deploy:
+    name: Pubblicazione su GitHub Pages
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Pubblicazione su GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

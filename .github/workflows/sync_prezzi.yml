@@ -69,28 +69,25 @@ jobs:
             echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Configurazione GitHub Pages
+        if: steps.git_push.outputs.has_changes == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Caricamento Artifacts Web App
+        if: steps.git_push.outputs.has_changes == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+
   deploy:
     name: Pubblicazione Web App su GitHub Pages
     needs: sync
-    if: needs.sync.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.sync.outputs.has_changes == 'true'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Configurazione GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Caricamento Artifacts Web App
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: '.'
-
       - name: Pubblicazione su GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
